@@ -1,190 +1,199 @@
 {
   "kind": "build_request",
-  "title": "Add Trade Alerts System and Market Heatmap with Toggleable Layers",
-  "priority": "normal",
+  "title": "Add API retry logic, dashboard timeframe selector, and AI trade recommendations",
+  "projectName": "Crypto Swing Trader",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-15",
-      "text": "Implement in-app toast/banner notifications that trigger when swing trading signals are generated (RSI oversold/overbought zones, MACD crossovers, support/resistance breaks). Display the notification with cryptocurrency name, signal type (buy/sell), reason, and timestamp. Notifications should appear when the dashboard is open and auto-dismiss after 5-7 seconds with option to dismiss manually.",
+      "id": "REQ-23",
+      "text": "Implement user-friendly retry buttons in the CryptoTable component and other data-fetching components that display 'Failed to load cryptocurrency data' errors. Add a prominent 'Retry' button centered in the error state UI that triggers a manual refetch of the failed query. Style the button consistently with the existing UI design.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "user-request"
         ],
         "quotes": [
-          "1) in-app notifications"
+          "add user-friendly retry buttons",
+          "it keeps fail to load",
+          "Failed to load cryptocurrency data. Please try again later."
         ]
       },
       "acceptanceCriteria": [
-        "Toast notifications appear when new trading signals are detected",
-        "Each notification shows crypto symbol, signal type, reason, and time",
-        "Notifications auto-dismiss after 5-7 seconds",
-        "Users can manually dismiss notifications",
-        "Multiple notifications stack vertically without overlapping"
+        "Error states in CryptoTable and other data components display a centered 'Retry' button",
+        "Clicking the retry button triggers a refetch of the failed query",
+        "Button styling matches the existing UI design with appropriate hover states",
+        "Error message remains visible alongside the retry button"
       ]
     },
     {
-      "id": "REQ-16",
-      "text": "Create a dedicated Alert History page/view accessible from main navigation that displays all triggered trade alerts for the authenticated user. Show alert timestamp, cryptocurrency, signal type (buy/sell/hold), trigger reason (e.g., 'RSI below 30', 'Bullish MACD crossover', 'Price broke resistance at $50,000'), and confidence level. Include filters by cryptocurrency and signal type. Store alert history per user in Motoko backend with timestamp, crypto ID, signal data, and trigger reason.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-5"
-        ],
-        "quotes": [
-          "2) new dedicated view/page"
-        ]
-      },
-      "acceptanceCriteria": [
-        "New 'Alerts' navigation item in main menu",
-        "Alert history page shows all past triggered alerts for authenticated user",
-        "Each alert entry displays timestamp, crypto, signal type, reason, and confidence",
-        "Filters allow users to view alerts by specific cryptocurrency or signal type",
-        "Alert data persists in Motoko backend keyed by user principal",
-        "Page requires Internet Identity authentication"
-      ]
-    },
-    {
-      "id": "REQ-17",
-      "text": "Store triggered trading alerts in Motoko backend with fields: timestamp, cryptocurrency ID/symbol, signal type (buy/sell/hold), trigger reason (RSI zone, MACD crossover, support/resistance break), confidence level, and price at trigger. Implement backend functions to add new alerts, fetch alert history for a user (with optional filters by crypto or date range), and optionally purge old alerts (e.g., older than 30 days). Associate alerts with user principals from Internet Identity.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-5"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend defines Alert type with all required fields",
-        "Function to add new alert to user's alert history",
-        "Function to fetch alerts for authenticated user with optional filters",
-        "Alerts are stored per user principal",
-        "Optional cleanup mechanism for alerts older than 30 days"
-      ]
-    },
-    {
-      "id": "REQ-18",
-      "text": "Create a new dedicated Market Heatmap page/view accessible from main navigation. Display all 20-30 tracked cryptocurrencies as a visual grid of blocks where block size represents market cap (larger blocks for larger cap coins) and color intensity represents 24-hour price change (green shades for gains, red shades for losses). Clicking a block navigates to that cryptocurrency's detail page. Use a responsive grid layout that adapts to screen size.",
+      "id": "REQ-24",
+      "text": "Add exponential backoff retry logic to the useCryptoPrices hook to handle CoinGecko API rate limiting. Configure React Query's retry option with exponential backoff (retryDelay: attempt => Math.min(1000 * 2 ** attempt, 30000)) and set retry count to 3 attempts before showing the error state.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "user-request"
         ],
         "quotes": [
-          "2) new dedicated view/page",
-          "24-hour price change - Color intensity shows gain/loss percentage (green = gains, red = losses)",
-          "Market cap size - Larger blocks = larger market cap coins"
+          "add user-friendly retry buttons",
+          "exponential backoff"
         ]
       },
       "acceptanceCriteria": [
-        "New 'Heatmap' navigation item in main menu",
-        "Grid layout displays all tracked cryptocurrencies as blocks",
-        "Block size correlates with market cap (larger cap = larger block)",
-        "Color intensity reflects 24h price change (green for positive, red for negative)",
-        "Clicking a block navigates to the crypto detail page",
-        "Layout is responsive and works on mobile, tablet, and desktop"
+        "useCryptoPrices hook implements React Query retry with exponential backoff",
+        "First retry waits 1 second, second waits 2 seconds, third waits 4 seconds (capped at 30 seconds)",
+        "After 3 failed attempts, error state is displayed with retry button",
+        "Successful retry clears error state and displays data normally"
       ]
     },
     {
-      "id": "REQ-19",
-      "text": "Implement toggleable overlay layers for the Market Heatmap that modify the visual display: 1) Volume Change layer - highlight cryptocurrencies with unusual volume spikes (e.g., >2x average volume) with distinct visual indicator (border, icon, or overlay pattern), 2) Volatility layer - show which coins have highest price volatility independent of direction using color intensity or pattern, 3) BTC Correlation layer - display how closely each altcoin follows Bitcoin's price movements using visual indicators (high correlation vs low correlation), 4) RSI Levels layer - overlay RSI status with color coding (green for oversold <30, red for overbought >70, neutral for mid-range). Provide toggle buttons/checkboxes above the heatmap to enable/disable each layer independently.",
+      "id": "REQ-25",
+      "text": "Implement request batching in the coingecko.ts service to fetch cryptocurrency data for multiple coins in a single API call instead of individual requests. Modify fetchCryptoPrices to use CoinGecko's batch endpoint that accepts comma-separated coin IDs (e.g., /coins/markets?vs_currency=usd&ids=bitcoin,ethereum,cardano) to reduce total API call volume.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "user-request"
         ],
         "quotes": [
-          "Optional Layers (toggleable views): Volume change - Highlight coins with unusual volume spikes, Volatility - Show which coins are moving the most (independent of direction), Correlation to BTC - How closely each altcoin follows Bitcoin's movements, RSI levels - Visual representation of oversold (green) vs overbought (red) conditions"
+          "request batching to reduce API calls",
+          "fetch multiple coins in one request"
         ]
       },
       "acceptanceCriteria": [
-        "Toggle controls above heatmap for each layer type",
-        "Volume Change layer highlights coins with volume spikes >2x average",
-        "Volatility layer shows highest volatility coins with distinct visual treatment",
-        "BTC Correlation layer indicates correlation strength to Bitcoin",
-        "RSI Levels layer color-codes blocks by RSI status (oversold/overbought/neutral)",
-        "Multiple layers can be enabled simultaneously",
-        "Visual indicators are clear and don't completely obscure base heatmap colors"
+        "fetchCryptoPrices function uses CoinGecko's batch endpoint with comma-separated IDs",
+        "Single API call retrieves data for all 20-30 tracked cryptocurrencies",
+        "Response parsing correctly handles batch response format",
+        "API call count reduced from 20-30 individual calls to 1 batch call per refresh cycle"
       ]
     },
     {
-      "id": "REQ-20",
-      "text": "Calculate and display volume analysis data showing unusual volume spikes for tracked cryptocurrencies. Compare current 24h volume against average volume over the past 7-30 days. Flag cryptocurrencies where current volume is significantly higher (e.g., >2x or >3x average) as having unusual volume activity. Display this information in the heatmap volume layer and optionally as a dedicated section in the market sentiment dashboard or crypto detail pages.",
+      "id": "REQ-26",
+      "text": "Add a TimeframeSelector component to the Dashboard page header, positioned prominently between the page title and the CryptoTable. The selector should control the default timeframe for chart previews and data displays across the dashboard. Add a new state variable in Dashboard.tsx to manage the selected timeframe (1H, 4H, Daily) and pass it as a prop to relevant child components that display chart data or technical indicators.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "user-request"
         ],
         "quotes": [
-          "Volume Analysis - Highlight unusual volume spikes that often precede big moves"
+          "on the main page i dont see a section to adjust timeframe",
+          "add a prominent timeframe selector in the dashboard header that controls chart displays across the watchlist"
         ]
       },
       "acceptanceCriteria": [
-        "Calculate average volume over historical period (7-30 days)",
-        "Compare current 24h volume to average",
-        "Flag cryptocurrencies with volume >2x average as unusual",
-        "Display volume spike indicators in heatmap volume layer",
-        "Provide clear visual distinction for high-volume anomalies"
+        "TimeframeSelector component appears in Dashboard page header above the CryptoTable",
+        "Selector displays three options: 1H, 4H, and Daily with clear visual indication of active selection",
+        "Changing timeframe updates a state variable in Dashboard component",
+        "Selected timeframe persists during the session (stored in component state)",
+        "Timeframe selector styling matches existing UI components"
       ]
     },
     {
-      "id": "REQ-21",
-      "text": "Add Fibonacci retracement level overlays to the candlestick charts on crypto detail pages. Automatically calculate and draw Fibonacci retracement levels (0%, 23.6%, 38.2%, 50%, 61.8%, 100%) based on the most recent significant price swing (high to low for downtrends, low to high for uptrends) within the visible timeframe. Display levels as horizontal lines with labels showing percentage and price. Provide a toggle to show/hide Fibonacci levels on the chart.",
+      "id": "REQ-27",
+      "text": "Create a new AI trade recommendation system in the CryptoDetail page that analyzes all available technical data (active signals from useTradingSignals, support/resistance levels from useChartData, detected patterns from useChartData, RSI/MACD/MA/BB values from useTechnicalIndicators) and generates actionable trade recommendations. Display recommendations in a new 'AI Trade Analysis' card component positioned prominently on the CryptoDetail page below the chart section.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "user-request"
         ],
         "quotes": [
-          "Fibonacci Retracement Overlays - Automatically draw key support/resistance levels on charts"
+          "is there a way to have ai or something use that information to give me entry point and take profit point?",
+          "analyze technical indicators (signals, support/resistance, patterns, RSI, MACD, MA, BB) to generate actionable entry points and take-profit levels"
         ]
       },
       "acceptanceCriteria": [
-        "Fibonacci levels automatically calculated from recent significant price swing",
-        "Standard Fibonacci percentages displayed: 0%, 23.6%, 38.2%, 50%, 61.8%, 100%",
-        "Levels rendered as horizontal lines on candlestick chart",
-        "Each level labeled with percentage and corresponding price",
-        "Toggle control to show/hide Fibonacci overlays",
-        "Levels recalculate when timeframe changes"
+        "New 'AI Trade Analysis' card component created and displayed on CryptoDetail page",
+        "Component positioned below the chart section for visibility",
+        "Card has a distinct visual design that stands out from other panels",
+        "Component receives all technical data as props from parent hooks"
       ]
     },
     {
-      "id": "REQ-22",
-      "text": "Enhance mobile-first responsive design across all new features (alert history page, market heatmap, Fibonacci overlays). Ensure heatmap grid adapts to mobile screens with smaller blocks that remain readable and tappable. Optimize alert history table/list for mobile with card-based layout instead of table on small screens. Ensure toggle controls for heatmap layers are touch-friendly and stack vertically on mobile. Test all interactions on mobile devices to ensure smooth performance and usability.",
+      "id": "REQ-28",
+      "text": "Implement the recommendation generation logic in a new utility file frontend/src/utils/aiTradeRecommendations.ts. Create a generateTradeRecommendation function that accepts technical data (signals, indicators, patterns, support/resistance) and returns a structured recommendation object containing: entry point price with reasoning, three take-profit targets (conservative 5-8%, moderate 10-15%, aggressive 20-30% from entry), stop-loss price (positioned below nearest support or 3-5% below entry), overall confidence score (0-100 based on signal strength and indicator alignment), risk level (low/medium/high based on volatility and signal clarity), and detailed reasoning text explaining the recommendation logic.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "user-request"
         ],
         "quotes": [
-          "Mobile-First Design - Ensure charts and controls work smoothly on phones"
+          "generate actionable entry points and take-profit levels",
+          "Recommendations will include multiple take-profit targets (conservative, moderate, aggressive) plus stop-loss suggestions",
+          "confidence scores, risk levels, and reasoning"
         ]
       },
       "acceptanceCriteria": [
-        "Heatmap grid adapts to mobile screens with appropriately sized blocks",
-        "Alert history uses card layout on mobile instead of table",
-        "Heatmap layer toggles are touch-friendly and stack vertically on small screens",
-        "All new features tested on mobile devices for performance and usability",
-        "Charts and interactive elements remain functional on phone-sized screens",
-        "No horizontal scrolling required on mobile for any new views"
+        "New file frontend/src/utils/aiTradeRecommendations.ts created with generateTradeRecommendation function",
+        "Function accepts parameters: currentPrice, signals, indicators, patterns, supportLevels, resistanceLevels",
+        "Function returns object with fields: entryPoint, entryReasoning, takeProfitTargets (array of 3 objects with price/percentage/label), stopLoss, confidence (0-100), riskLevel (low/medium/high), reasoning (string)",
+        "Entry point logic considers current price, active signals, and proximity to support/resistance",
+        "Take-profit targets calculated as: conservative (5-8%), moderate (10-15%), aggressive (20-30%) above entry",
+        "Stop-loss positioned at nearest support level below entry or 3-5% below entry if no support exists",
+        "Confidence score increases when multiple indicators align (RSI + MACD + patterns all bullish/bearish)",
+        "Risk level determined by: high if volatility >8%, medium if 4-8%, low if <4%",
+        "Reasoning text generated to explain which indicators drove the recommendation"
+      ]
+    },
+    {
+      "id": "REQ-29",
+      "text": "Display the AI-generated trade recommendation in the 'AI Trade Analysis' card component with a clear visual hierarchy. Show entry point price prominently at the top with an icon and color coding (green for buy entry, red for sell/short entry). Display the three take-profit targets in a horizontal row with badges labeled 'Conservative', 'Moderate', 'Aggressive' showing both price and percentage gain. Show stop-loss price with a warning icon. Display confidence score as a progress bar or percentage badge with color coding (green >70%, yellow 50-70%, red <50%). Show risk level with an appropriate badge. Display the reasoning text in a readable paragraph format at the bottom of the card.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "user-request"
+        ],
+        "quotes": [
+          "The AI will display real-time recommendations on the coin detail page with confidence scores, risk levels, and reasoning"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Entry point displayed prominently at top of card with green/red color coding",
+        "Three take-profit targets shown in horizontal layout with labeled badges",
+        "Each take-profit displays both absolute price and percentage gain from entry",
+        "Stop-loss shown with warning icon and clear price display",
+        "Confidence score displayed as visual element (progress bar or percentage badge) with color coding",
+        "Risk level shown as badge with appropriate color (green=low, yellow=medium, red=high)",
+        "Reasoning text displayed in readable paragraph format",
+        "Card responsive and adapts layout for mobile screens",
+        "All prices formatted consistently with cryptocurrency decimal precision"
+      ]
+    },
+    {
+      "id": "REQ-30",
+      "text": "Update the recommendation generation logic to trigger in real-time whenever technical data updates. Configure the AI Trade Analysis component to automatically recalculate recommendations when any of the underlying data sources change (new price data, updated indicators, new patterns detected, changed signals). Display a subtle loading indicator when recalculating recommendations. Add a timestamp to show when the recommendation was last generated.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "user-request"
+        ],
+        "quotes": [
+          "The AI will display real-time recommendations",
+          "Recommendations will appear in real-time when you view a coin"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Recommendation recalculates automatically when any technical data dependency updates",
+        "Loading indicator appears during recalculation without blocking the entire card",
+        "Timestamp displays when recommendation was last generated (e.g., 'Updated 2 minutes ago')",
+        "Recommendation smoothly updates without jarring UI transitions",
+        "If data is still loading, card shows a loading skeleton or message"
       ]
     }
   ],
   "constraints": [
-    "Use existing CoinGecko API integration for all market data including volume, volatility, and correlation calculations",
-    "Maintain single-actor Motoko backend architecture for alert storage and retrieval",
-    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, or components/ui directory",
-    "Use existing authentication system (Internet Identity) for alert history access",
-    "Preserve existing technical indicator and trading signal calculation logic",
-    "Use existing React Query patterns for data fetching and caching"
+    "Do not modify frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or files in frontend/src/components/ui",
+    "All Motoko backend logic must remain in backend/main.mo single-actor architecture",
+    "Use CoinGecko API endpoints and data formats already established in frontend/src/services/coingecko.ts",
+    "Maintain React Query caching patterns already used in existing hooks",
+    "Preserve existing TimeframeSelector component implementation from frontend/src/components/TimeframeSelector.tsx",
+    "Do not integrate external AI services (OpenAI, Anthropic, etc.) - implement recommendation logic as pure frontend calculation"
   ],
   "nonGoals": [
-    "Email or SMS notifications for alerts (only in-app notifications)",
-    "Real-time WebSocket connections for alert delivery",
-    "Machine learning or AI-based pattern prediction",
-    "Custom alert thresholds beyond existing trading signals",
-    "Social sharing or collaborative features for alerts",
-    "Export functionality for alert history or heatmap data",
-    "Advanced correlation calculations beyond basic BTC price comparison"
+    "Backend storage of AI recommendations",
+    "Automatic trade execution based on recommendations",
+    "Real-time notifications for recommendation changes",
+    "Machine learning model training or integration",
+    "Historical backtesting of recommendation accuracy",
+    "Integration with external trading platforms or APIs",
+    "Email or SMS notifications for trade recommendations"
   ],
   "imageRequirements": {
     "required": [],

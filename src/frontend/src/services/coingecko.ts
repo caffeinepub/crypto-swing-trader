@@ -28,8 +28,18 @@ const COINGECKO_API_BASE = 'https://api.coingecko.com/api/v3';
 
 export async function fetchTopCryptos(limit = 30): Promise<CryptoMarketData[]> {
   try {
+    // Build comma-separated list of top coin IDs for batch request
+    const coinIds = [
+      'bitcoin', 'ethereum', 'tether', 'binancecoin', 'solana', 'usd-coin',
+      'ripple', 'cardano', 'dogecoin', 'tron', 'avalanche-2', 'polkadot',
+      'chainlink', 'polygon', 'shiba-inu', 'litecoin', 'bitcoin-cash',
+      'uniswap', 'stellar', 'monero', 'ethereum-classic', 'okb', 'cosmos',
+      'filecoin', 'hedera-hashgraph', 'aptos', 'near', 'vechain', 'algorand',
+      'internet-computer'
+    ].slice(0, limit).join(',');
+
     const response = await fetch(
-      `${COINGECKO_API_BASE}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${limit}&page=1&sparkline=false&price_change_percentage=24h`
+      `${COINGECKO_API_BASE}/coins/markets?vs_currency=usd&ids=${coinIds}&order=market_cap_desc&per_page=${limit}&page=1&sparkline=false&price_change_percentage=24h`
     );
 
     if (!response.ok) {

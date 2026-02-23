@@ -1,149 +1,126 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T00:20:38.590Z",
+  "generatedAt": "2026-02-23T03:33:48.985Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 8,
-    "implemented": 4,
+    "implemented": 8,
     "items": [
       {
-        "id": "REQ-15",
-        "summary": "Implement in-app toast/banner notifications that trigger when swing trading signals are generated (RSI oversold/overbought zones, MACD crossovers, support/resistance breaks). Display the notification with cryptocurrency name, signal type (buy/sell), reason, and timestamp. Notifications should appear when the dashboard is open and auto-dismiss after 5-7 seconds with option to dismiss manually.",
+        "id": "REQ-23",
+        "summary": "Implement user-friendly retry buttons in the CryptoTable component and other data-fetching components that display 'Failed to load cryptocurrency data' errors. Add a prominent 'Retry' button centered in the error state UI that triggers a manual refetch of the failed query. Style the button consistently with the existing UI design.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/AlertToast.tsx",
-          "frontend/src/hooks/useAlertNotifications.ts",
+          "frontend/src/components/CryptoTable.tsx",
+          "frontend/src/components/WatchlistPanel.tsx",
           "frontend/src/pages/Dashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useAlertNotifications.ts",
+          "frontend/src/components/CryptoTable.tsx",
+          "frontend/src/components/WatchlistPanel.tsx",
           "frontend/src/pages/Dashboard.tsx"
         ]
       },
       {
-        "id": "REQ-16",
-        "summary": "Create a dedicated Alert History page/view accessible from main navigation that displays all triggered trade alerts for the authenticated user. Show alert timestamp, cryptocurrency, signal type (buy/sell/hold), trigger reason (e.g., 'RSI below 30', 'Bullish MACD crossover', 'Price broke resistance at $50,000'), and confidence level. Include filters by cryptocurrency and signal type. Store alert history per user in Motoko backend with timestamp, crypto ID, signal data, and trigger reason.",
+        "id": "REQ-24",
+        "summary": "Add exponential backoff retry logic to the useCryptoPrices hook to handle CoinGecko API rate limiting. Configure React Query's retry option with exponential backoff (retryDelay: attempt => Math.min(1000 * 2 ** attempt, 30000)) and set retry count to 3 attempts before showing the error state.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/Alerts.tsx",
-          "frontend/src/hooks/useAlertHistory.ts",
-          "frontend/src/components/AlertFilters.tsx",
-          "frontend/src/components/AlertCard.tsx",
-          "frontend/src/components/Layout.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/hooks/useCryptoPrices.ts"
         ],
         "matchedFiles": [
-          "frontend/src/pages/Alerts.tsx",
-          "frontend/src/hooks/useAlertHistory.ts",
-          "frontend/src/components/AlertFilters.tsx",
-          "frontend/src/components/AlertCard.tsx",
-          "frontend/src/components/Layout.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/hooks/useCryptoPrices.ts"
         ]
       },
       {
-        "id": "REQ-17",
-        "summary": "Store triggered trading alerts in Motoko backend with fields: timestamp, cryptocurrency ID/symbol, signal type (buy/sell/hold), trigger reason (RSI zone, MACD crossover, support/resistance break), confidence level, and price at trigger. Implement backend functions to add new alerts, fetch alert history for a user (with optional filters by crypto or date range), and optionally purge old alerts (e.g., older than 30 days). Associate alerts with user principals from Internet Identity.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-18",
-        "summary": "Create a new dedicated Market Heatmap page/view accessible from main navigation. Display all 20-30 tracked cryptocurrencies as a visual grid of blocks where block size represents market cap (larger blocks for larger cap coins) and color intensity represents 24-hour price change (green shades for gains, red shades for losses). Clicking a block navigates to that cryptocurrency's detail page. Use a responsive grid layout that adapts to screen size.",
+        "id": "REQ-25",
+        "summary": "Implement request batching in the coingecko.ts service to fetch cryptocurrency data for multiple coins in a single API call instead of individual requests. Modify fetchCryptoPrices to use CoinGecko's batch endpoint that accepts comma-separated coin IDs (e.g., /coins/markets?vs_currency=usd&ids=bitcoin,ethereum,cardano) to reduce total API call volume.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/Heatmap.tsx",
-          "frontend/src/components/HeatmapGrid.tsx",
-          "frontend/src/components/HeatmapBlock.tsx",
-          "frontend/src/components/Layout.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/services/coingecko.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/Layout.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/services/coingecko.ts"
         ]
       },
       {
-        "id": "REQ-19",
-        "summary": "Implement toggleable overlay layers for the Market Heatmap that modify the visual display: 1) Volume Change layer - highlight cryptocurrencies with unusual volume spikes (e.g., >2x average volume) with distinct visual indicator (border, icon, or overlay pattern), 2) Volatility layer - show which coins have highest price volatility independent of direction using color intensity or pattern, 3) BTC Correlation layer - display how closely each altcoin follows Bitcoin's price movements using visual indicators (high correlation vs low correlation), 4) RSI Levels layer - overlay RSI status with color coding (green for oversold <30, red for overbought >70, neutral for mid-range). Provide toggle buttons/checkboxes above the heatmap to enable/disable each layer independently.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/components/HeatmapLayerToggles.tsx",
-          "frontend/src/hooks/useHeatmapLayers.ts",
-          "frontend/src/pages/Heatmap.tsx",
-          "frontend/src/components/HeatmapGrid.tsx",
-          "frontend/src/components/HeatmapBlock.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-20",
-        "summary": "Calculate and display volume analysis data showing unusual volume spikes for tracked cryptocurrencies. Compare current 24h volume against average volume over the past 7-30 days. Flag cryptocurrencies where current volume is significantly higher (e.g., >2x or >3x average) as having unusual volume activity. Display this information in the heatmap volume layer and optionally as a dedicated section in the market sentiment dashboard or crypto detail pages.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/utils/volumeAnalysis.ts",
-          "frontend/src/hooks/useHeatmapLayers.ts"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-21",
-        "summary": "Add Fibonacci retracement level overlays to the candlestick charts on crypto detail pages. Automatically calculate and draw Fibonacci retracement levels (0%, 23.6%, 38.2%, 50%, 61.8%, 100%) based on the most recent significant price swing (high to low for downtrends, low to high for uptrends) within the visible timeframe. Display levels as horizontal lines with labels showing percentage and price. Provide a toggle to show/hide Fibonacci levels on the chart.",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/utils/fibonacciRetracement.ts",
-          "frontend/src/hooks/useFibonacciLevels.ts",
-          "frontend/src/pages/CryptoDetail.tsx",
-          "frontend/src/components/CandlestickChart.tsx"
-        ],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-22",
-        "summary": "Enhance mobile-first responsive design across all new features (alert history page, market heatmap, Fibonacci overlays). Ensure heatmap grid adapts to mobile screens with smaller blocks that remain readable and tappable. Optimize alert history table/list for mobile with card-based layout instead of table on small screens. Ensure toggle controls for heatmap layers are touch-friendly and stack vertically on mobile. Test all interactions on mobile devices to ensure smooth performance and usability.",
+        "id": "REQ-26",
+        "summary": "Add a TimeframeSelector component to the Dashboard page header, positioned prominently between the page title and the CryptoTable. The selector should control the default timeframe for chart previews and data displays across the dashboard. Add a new state variable in Dashboard.tsx to manage the selected timeframe (1H, 4H, Daily) and pass it as a prop to relevant child components that display chart data or technical indicators.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/Heatmap.tsx",
-          "frontend/src/components/HeatmapGrid.tsx",
-          "frontend/src/components/HeatmapBlock.tsx",
-          "frontend/src/pages/Alerts.tsx",
-          "frontend/src/components/AlertCard.tsx",
-          "frontend/src/components/HeatmapLayerToggles.tsx",
-          "frontend/src/pages/CryptoDetail.tsx",
-          "frontend/src/components/CandlestickChart.tsx"
+          "frontend/src/pages/Dashboard.tsx",
+          "frontend/src/components/MarketSentimentPanel.tsx",
+          "frontend/src/components/TradingSignalsPanel.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/Alerts.tsx",
-          "frontend/src/components/AlertCard.tsx"
+          "frontend/src/pages/Dashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-27",
+        "summary": "Create a new AI trade recommendation system in the CryptoDetail page that analyzes all available technical data (active signals from useTradingSignals, support/resistance levels from useChartData, detected patterns from useChartData, RSI/MACD/MA/BB values from useTechnicalIndicators) and generates actionable trade recommendations. Display recommendations in a new 'AI Trade Analysis' card component positioned prominently on the CryptoDetail page below the chart section.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AITradeAnalysisCard.tsx",
+          "frontend/src/pages/CryptoDetail.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/AITradeAnalysisCard.tsx",
+          "frontend/src/pages/CryptoDetail.tsx"
+        ]
+      },
+      {
+        "id": "REQ-28",
+        "summary": "Implement the recommendation generation logic in a new utility file frontend/src/utils/aiTradeRecommendations.ts. Create a generateTradeRecommendation function that accepts technical data (signals, indicators, patterns, support/resistance) and returns a structured recommendation object containing: entry point price with reasoning, three take-profit targets (conservative 5-8%, moderate 10-15%, aggressive 20-30% from entry), stop-loss price (positioned below nearest support or 3-5% below entry), overall confidence score (0-100 based on signal strength and indicator alignment), risk level (low/medium/high based on volatility and signal clarity), and detailed reasoning text explaining the recommendation logic.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/aiTradeRecommendations.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/aiTradeRecommendations.ts"
+        ]
+      },
+      {
+        "id": "REQ-29",
+        "summary": "Display the AI-generated trade recommendation in the 'AI Trade Analysis' card component with a clear visual hierarchy. Show entry point price prominently at the top with an icon and color coding (green for buy entry, red for sell/short entry). Display the three take-profit targets in a horizontal row with badges labeled 'Conservative', 'Moderate', 'Aggressive' showing both price and percentage gain. Show stop-loss price with a warning icon. Display confidence score as a progress bar or percentage badge with color coding (green >70%, yellow 50-70%, red <50%). Show risk level with an appropriate badge. Display the reasoning text in a readable paragraph format at the bottom of the card.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AITradeAnalysisCard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/AITradeAnalysisCard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-30",
+        "summary": "Update the recommendation generation logic to trigger in real-time whenever technical data updates. Configure the AI Trade Analysis component to automatically recalculate recommendations when any of the underlying data sources change (new price data, updated indicators, new patterns detected, changed signals). Display a subtle loading indicator when recalculating recommendations. Add a timestamp to show when the recommendation was last generated.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AITradeAnalysisCard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/AITradeAnalysisCard.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
-    "build-template/README.md",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/AlertCard.tsx",
-    "frontend/src/components/AlertFilters.tsx",
-    "frontend/src/components/Layout.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useAlertHistory.ts",
-    "frontend/src/hooks/useAlertNotifications.ts",
-    "frontend/src/pages/Alerts.tsx",
+    "frontend/src/components/AITradeAnalysisCard.tsx",
+    "frontend/src/components/CryptoTable.tsx",
+    "frontend/src/components/WatchlistPanel.tsx",
+    "frontend/src/hooks/useCryptoPrices.ts",
+    "frontend/src/pages/CryptoDetail.tsx",
     "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/services/coingecko.ts",
+    "frontend/src/utils/aiTradeRecommendations.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
+  "projectStateVersion": 7,
   "summary": "Professional crypto swing trading dashboard with real-time price tracking for 20-30 top cryptocurrencies, technical indicators (RSI, MACD, Moving Averages, Bollinger Bands), swing trading signals, portfolio tracker with manual entry, multi-timeframe chart analysis, candlestick pattern recognition, support/resistance detection, market sentiment dashboard, trading journal, dark/light mode, mobile-responsive design, Internet Identity authentication, CoinGecko API integration, Motoko backend, React + TypeScript frontend",
   "architectural_notes": [
     "React + TypeScript frontend with Tailwind CSS for styling",
@@ -14,8 +14,10 @@
     "In-app toast/banner notifications for real-time trade alerts",
     "Dedicated heatmap page with interactive grid visualization"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "CoinGecko API rate limiting causing dashboard data load failures"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-real-time-price-tracking-for-20-30-top-cryptocurrencies-using-coingecko-api-with-30-60-second-refresh-intervals-display-current-price-24h-change-percentage-24h-volume-and-market-cap-for-each-cryptocurrency",
@@ -160,6 +162,70 @@
         "REQ-22"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-implement-user-friendly-retry-buttons-in-the-cryptotable-component-and-other-data-fetching-components-that-display-failed-to-load-cryptocurrency-data-errors-add-a-prominent-retry-button-centered-in-the-error-state-ui-that-triggers-a-manual-refetch-of-the-failed-query-style-the-button-consistently-with-the-existing-ui-design",
+      "title": "Implement user-friendly retry buttons in the CryptoTable component and other data-fetching components that display 'Failed to load cryptocurrency data' errors. Add a prominent 'Retry' button centered in the error state UI that triggers a manual refetch of the failed query. Style the button consistently with the existing UI design.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-exponential-backoff-retry-logic-to-the-usecryptoprices-hook-to-handle-coingecko-api-rate-limiting-configure-react-query-s-retry-option-with-exponential-backoff-retrydelay-attempt-math-min-1000-2-attempt-30000-and-set-retry-count-to-3-attempts-before-showing-the-error-state",
+      "title": "Add exponential backoff retry logic to the useCryptoPrices hook to handle CoinGecko API rate limiting. Configure React Query's retry option with exponential backoff (retryDelay: attempt => Math.min(1000 * 2 ** attempt, 30000)) and set retry count to 3 attempts before showing the error state.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-request-batching-in-the-coingecko-ts-service-to-fetch-cryptocurrency-data-for-multiple-coins-in-a-single-api-call-instead-of-individual-requests-modify-fetchcryptoprices-to-use-coingecko-s-batch-endpoint-that-accepts-comma-separated-coin-ids-e-g-coins-markets-vs-currency-usd-ids-bitcoin-ethereum-cardano-to-reduce-total-api-call-volume",
+      "title": "Implement request batching in the coingecko.ts service to fetch cryptocurrency data for multiple coins in a single API call instead of individual requests. Modify fetchCryptoPrices to use CoinGecko's batch endpoint that accepts comma-separated coin IDs (e.g., /coins/markets?vs_currency=usd&ids=bitcoin,ethereum,cardano) to reduce total API call volume.",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-timeframeselector-component-to-the-dashboard-page-header-positioned-prominently-between-the-page-title-and-the-cryptotable-the-selector-should-control-the-default-timeframe-for-chart-previews-and-data-displays-across-the-dashboard-add-a-new-state-variable-in-dashboard-tsx-to-manage-the-selected-timeframe-1h-4h-daily-and-pass-it-as-a-prop-to-relevant-child-components-that-display-chart-data-or-technical-indicators",
+      "title": "Add a TimeframeSelector component to the Dashboard page header, positioned prominently between the page title and the CryptoTable. The selector should control the default timeframe for chart previews and data displays across the dashboard. Add a new state variable in Dashboard.tsx to manage the selected timeframe (1H, 4H, Daily) and pass it as a prop to relevant child components that display chart data or technical indicators.",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-ai-trade-recommendation-system-in-the-cryptodetail-page-that-analyzes-all-available-technical-data-active-signals-from-usetradingsignals-support-resistance-levels-from-usechartdata-detected-patterns-from-usechartdata-rsi-macd-ma-bb-values-from-usetechnicalindicators-and-generates-actionable-trade-recommendations-display-recommendations-in-a-new-ai-trade-analysis-card-component-positioned-prominently-on-the-cryptodetail-page-below-the-chart-section",
+      "title": "Create a new AI trade recommendation system in the CryptoDetail page that analyzes all available technical data (active signals from useTradingSignals, support/resistance levels from useChartData, detected patterns from useChartData, RSI/MACD/MA/BB values from useTechnicalIndicators) and generates actionable trade recommendations. Display recommendations in a new 'AI Trade Analysis' card component positioned prominently on the CryptoDetail page below the chart section.",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-recommendation-generation-logic-in-a-new-utility-file-frontend-src-utils-aitraderecommendations-ts-create-a-generatetraderecommendation-function-that-accepts-technical-data-signals-indicators-patterns-support-resistance-and-returns-a-structured-recommendation-object-containing-entry-point-price-with-reasoning-three-take-profit-targets-conservative-5-8-moderate-10-15-aggressive-20-30-from-entry-stop-loss-price-positioned-below-nearest-support-or-3-5-below-entry-overall-confidence-score-0-100-based-on-signal-strength-and-indicator-alignment-risk-level-low-medium-high-based-on-volatility-and-signal-clarity-and-detailed-reasoning-text-explaining-the-recommendation-logic",
+      "title": "Implement the recommendation generation logic in a new utility file frontend/src/utils/aiTradeRecommendations.ts. Create a generateTradeRecommendation function that accepts technical data (signals, indicators, patterns, support/resistance) and returns a structured recommendation object containing: entry point price with reasoning, three take-profit targets (conservative 5-8%, moderate 10-15%, aggressive 20-30% from entry), stop-loss price (positioned below nearest support or 3-5% below entry), overall confidence score (0-100 based on signal strength and indicator alignment), risk level (low/medium/high based on volatility and signal clarity), and detailed reasoning text explaining the recommendation logic.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-display-the-ai-generated-trade-recommendation-in-the-ai-trade-analysis-card-component-with-a-clear-visual-hierarchy-show-entry-point-price-prominently-at-the-top-with-an-icon-and-color-coding-green-for-buy-entry-red-for-sell-short-entry-display-the-three-take-profit-targets-in-a-horizontal-row-with-badges-labeled-conservative-moderate-aggressive-showing-both-price-and-percentage-gain-show-stop-loss-price-with-a-warning-icon-display-confidence-score-as-a-progress-bar-or-percentage-badge-with-color-coding-green-70-yellow-50-70-red-50-show-risk-level-with-an-appropriate-badge-display-the-reasoning-text-in-a-readable-paragraph-format-at-the-bottom-of-the-card",
+      "title": "Display the AI-generated trade recommendation in the 'AI Trade Analysis' card component with a clear visual hierarchy. Show entry point price prominently at the top with an icon and color coding (green for buy entry, red for sell/short entry). Display the three take-profit targets in a horizontal row with badges labeled 'Conservative', 'Moderate', 'Aggressive' showing both price and percentage gain. Show stop-loss price with a warning icon. Display confidence score as a progress bar or percentage badge with color coding (green >70%, yellow 50-70%, red <50%). Show risk level with an appropriate badge. Display the reasoning text in a readable paragraph format at the bottom of the card.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-recommendation-generation-logic-to-trigger-in-real-time-whenever-technical-data-updates-configure-the-ai-trade-analysis-component-to-automatically-recalculate-recommendations-when-any-of-the-underlying-data-sources-change-new-price-data-updated-indicators-new-patterns-detected-changed-signals-display-a-subtle-loading-indicator-when-recalculating-recommendations-add-a-timestamp-to-show-when-the-recommendation-was-last-generated",
+      "title": "Update the recommendation generation logic to trigger in real-time whenever technical data updates. Configure the AI Trade Analysis component to automatically recalculate recommendations when any of the underlying data sources change (new price data, updated indicators, new patterns detected, changed signals). Display a subtle loading indicator when recalculating recommendations. Add a timestamp to show when the recommendation was last generated.",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -301,6 +367,24 @@
       "reqIds": [
         "REQ-21"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Add user-friendly retry buttons with exponential backoff and request batching to handle API failures gracefully",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Add timeframe selector (1H, 4H, Daily) on main dashboard page to control chart displays across watchlist",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "AI-powered trade recommendation system on coin detail pages that analyzes all technical indicators (signals, support/resistance, patterns, RSI, MACD, MA, BB) to generate entry points, multiple take-profit targets (conservative/moderate/aggressive), stop-loss suggestions, confidence scores, risk levels, and reasoning in real-time",
+      "reqIds": [],
       "status": "pending"
     }
   ],

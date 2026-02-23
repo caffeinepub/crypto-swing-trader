@@ -7,5 +7,7 @@ export function useCryptoPrices() {
     queryFn: () => fetchTopCryptos(30),
     staleTime: 30000,
     refetchInterval: 45000,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
 }

@@ -10,9 +10,9 @@ import Nat32 "mo:core/Nat32";
 import OutCall "http-outcalls/outcall";
 import Array "mo:core/Array";
 import Order "mo:core/Order";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   public query func transform(input : OutCall.TransformationInput) : async OutCall.TransformationOutput {
     OutCall.transform(input);

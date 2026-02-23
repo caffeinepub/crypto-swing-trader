@@ -11,12 +11,13 @@ import { generateTradingSignals } from '@/utils/tradingSignals';
 
 interface CryptoTableProps {
   cryptos: CryptoMarketData[];
+  timeframe?: '1H' | '4H' | 'Daily';
 }
 
-function CryptoRow({ crypto }: { crypto: CryptoMarketData }) {
+function CryptoRow({ crypto, timeframe = '4H' }: { crypto: CryptoMarketData; timeframe?: '1H' | '4H' | 'Daily' }) {
   const { identity } = useInternetIdentity();
   const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
-  const { data: indicators } = useTechnicalIndicators(crypto.id, '4H');
+  const { data: indicators } = useTechnicalIndicators(crypto.id, timeframe);
   const inWatchlist = isInWatchlist(crypto.id);
 
   const signals = indicators ? generateTradingSignals(indicators) : [];
@@ -86,7 +87,7 @@ function CryptoRow({ crypto }: { crypto: CryptoMarketData }) {
   );
 }
 
-export default function CryptoTable({ cryptos }: CryptoTableProps) {
+export default function CryptoTable({ cryptos, timeframe = '4H' }: CryptoTableProps) {
   return (
     <div className="rounded-lg border bg-card">
       <Table>
@@ -104,7 +105,7 @@ export default function CryptoTable({ cryptos }: CryptoTableProps) {
         </TableHeader>
         <TableBody>
           {cryptos.map((crypto) => (
-            <CryptoRow key={crypto.id} crypto={crypto} />
+            <CryptoRow key={crypto.id} crypto={crypto} timeframe={timeframe} />
           ))}
         </TableBody>
       </Table>

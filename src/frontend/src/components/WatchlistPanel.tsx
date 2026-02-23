@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useWatchlist } from '@/hooks/useWatchlist';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { Button } from '@/components/ui/button';
-import { Star, X } from 'lucide-react';
+import { useCryptoPrices } from '@/hooks/useCryptoPrices';
+import { Star, X, Loader2, RefreshCw } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import type { CryptoMarketData } from '@/services/coingecko';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface WatchlistPanelProps {
   cryptos: CryptoMarketData[];
@@ -13,12 +15,46 @@ interface WatchlistPanelProps {
 export default function WatchlistPanel({ cryptos }: WatchlistPanelProps) {
   const { identity } = useInternetIdentity();
   const { data: watchlist, removeFromWatchlist } = useWatchlist();
+  const { error, refetch, isFetching } = useCryptoPrices();
 
   if (!identity || watchlist.length === 0) {
     return null;
   }
 
   const watchlistCryptos = cryptos.filter((c) => watchlist.includes(c.id));
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
+            My Watchlist
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center gap-3 py-6">
+            <Alert variant="destructive" className="max-w-md">
+              <AlertDescription>Failed to load watchlist data.</AlertDescription>
+            </Alert>
+            <Button onClick={() => refetch()} disabled={isFetching} size="sm" variant="outline" className="gap-2">
+              {isFetching ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Retrying...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4" />
+                  Retry
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>

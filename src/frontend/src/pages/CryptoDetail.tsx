@@ -12,6 +12,7 @@ import TimeframeSelector from '@/components/TimeframeSelector';
 import IndicatorsPanel from '@/components/IndicatorsPanel';
 import TradingSignalsPanel from '@/components/TradingSignalsPanel';
 import PatternLegend from '@/components/PatternLegend';
+import AITradeAnalysisCard from '@/components/AITradeAnalysisCard';
 
 export default function CryptoDetail() {
   const { cryptoId } = useParams({ from: '/crypto/$cryptoId' });
@@ -98,6 +99,16 @@ export default function CryptoDetail() {
       </Card>
 
       {chartData?.patterns && chartData.patterns.length > 0 && <PatternLegend patterns={chartData.patterns} />}
+
+      {indicators && signals && chartData && (
+        <AITradeAnalysisCard
+          currentPrice={crypto.current_price}
+          signals={signals}
+          indicators={indicators}
+          patterns={chartData.patterns}
+          supportResistance={chartData.supportResistance}
+        />
+      )}
 
       {indicators && <IndicatorsPanel indicators={indicators} />}
     </div>

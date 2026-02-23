@@ -1,16 +1,16 @@
 # Specification
 
 ## Summary
-**Goal:** Add a comprehensive trade alerts system with in-app notifications and history tracking, plus a market heatmap visualization with toggleable analytical layers.
+**Goal:** Improve API reliability with retry logic and request batching, add dashboard timeframe selector, and implement AI-powered trade recommendations with entry points and take-profit targets.
 
 **Planned changes:**
-- Implement toast notifications for swing trading signals (RSI, MACD, support/resistance breaks) that auto-dismiss after 5-7 seconds
-- Create Alert History page showing all triggered alerts with filters by cryptocurrency and signal type
-- Store alert data in Motoko backend associated with user principals
-- Build Market Heatmap page displaying all tracked cryptocurrencies as blocks sized by market cap and colored by 24h price change
-- Add toggleable overlay layers to heatmap: Volume Change (unusual spikes), Volatility, BTC Correlation, and RSI Levels
-- Calculate and display volume analysis showing unusual activity (>2x average)
-- Add Fibonacci retracement level overlays to candlestick charts with toggle control
-- Enhance mobile-first responsive design for all new features with touch-friendly controls and adaptive layouts
+- Add user-friendly retry buttons to error states in CryptoTable and data-fetching components
+- Implement exponential backoff retry logic in useCryptoPrices hook to handle API rate limiting
+- Implement request batching in coingecko.ts to fetch multiple coins in a single API call
+- Add TimeframeSelector component to Dashboard page header to control chart timeframes (1H, 4H, Daily)
+- Create AI Trade Analysis card component on CryptoDetail page that analyzes technical indicators
+- Build recommendation generation logic that calculates entry points, three take-profit targets (conservative 5-8%, moderate 10-15%, aggressive 20-30%), stop-loss prices, confidence scores, and risk levels
+- Display recommendations in real-time with visual hierarchy showing entry point, take-profit targets, stop-loss, confidence score, risk level, and reasoning text
+- Auto-recalculate recommendations when technical data updates
 
-**User-visible outcome:** Users receive real-time in-app notifications for trading signals, can review their complete alert history with filtering options, visualize the entire crypto market at a glance through an interactive heatmap with multiple analytical layers, and access Fibonacci retracement levels on price charts - all optimized for mobile devices.
+**User-visible outcome:** Users can manually retry failed data loads with a prominent button, experience fewer API errors due to intelligent retry logic and batching, select their preferred timeframe from the dashboard header to control chart displays, and receive AI-generated trade recommendations on coin detail pages showing specific entry points, multiple take-profit targets, stop-loss levels, and confidence scores with detailed reasoning.
