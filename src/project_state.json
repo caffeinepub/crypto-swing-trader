@@ -1,0 +1,311 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Professional crypto swing trading dashboard with real-time price tracking for 20-30 top cryptocurrencies, technical indicators (RSI, MACD, Moving Averages, Bollinger Bands), swing trading signals, portfolio tracker with manual entry, multi-timeframe chart analysis, candlestick pattern recognition, support/resistance detection, market sentiment dashboard, trading journal, dark/light mode, mobile-responsive design, Internet Identity authentication, CoinGecko API integration, Motoko backend, React + TypeScript frontend",
+  "architectural_notes": [
+    "React + TypeScript frontend with Tailwind CSS for styling",
+    "Motoko backend for storing user data and preferences",
+    "CoinGecko API integration for real-time cryptocurrency price data",
+    "Internet Identity for secure user authentication",
+    "30-60 second refresh intervals for real-time price updates",
+    "Manual trade entry approach for privacy and simplicity",
+    "Multi-timeframe chart support (1H, 4H, Daily)",
+    "Mobile-responsive design for all screen sizes",
+    "In-app toast/banner notifications for real-time trade alerts",
+    "Dedicated heatmap page with interactive grid visualization"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-real-time-price-tracking-for-20-30-top-cryptocurrencies-using-coingecko-api-with-30-60-second-refresh-intervals-display-current-price-24h-change-percentage-24h-volume-and-market-cap-for-each-cryptocurrency",
+      "title": "Implement real-time price tracking for 20-30 top cryptocurrencies using CoinGecko API with 30-60 second refresh intervals. Display current price, 24h change percentage, 24h volume, and market cap for each cryptocurrency.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-calculate-and-display-technical-indicators-for-each-tracked-cryptocurrency-rsi-relative-strength-index-macd-moving-average-convergence-divergence-moving-averages-sma-and-ema-and-bollinger-bands-use-historical-price-data-from-coingecko-api-to-compute-these-indicators",
+      "title": "Calculate and display technical indicators for each tracked cryptocurrency: RSI (Relative Strength Index), MACD (Moving Average Convergence Divergence), Moving Averages (SMA and EMA), and Bollinger Bands. Use historical price data from CoinGecko API to compute these indicators.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-swing-trading-signals-based-on-standard-technical-analysis-rsi-oversold-overbought-zones-buy-when-rsi-30-sell-when-rsi-70-macd-crossovers-buy-on-bullish-crossover-sell-on-bearish-crossover-and-support-resistance-level-breaks-display-clear-buy-sell-zones-with-visual-indicators",
+      "title": "Generate swing trading signals based on standard technical analysis: RSI oversold/overbought zones (buy when RSI < 30, sell when RSI > 70), MACD crossovers (buy on bullish crossover, sell on bearish crossover), and support/resistance level breaks. Display clear buy/sell zones with visual indicators.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-portfolio-tracker-where-users-can-manually-enter-their-trades-cryptocurrency-buy-price-quantity-date-calculate-and-display-current-portfolio-value-total-p-l-profit-loss-individual-position-p-l-and-percentage-gains-losses-store-portfolio-data-in-motoko-backend-per-authenticated-user",
+      "title": "Build a portfolio tracker where users can manually enter their trades (cryptocurrency, buy price, quantity, date). Calculate and display current portfolio value, total P&L (profit/loss), individual position P&L, and percentage gains/losses. Store portfolio data in Motoko backend per authenticated user.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-a-customizable-watchlist-feature-where-users-can-add-or-remove-cryptocurrencies-from-their-personal-watchlist-store-watchlist-preferences-per-user-in-motoko-backend-display-watchlist-prominently-on-dashboard-with-quick-access-to-tracked-coins",
+      "title": "Implement a customizable watchlist feature where users can add or remove cryptocurrencies from their personal watchlist. Store watchlist preferences per user in Motoko backend. Display watchlist prominently on dashboard with quick access to tracked coins.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-provide-multi-timeframe-chart-analysis-with-1-hour-4-hour-and-daily-candlestick-charts-for-each-cryptocurrency-allow-users-to-switch-between-timeframes-seamlessly-fetch-appropriate-historical-data-from-coingecko-api-for-each-timeframe",
+      "title": "Provide multi-timeframe chart analysis with 1-hour, 4-hour, and daily candlestick charts for each cryptocurrency. Allow users to switch between timeframes seamlessly. Fetch appropriate historical data from CoinGecko API for each timeframe.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-candlestick-pattern-recognition-to-identify-common-patterns-e-g-hammer-doji-engulfing-patterns-morning-evening-star-highlight-detected-patterns-on-charts-with-labels-and-descriptions-to-assist-swing-trading-decisions",
+      "title": "Implement candlestick pattern recognition to identify common patterns (e.g., hammer, doji, engulfing patterns, morning/evening star). Highlight detected patterns on charts with labels and descriptions to assist swing trading decisions.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-detect-and-display-support-and-resistance-levels-for-each-cryptocurrency-based-on-historical-price-action-mark-these-levels-clearly-on-charts-with-horizontal-lines-update-levels-dynamically-as-new-price-data-arrives",
+      "title": "Detect and display support and resistance levels for each cryptocurrency based on historical price action. Mark these levels clearly on charts with horizontal lines. Update levels dynamically as new price data arrives.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-market-sentiment-dashboard-aggregating-key-sentiment-indicators-fear-greed-index-representation-trending-cryptocurrencies-top-gainers-losers-over-24h-and-overall-market-trend-bullish-bearish-neutral-use-coingecko-api-data-to-derive-sentiment-metrics",
+      "title": "Create a market sentiment dashboard aggregating key sentiment indicators: fear/greed index representation, trending cryptocurrencies, top gainers/losers over 24h, and overall market trend (bullish/bearish/neutral). Use CoinGecko API data to derive sentiment metrics.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-trading-journal-feature-where-users-can-log-their-trades-with-details-entry-exit-prices-trade-rationale-outcome-and-personal-notes-store-journal-entries-per-user-in-motoko-backend-provide-a-searchable-filterable-view-of-past-trades-to-review-trading-performance-and-strategy",
+      "title": "Build a trading journal feature where users can log their trades with details: entry/exit prices, trade rationale, outcome, and personal notes. Store journal entries per user in Motoko backend. Provide a searchable, filterable view of past trades to review trading performance and strategy.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-dark-mode-and-light-mode-themes-with-perfect-visibility-and-readability-in-both-modes-use-tailwind-css-for-theming-provide-a-theme-toggle-in-the-ui-persist-theme-preference-per-user-in-motoko-backend",
+      "title": "Implement dark mode and light mode themes with perfect visibility and readability in both modes. Use Tailwind CSS for theming. Provide a theme toggle in the UI. Persist theme preference per user in Motoko backend.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-entire-dashboard-is-mobile-responsive-with-layouts-that-adapt-gracefully-to-different-screen-sizes-desktop-tablet-mobile-use-tailwind-css-responsive-utilities-prioritize-usability-on-smaller-screens-for-key-features-like-watchlist-portfolio-and-trading-signals",
+      "title": "Ensure the entire dashboard is mobile-responsive with layouts that adapt gracefully to different screen sizes (desktop, tablet, mobile). Use Tailwind CSS responsive utilities. Prioritize usability on smaller screens for key features like watchlist, portfolio, and trading signals.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-internet-identity-authentication-for-secure-user-login-and-session-management-require-authentication-to-access-portfolio-watchlist-trading-journal-and-theme-preferences-store-user-specific-data-in-motoko-backend-keyed-by-internet-identity-principal",
+      "title": "Integrate Internet Identity authentication for secure user login and session management. Require authentication to access portfolio, watchlist, trading journal, and theme preferences. Store user-specific data in Motoko backend keyed by Internet Identity principal.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-design-a-clean-professional-ui-with-tailwind-css-that-conveys-authority-and-trustworthiness-for-financial-data-use-a-cohesive-color-scheme-that-avoids-clich-blue-purple-gradients-clear-typography-hierarchy-intuitive-navigation-and-data-dense-layouts-without-clutter-ensure-consistent-spacing-alignment-and-component-styling-across-all-views",
+      "title": "Design a clean, professional UI with Tailwind CSS that conveys authority and trustworthiness for financial data. Use a cohesive color scheme that avoids cliché blue/purple gradients, clear typography hierarchy, intuitive navigation, and data-dense layouts without clutter. Ensure consistent spacing, alignment, and component styling across all views.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-in-app-toast-banner-notifications-that-trigger-when-swing-trading-signals-are-generated-rsi-oversold-overbought-zones-macd-crossovers-support-resistance-breaks-display-the-notification-with-cryptocurrency-name-signal-type-buy-sell-reason-and-timestamp-notifications-should-appear-when-the-dashboard-is-open-and-auto-dismiss-after-5-7-seconds-with-option-to-dismiss-manually",
+      "title": "Implement in-app toast/banner notifications that trigger when swing trading signals are generated (RSI oversold/overbought zones, MACD crossovers, support/resistance breaks). Display the notification with cryptocurrency name, signal type (buy/sell), reason, and timestamp. Notifications should appear when the dashboard is open and auto-dismiss after 5-7 seconds with option to dismiss manually.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-dedicated-alert-history-page-view-accessible-from-main-navigation-that-displays-all-triggered-trade-alerts-for-the-authenticated-user-show-alert-timestamp-cryptocurrency-signal-type-buy-sell-hold-trigger-reason-e-g-rsi-below-30-bullish-macd-crossover-price-broke-resistance-at-50-000-and-confidence-level-include-filters-by-cryptocurrency-and-signal-type-store-alert-history-per-user-in-motoko-backend-with-timestamp-crypto-id-signal-data-and-trigger-reason",
+      "title": "Create a dedicated Alert History page/view accessible from main navigation that displays all triggered trade alerts for the authenticated user. Show alert timestamp, cryptocurrency, signal type (buy/sell/hold), trigger reason (e.g., 'RSI below 30', 'Bullish MACD crossover', 'Price broke resistance at $50,000'), and confidence level. Include filters by cryptocurrency and signal type. Store alert history per user in Motoko backend with timestamp, crypto ID, signal data, and trigger reason.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-new-dedicated-market-heatmap-page-view-accessible-from-main-navigation-display-all-20-30-tracked-cryptocurrencies-as-a-visual-grid-of-blocks-where-block-size-represents-market-cap-larger-blocks-for-larger-cap-coins-and-color-intensity-represents-24-hour-price-change-green-shades-for-gains-red-shades-for-losses-clicking-a-block-navigates-to-that-cryptocurrency-s-detail-page-use-a-responsive-grid-layout-that-adapts-to-screen-size",
+      "title": "Create a new dedicated Market Heatmap page/view accessible from main navigation. Display all 20-30 tracked cryptocurrencies as a visual grid of blocks where block size represents market cap (larger blocks for larger cap coins) and color intensity represents 24-hour price change (green shades for gains, red shades for losses). Clicking a block navigates to that cryptocurrency's detail page. Use a responsive grid layout that adapts to screen size.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-mobile-first-responsive-design-across-all-new-features-alert-history-page-market-heatmap-fibonacci-overlays-ensure-heatmap-grid-adapts-to-mobile-screens-with-smaller-blocks-that-remain-readable-and-tappable-optimize-alert-history-table-list-for-mobile-with-card-based-layout-instead-of-table-on-small-screens-ensure-toggle-controls-for-heatmap-layers-are-touch-friendly-and-stack-vertically-on-mobile-test-all-interactions-on-mobile-devices-to-ensure-smooth-performance-and-usability",
+      "title": "Enhance mobile-first responsive design across all new features (alert history page, market heatmap, Fibonacci overlays). Ensure heatmap grid adapts to mobile screens with smaller blocks that remain readable and tappable. Optimize alert history table/list for mobile with card-based layout instead of table on small screens. Ensure toggle controls for heatmap layers are touch-friendly and stack vertically on mobile. Test all interactions on mobile devices to ensure smooth performance and usability.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Real-time price tracking for 20-30 top cryptocurrencies with 30-60 second refresh intervals",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Technical indicators: RSI, MACD, Moving Averages, Bollinger Bands",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Swing trading signals based on RSI zones, MACD crossovers, and support/resistance breaks",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Manual portfolio tracker with P&L calculations",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Customizable watchlist for cryptocurrencies",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Multi-timeframe chart analysis (1H, 4H, Daily)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Candlestick pattern recognition",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Support/resistance level detection",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Market sentiment dashboard",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Trading journal for tracking trades",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Dark/light mode with mobile-responsive layout",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Internet Identity authentication",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "CoinGecko API integration for real-time crypto prices",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Trade alerts triggered by swing trading signals (RSI zones, MACD crossovers, support/resistance breaks) with in-app notifications and alert history page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Market heatmap page with block size by market cap, color intensity by 24h price change, toggleable layers (volume spikes, volatility, BTC correlation, RSI levels)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Volume analysis highlighting unusual volume spikes",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Fibonacci retracement overlays on charts",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Mobile-first responsive design improvements",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Store triggered trading alerts in Motoko backend with fields: timestamp, cryptocurrency ID/symbol, signal type (buy/sell/hold), trigger reason (RSI zone, MACD crossover, support/resistance break), confidence level, and price at trigger. Implement backend functions to add new alerts, fetch alert history for a user (with optional filters by crypto or date range), and optionally purge old alerts (e.g., older than 30 days). Associate alerts with user principals from Internet Identity.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Implement toggleable overlay layers for the Market Heatmap that modify the visual display: 1) Volume Change layer - highlight cryptocurrencies with unusual volume spikes (e.g., >2x average volume) with distinct visual indicator (border, icon, or overlay pattern), 2) Volatility layer - show which coins have highest price volatility independent of direction using color intensity or pattern, 3) BTC Correlation layer - display how closely each altcoin follows Bitcoin's price movements using visual indicators (high correlation vs low correlation), 4) RSI Levels layer - overlay RSI status with color coding (green for oversold <30, red for overbought >70, neutral for mid-range). Provide toggle buttons/checkboxes above the heatmap to enable/disable each layer independently.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Calculate and display volume analysis data showing unusual volume spikes for tracked cryptocurrencies. Compare current 24h volume against average volume over the past 7-30 days. Flag cryptocurrencies where current volume is significantly higher (e.g., >2x or >3x average) as having unusual volume activity. Display this information in the heatmap volume layer and optionally as a dedicated section in the market sentiment dashboard or crypto detail pages.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-25",
+      "summary": "Add Fibonacci retracement level overlays to the candlestick charts on crypto detail pages. Automatically calculate and draw Fibonacci retracement levels (0%, 23.6%, 38.2%, 50%, 61.8%, 100%) based on the most recent significant price swing (high to low for downtrends, low to high for uptrends) within the visible timeframe. Display levels as horizontal lines with labels showing percentage and price. Provide a toggle to show/hide Fibonacci levels on the chart.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Crypto Swing Trader",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

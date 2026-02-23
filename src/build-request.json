@@ -1,0 +1,193 @@
+{
+  "kind": "build_request",
+  "title": "Add Trade Alerts System and Market Heatmap with Toggleable Layers",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-15",
+      "text": "Implement in-app toast/banner notifications that trigger when swing trading signals are generated (RSI oversold/overbought zones, MACD crossovers, support/resistance breaks). Display the notification with cryptocurrency name, signal type (buy/sell), reason, and timestamp. Notifications should appear when the dashboard is open and auto-dismiss after 5-7 seconds with option to dismiss manually.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "1) in-app notifications"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Toast notifications appear when new trading signals are detected",
+        "Each notification shows crypto symbol, signal type, reason, and time",
+        "Notifications auto-dismiss after 5-7 seconds",
+        "Users can manually dismiss notifications",
+        "Multiple notifications stack vertically without overlapping"
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Create a dedicated Alert History page/view accessible from main navigation that displays all triggered trade alerts for the authenticated user. Show alert timestamp, cryptocurrency, signal type (buy/sell/hold), trigger reason (e.g., 'RSI below 30', 'Bullish MACD crossover', 'Price broke resistance at $50,000'), and confidence level. Include filters by cryptocurrency and signal type. Store alert history per user in Motoko backend with timestamp, crypto ID, signal data, and trigger reason.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "2) new dedicated view/page"
+        ]
+      },
+      "acceptanceCriteria": [
+        "New 'Alerts' navigation item in main menu",
+        "Alert history page shows all past triggered alerts for authenticated user",
+        "Each alert entry displays timestamp, crypto, signal type, reason, and confidence",
+        "Filters allow users to view alerts by specific cryptocurrency or signal type",
+        "Alert data persists in Motoko backend keyed by user principal",
+        "Page requires Internet Identity authentication"
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "text": "Store triggered trading alerts in Motoko backend with fields: timestamp, cryptocurrency ID/symbol, signal type (buy/sell/hold), trigger reason (RSI zone, MACD crossover, support/resistance break), confidence level, and price at trigger. Implement backend functions to add new alerts, fetch alert history for a user (with optional filters by crypto or date range), and optionally purge old alerts (e.g., older than 30 days). Associate alerts with user principals from Internet Identity.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend defines Alert type with all required fields",
+        "Function to add new alert to user's alert history",
+        "Function to fetch alerts for authenticated user with optional filters",
+        "Alerts are stored per user principal",
+        "Optional cleanup mechanism for alerts older than 30 days"
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "text": "Create a new dedicated Market Heatmap page/view accessible from main navigation. Display all 20-30 tracked cryptocurrencies as a visual grid of blocks where block size represents market cap (larger blocks for larger cap coins) and color intensity represents 24-hour price change (green shades for gains, red shades for losses). Clicking a block navigates to that cryptocurrency's detail page. Use a responsive grid layout that adapts to screen size.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "2) new dedicated view/page",
+          "24-hour price change - Color intensity shows gain/loss percentage (green = gains, red = losses)",
+          "Market cap size - Larger blocks = larger market cap coins"
+        ]
+      },
+      "acceptanceCriteria": [
+        "New 'Heatmap' navigation item in main menu",
+        "Grid layout displays all tracked cryptocurrencies as blocks",
+        "Block size correlates with market cap (larger cap = larger block)",
+        "Color intensity reflects 24h price change (green for positive, red for negative)",
+        "Clicking a block navigates to the crypto detail page",
+        "Layout is responsive and works on mobile, tablet, and desktop"
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "text": "Implement toggleable overlay layers for the Market Heatmap that modify the visual display: 1) Volume Change layer - highlight cryptocurrencies with unusual volume spikes (e.g., >2x average volume) with distinct visual indicator (border, icon, or overlay pattern), 2) Volatility layer - show which coins have highest price volatility independent of direction using color intensity or pattern, 3) BTC Correlation layer - display how closely each altcoin follows Bitcoin's price movements using visual indicators (high correlation vs low correlation), 4) RSI Levels layer - overlay RSI status with color coding (green for oversold <30, red for overbought >70, neutral for mid-range). Provide toggle buttons/checkboxes above the heatmap to enable/disable each layer independently.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Optional Layers (toggleable views): Volume change - Highlight coins with unusual volume spikes, Volatility - Show which coins are moving the most (independent of direction), Correlation to BTC - How closely each altcoin follows Bitcoin's movements, RSI levels - Visual representation of oversold (green) vs overbought (red) conditions"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Toggle controls above heatmap for each layer type",
+        "Volume Change layer highlights coins with volume spikes >2x average",
+        "Volatility layer shows highest volatility coins with distinct visual treatment",
+        "BTC Correlation layer indicates correlation strength to Bitcoin",
+        "RSI Levels layer color-codes blocks by RSI status (oversold/overbought/neutral)",
+        "Multiple layers can be enabled simultaneously",
+        "Visual indicators are clear and don't completely obscure base heatmap colors"
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "text": "Calculate and display volume analysis data showing unusual volume spikes for tracked cryptocurrencies. Compare current 24h volume against average volume over the past 7-30 days. Flag cryptocurrencies where current volume is significantly higher (e.g., >2x or >3x average) as having unusual volume activity. Display this information in the heatmap volume layer and optionally as a dedicated section in the market sentiment dashboard or crypto detail pages.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Volume Analysis - Highlight unusual volume spikes that often precede big moves"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Calculate average volume over historical period (7-30 days)",
+        "Compare current 24h volume to average",
+        "Flag cryptocurrencies with volume >2x average as unusual",
+        "Display volume spike indicators in heatmap volume layer",
+        "Provide clear visual distinction for high-volume anomalies"
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "text": "Add Fibonacci retracement level overlays to the candlestick charts on crypto detail pages. Automatically calculate and draw Fibonacci retracement levels (0%, 23.6%, 38.2%, 50%, 61.8%, 100%) based on the most recent significant price swing (high to low for downtrends, low to high for uptrends) within the visible timeframe. Display levels as horizontal lines with labels showing percentage and price. Provide a toggle to show/hide Fibonacci levels on the chart.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Fibonacci Retracement Overlays - Automatically draw key support/resistance levels on charts"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Fibonacci levels automatically calculated from recent significant price swing",
+        "Standard Fibonacci percentages displayed: 0%, 23.6%, 38.2%, 50%, 61.8%, 100%",
+        "Levels rendered as horizontal lines on candlestick chart",
+        "Each level labeled with percentage and corresponding price",
+        "Toggle control to show/hide Fibonacci overlays",
+        "Levels recalculate when timeframe changes"
+      ]
+    },
+    {
+      "id": "REQ-22",
+      "text": "Enhance mobile-first responsive design across all new features (alert history page, market heatmap, Fibonacci overlays). Ensure heatmap grid adapts to mobile screens with smaller blocks that remain readable and tappable. Optimize alert history table/list for mobile with card-based layout instead of table on small screens. Ensure toggle controls for heatmap layers are touch-friendly and stack vertically on mobile. Test all interactions on mobile devices to ensure smooth performance and usability.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-5"
+        ],
+        "quotes": [
+          "Mobile-First Design - Ensure charts and controls work smoothly on phones"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Heatmap grid adapts to mobile screens with appropriately sized blocks",
+        "Alert history uses card layout on mobile instead of table",
+        "Heatmap layer toggles are touch-friendly and stack vertically on small screens",
+        "All new features tested on mobile devices for performance and usability",
+        "Charts and interactive elements remain functional on phone-sized screens",
+        "No horizontal scrolling required on mobile for any new views"
+      ]
+    }
+  ],
+  "constraints": [
+    "Use existing CoinGecko API integration for all market data including volume, volatility, and correlation calculations",
+    "Maintain single-actor Motoko backend architecture for alert storage and retrieval",
+    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, or components/ui directory",
+    "Use existing authentication system (Internet Identity) for alert history access",
+    "Preserve existing technical indicator and trading signal calculation logic",
+    "Use existing React Query patterns for data fetching and caching"
+  ],
+  "nonGoals": [
+    "Email or SMS notifications for alerts (only in-app notifications)",
+    "Real-time WebSocket connections for alert delivery",
+    "Machine learning or AI-based pattern prediction",
+    "Custom alert thresholds beyond existing trading signals",
+    "Social sharing or collaborative features for alerts",
+    "Export functionality for alert history or heatmap data",
+    "Advanced correlation calculations beyond basic BTC price comparison"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-implement-in-app-toast-banner-notifications-that-trigger-when-swing-trading-signals-are-generated-rsi-oversold-overbought-zones-macd-crossovers-support-resistance-breaks-display-the-notification-with-cryptocurrency-name-signal-type-buy-sell-reason-and-timestamp-notifications-should-appear-when-the-dashboard-is-open-and-auto-dismiss-after-5-7-seconds-with-option-to-dismiss-manually",
+      "featureTitle": "Implement in-app toast/banner notifications that trigger when swing trading signals are generated (RSI oversold/overbought zones, MACD crossovers, support/resistance breaks). Display the notification with cryptocurrency name, signal type (buy/sell), reason, and timestamp. Notifications should appear when the dashboard is open and auto-dismiss after 5-7 seconds with option to dismiss manually.",
+      "files": [
+        "frontend/src/hooks/useAlertNotifications.ts",
+        "frontend/src/pages/Dashboard.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-15"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-dedicated-alert-history-page-view-accessible-from-main-navigation-that-displays-all-triggered-trade-alerts-for-the-authenticated-user-show-alert-timestamp-cryptocurrency-signal-type-buy-sell-hold-trigger-reason-e-g-rsi-below-30-bullish-macd-crossover-price-broke-resistance-at-50-000-and-confidence-level-include-filters-by-cryptocurrency-and-signal-type-store-alert-history-per-user-in-motoko-backend-with-timestamp-crypto-id-signal-data-and-trigger-reason",
+      "featureTitle": "Create a dedicated Alert History page/view accessible from main navigation that displays all triggered trade alerts for the authenticated user. Show alert timestamp, cryptocurrency, signal type (buy/sell/hold), trigger reason (e.g., 'RSI below 30', 'Bullish MACD crossover', 'Price broke resistance at $50,000'), and confidence level. Include filters by cryptocurrency and signal type. Store alert history per user in Motoko backend with timestamp, crypto ID, signal data, and trigger reason.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AlertCard.tsx",
+        "frontend/src/components/AlertFilters.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/hooks/useAlertHistory.ts",
+        "frontend/src/pages/Alerts.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-16"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-new-dedicated-market-heatmap-page-view-accessible-from-main-navigation-display-all-20-30-tracked-cryptocurrencies-as-a-visual-grid-of-blocks-where-block-size-represents-market-cap-larger-blocks-for-larger-cap-coins-and-color-intensity-represents-24-hour-price-change-green-shades-for-gains-red-shades-for-losses-clicking-a-block-navigates-to-that-cryptocurrency-s-detail-page-use-a-responsive-grid-layout-that-adapts-to-screen-size",
+      "featureTitle": "Create a new dedicated Market Heatmap page/view accessible from main navigation. Display all 20-30 tracked cryptocurrencies as a visual grid of blocks where block size represents market cap (larger blocks for larger cap coins) and color intensity represents 24-hour price change (green shades for gains, red shades for losses). Clicking a block navigates to that cryptocurrency's detail page. Use a responsive grid layout that adapts to screen size.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Layout.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-18"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-enhance-mobile-first-responsive-design-across-all-new-features-alert-history-page-market-heatmap-fibonacci-overlays-ensure-heatmap-grid-adapts-to-mobile-screens-with-smaller-blocks-that-remain-readable-and-tappable-optimize-alert-history-table-list-for-mobile-with-card-based-layout-instead-of-table-on-small-screens-ensure-toggle-controls-for-heatmap-layers-are-touch-friendly-and-stack-vertically-on-mobile-test-all-interactions-on-mobile-devices-to-ensure-smooth-performance-and-usability",
+      "featureTitle": "Enhance mobile-first responsive design across all new features (alert history page, market heatmap, Fibonacci overlays). Ensure heatmap grid adapts to mobile screens with smaller blocks that remain readable and tappable. Optimize alert history table/list for mobile with card-based layout instead of table on small screens. Ensure toggle controls for heatmap layers are touch-friendly and stack vertically on mobile. Test all interactions on mobile devices to ensure smooth performance and usability.",
+      "files": [
+        "frontend/src/components/AlertCard.tsx",
+        "frontend/src/pages/Alerts.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-22"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

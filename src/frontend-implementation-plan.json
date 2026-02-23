@@ -1,0 +1,269 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add Trade Alerts System and Market Heatmap with Toggleable Layers",
+  "requirements": [
+    {
+      "id": "REQ-15",
+      "summary": "Implement in-app toast notifications for swing trading signals with auto-dismiss and manual controls",
+      "acceptanceCriteria": [
+        "Toast notifications appear when new trading signals are detected",
+        "Each notification shows crypto symbol, signal type, reason, and time",
+        "Notifications auto-dismiss after 5-7 seconds",
+        "Users can manually dismiss notifications",
+        "Multiple notifications stack vertically without overlapping"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/AlertToast.tsx",
+          "operation": "create",
+          "description": "Create a custom toast notification component for trading signals. Display cryptocurrency name, signal type (buy/sell), trigger reason, and timestamp. Include manual dismiss button and implement auto-dismiss after 5-7 seconds. Use shadcn/ui Toast primitives for accessibility and stacking behavior."
+        },
+        {
+          "path": "frontend/src/hooks/useAlertNotifications.ts",
+          "operation": "create",
+          "description": "Create a custom hook that listens for new trading signals and triggers toast notifications. Poll or check for new alerts periodically when dashboard is open. Integrate with existing useTradingSignals hook to detect signal changes. Trigger AlertToast component when new signals are detected."
+        },
+        {
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "modify",
+          "description": "Integrate useAlertNotifications hook to enable alert toast notifications on the dashboard page. Ensure notifications appear when dashboard is active and signals are generated."
+        }
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "summary": "Create Alert History page with filters for viewing triggered trade alerts by crypto and signal type",
+      "acceptanceCriteria": [
+        "New 'Alerts' navigation item in main menu",
+        "Alert history page shows all past triggered alerts for authenticated user",
+        "Each alert entry displays timestamp, crypto, signal type, reason, and confidence",
+        "Filters allow users to view alerts by specific cryptocurrency or signal type",
+        "Alert data persists in Motoko backend keyed by user principal",
+        "Page requires Internet Identity authentication"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Alerts.tsx",
+          "operation": "create",
+          "description": "Create a dedicated Alert History page for authenticated users. Display a table/list of all triggered alerts fetched from backend getAlertHistory. Show timestamp, cryptocurrency, signal type, trigger reason, and confidence level for each alert. Include filter controls for cryptocurrency and signal type. Require authentication and show login prompt if not authenticated. Use responsive card layout on mobile screens."
+        },
+        {
+          "path": "frontend/src/hooks/useAlertHistory.ts",
+          "operation": "create",
+          "description": "Create a custom hook to fetch and filter alert history from backend actor. Call getAlertHistory, getCryptoAlertHistory, and getAlertsLast24Hours methods. Support filtering by cryptocurrency and signal type. Provide query states (loading, error, data) and refetch capability."
+        },
+        {
+          "path": "frontend/src/components/AlertFilters.tsx",
+          "operation": "create",
+          "description": "Create filter controls component for the alert history page. Provide dropdown/select for cryptocurrency filter and signal type filter (buy/sell/hold). Reset filters option. Update parent component state when filters change."
+        },
+        {
+          "path": "frontend/src/components/AlertCard.tsx",
+          "operation": "create",
+          "description": "Create a card component to display individual alert entries. Show timestamp in readable format, cryptocurrency name with icon, signal type badge (buy/sell/hold), trigger reason text, and confidence level. Optimize for mobile with compact card layout."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add 'Alerts' navigation item to the main menu in both desktop and mobile navigation. Link to the new Alerts page route (/alerts). Position between existing navigation items."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register the new Alerts page route (/alerts) in the TanStack Router configuration. Import and configure the Alerts page component."
+        }
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "summary": "Create Market Heatmap page displaying cryptocurrencies as color-coded blocks sized by market cap",
+      "acceptanceCriteria": [
+        "New 'Heatmap' navigation item in main menu",
+        "Grid layout displays all tracked cryptocurrencies as blocks",
+        "Block size correlates with market cap (larger cap = larger block)",
+        "Color intensity reflects 24h price change (green for positive, red for negative)",
+        "Clicking a block navigates to the crypto detail page",
+        "Layout is responsive and works on mobile, tablet, and desktop"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Heatmap.tsx",
+          "operation": "create",
+          "description": "Create a Market Heatmap page displaying all tracked cryptocurrencies as a responsive grid. Use useCryptoPrices hook to fetch market data. Render blocks sized proportionally by market cap and colored by 24h price change (green for gains, red for losses). Make blocks clickable to navigate to crypto detail pages. Implement responsive grid that adapts to mobile, tablet, and desktop screens."
+        },
+        {
+          "path": "frontend/src/components/HeatmapGrid.tsx",
+          "operation": "create",
+          "description": "Create the heatmap grid visualization component. Calculate block sizes based on market cap proportions. Apply color gradients based on 24h price change (green shades for positive, red shades for negative, with intensity reflecting magnitude). Handle click events to navigate to crypto detail pages. Use CSS Grid or Flexbox for responsive layout."
+        },
+        {
+          "path": "frontend/src/components/HeatmapBlock.tsx",
+          "operation": "create",
+          "description": "Create individual heatmap block component representing one cryptocurrency. Display crypto symbol/name, current price, and 24h change percentage. Apply dynamic sizing and color styling based on props. Include hover effects and ensure touch-friendly sizing for mobile."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add 'Heatmap' navigation item to the main menu in both desktop and mobile navigation. Link to the new Heatmap page route (/heatmap). Position appropriately among existing navigation items."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register the new Heatmap page route (/heatmap) in the TanStack Router configuration. Import and configure the Heatmap page component."
+        }
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "summary": "Implement four toggleable overlay layers for the heatmap: Volume Change, Volatility, BTC Correlation, and RSI Levels",
+      "acceptanceCriteria": [
+        "Toggle controls above heatmap for each layer type",
+        "Volume Change layer highlights coins with volume spikes >2x average",
+        "Volatility layer shows highest volatility coins with distinct visual treatment",
+        "BTC Correlation layer indicates correlation strength to Bitcoin",
+        "RSI Levels layer color-codes blocks by RSI status (oversold/overbought/neutral)",
+        "Multiple layers can be enabled simultaneously",
+        "Visual indicators are clear and don't completely obscure base heatmap colors"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/HeatmapLayerToggles.tsx",
+          "operation": "create",
+          "description": "Create toggle controls component for heatmap layers. Provide checkboxes or toggle buttons for Volume Change, Volatility, BTC Correlation, and RSI Levels layers. Support multiple simultaneous layer selections. Stack vertically on mobile for touch-friendly interaction. Pass selected layers state to parent component."
+        },
+        {
+          "path": "frontend/src/hooks/useHeatmapLayers.ts",
+          "operation": "create",
+          "description": "Create a custom hook to calculate layer data for the heatmap. Compute volume spikes (>2x average), volatility metrics, BTC correlation coefficients, and RSI levels for each cryptocurrency. Return layer indicators that can be applied as overlays on heatmap blocks. Use existing market data and technical indicators."
+        },
+        {
+          "path": "frontend/src/pages/Heatmap.tsx",
+          "operation": "modify",
+          "description": "Integrate HeatmapLayerToggles component above the heatmap grid. Use useHeatmapLayers hook to compute layer data. Pass active layers and layer data to HeatmapGrid component for rendering overlays."
+        },
+        {
+          "path": "frontend/src/components/HeatmapGrid.tsx",
+          "operation": "modify",
+          "description": "Update grid to render overlay indicators based on active layers. Apply visual treatments: borders/icons for volume spikes, patterns for volatility, correlation indicators, and RSI color overlays (green for oversold, red for overbought). Ensure overlays don't completely obscure base heatmap colors."
+        },
+        {
+          "path": "frontend/src/components/HeatmapBlock.tsx",
+          "operation": "modify",
+          "description": "Enhance block component to accept and render layer overlay props. Display volume spike indicators, volatility patterns, BTC correlation badges, and RSI color overlays. Layer multiple visual indicators when multiple layers are active without cluttering the block."
+        }
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "summary": "Calculate and display volume analysis showing unusual volume spikes compared to historical averages",
+      "acceptanceCriteria": [
+        "Calculate average volume over historical period (7-30 days)",
+        "Compare current 24h volume to average",
+        "Flag cryptocurrencies with volume >2x average as unusual",
+        "Display volume spike indicators in heatmap volume layer",
+        "Provide clear visual distinction for high-volume anomalies"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/volumeAnalysis.ts",
+          "operation": "create",
+          "description": "Create utility functions to analyze volume data. Calculate average volume over past 7-30 days from historical OHLC data. Compare current 24h volume against average. Identify volume spikes where current volume exceeds 2x or 3x average. Return volume spike status and magnitude for each cryptocurrency."
+        },
+        {
+          "path": "frontend/src/hooks/useHeatmapLayers.ts",
+          "operation": "modify",
+          "description": "Integrate volume analysis utility to compute volume spike data for the Volume Change layer. Fetch historical OHLC data for each cryptocurrency, calculate averages, and identify unusual volume activity. Include results in layer data returned to the heatmap."
+        }
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "summary": "Add toggleable Fibonacci retracement level overlays to candlestick charts with automatic calculation",
+      "acceptanceCriteria": [
+        "Fibonacci levels automatically calculated from recent significant price swing",
+        "Standard Fibonacci percentages displayed: 0%, 23.6%, 38.2%, 50%, 61.8%, 100%",
+        "Levels rendered as horizontal lines on candlestick chart",
+        "Each level labeled with percentage and corresponding price",
+        "Toggle control to show/hide Fibonacci overlays",
+        "Levels recalculate when timeframe changes"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/fibonacciRetracement.ts",
+          "operation": "create",
+          "description": "Create utility functions to calculate Fibonacci retracement levels. Identify the most recent significant price swing (high to low or low to high) from OHLC data. Calculate standard Fibonacci levels: 0%, 23.6%, 38.2%, 50%, 61.8%, 100%. Return array of level objects with percentage, price, and label."
+        },
+        {
+          "path": "frontend/src/hooks/useFibonacciLevels.ts",
+          "operation": "create",
+          "description": "Create a custom hook to calculate Fibonacci levels for a given coin and timeframe. Use OHLC data from existing hooks and apply fibonacciRetracement utility. Recalculate when timeframe changes. Return Fibonacci levels data for chart rendering."
+        },
+        {
+          "path": "frontend/src/pages/CryptoDetail.tsx",
+          "operation": "modify",
+          "description": "Add toggle control for Fibonacci overlays on the crypto detail page. Use useFibonacciLevels hook to fetch Fibonacci data. Pass Fibonacci levels to CandlestickChart component when toggle is enabled."
+        },
+        {
+          "path": "frontend/src/components/CandlestickChart.tsx",
+          "operation": "modify",
+          "description": "Enhance candlestick chart to render Fibonacci retracement levels as horizontal reference lines using Recharts ReferenceLine component. Display each Fibonacci level with label showing percentage and price. Only render when Fibonacci data is provided. Ensure lines are visually distinct but not distracting."
+        }
+      ]
+    },
+    {
+      "id": "REQ-22",
+      "summary": "Enhance mobile-first responsive design for all new features with optimized layouts and touch interactions",
+      "acceptanceCriteria": [
+        "Heatmap grid adapts to mobile screens with appropriately sized blocks",
+        "Alert history uses card layout on mobile instead of table",
+        "Heatmap layer toggles are touch-friendly and stack vertically on small screens",
+        "All new features tested on mobile devices for performance and usability",
+        "Charts and interactive elements remain functional on phone-sized screens",
+        "No horizontal scrolling required on mobile for any new views"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Heatmap.tsx",
+          "operation": "modify",
+          "description": "Apply responsive design patterns to heatmap page. Use Tailwind responsive classes to adjust grid columns based on screen size (fewer columns on mobile). Ensure no horizontal scrolling on small screens. Test touch interactions on mobile devices."
+        },
+        {
+          "path": "frontend/src/components/HeatmapGrid.tsx",
+          "operation": "modify",
+          "description": "Optimize grid layout for mobile with CSS Grid responsive breakpoints. Reduce block sizes proportionally on smaller screens while maintaining readability. Ensure blocks remain tappable with minimum touch target size (44x44px)."
+        },
+        {
+          "path": "frontend/src/components/HeatmapBlock.tsx",
+          "operation": "modify",
+          "description": "Adjust block component styling for mobile displays. Use responsive font sizes and padding. Ensure crypto symbol and price change remain readable on small blocks. Increase touch target area if needed."
+        },
+        {
+          "path": "frontend/src/pages/Alerts.tsx",
+          "operation": "modify",
+          "description": "Implement responsive layout for alert history page. Use card-based layout on mobile screens instead of table format. Stack alert cards vertically with appropriate spacing. Optimize filter controls for mobile with full-width selects or dropdowns."
+        },
+        {
+          "path": "frontend/src/components/AlertCard.tsx",
+          "operation": "modify",
+          "description": "Ensure alert card component is optimized for mobile with compact layout, readable text sizes, and appropriate padding. Stack information vertically on narrow screens."
+        },
+        {
+          "path": "frontend/src/components/HeatmapLayerToggles.tsx",
+          "operation": "modify",
+          "description": "Make layer toggle controls touch-friendly with larger tap targets. Stack toggles vertically on mobile screens. Use Tailwind responsive utilities to adjust layout. Ensure labels remain readable on small screens."
+        },
+        {
+          "path": "frontend/src/pages/CryptoDetail.tsx",
+          "operation": "modify",
+          "description": "Ensure Fibonacci toggle control is touch-friendly and accessible on mobile. Position toggle appropriately for mobile layout without overlapping chart content."
+        },
+        {
+          "path": "frontend/src/components/CandlestickChart.tsx",
+          "operation": "modify",
+          "description": "Optimize chart rendering for mobile screens. Adjust chart dimensions and margins for smaller viewports. Ensure Fibonacci level labels remain readable on mobile. Test chart interactions (zoom, pan if applicable) on touch devices."
+        }
+      ]
+    }
+  ]
+}
