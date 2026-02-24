@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { AlertTriangle, TrendingUp, TrendingDown, Minus, Sparkles, Clock } from 'lucide-react';
+import { AlertTriangle, TrendingUp, TrendingDown, Minus, Sparkles, Clock, Target } from 'lucide-react';
 import { generateTradeRecommendation, type TradeRecommendation } from '@/utils/aiTradeRecommendations';
 import type { TechnicalIndicators } from '@/utils/technicalIndicators';
 import type { TradingSignal } from '@/utils/tradingSignals';
@@ -102,21 +102,31 @@ export default function AITradeAnalysisCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Entry Point */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-muted-foreground">Recommended Action</span>
-            <Badge variant="outline" className={`${getDirectionColor()} border-current`}>
-              <span className="flex items-center gap-1">
-                {getDirectionIcon()}
-                <span className="uppercase font-semibold">{recommendation.direction}</span>
-              </span>
-            </Badge>
+        {/* Recommended Action Badge */}
+        <div className="flex items-center justify-between pb-2 border-b">
+          <span className="text-sm font-medium text-muted-foreground">Recommended Action</span>
+          <Badge variant="outline" className={`${getDirectionColor()} border-current`}>
+            <span className="flex items-center gap-1">
+              {getDirectionIcon()}
+              <span className="uppercase font-semibold">{recommendation.direction}</span>
+            </span>
+          </Badge>
+        </div>
+
+        {/* Entry Point - Prominently Displayed */}
+        <div className="p-4 rounded-lg border-2 border-primary/30 bg-primary/5 space-y-2">
+          <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+            <Target className="h-4 w-4" />
+            Entry Point
           </div>
-          <div className={`text-3xl font-bold ${getDirectionColor()}`}>
+          <div className={`text-4xl font-bold ${getDirectionColor()}`}>
             ${formatPrice(recommendation.entryPoint)}
           </div>
-          <p className="text-sm text-muted-foreground">{recommendation.entryReasoning}</p>
+          {recommendation.entryReasoning && (
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {recommendation.entryReasoning}
+            </p>
+          )}
         </div>
 
         {/* Confidence & Risk */}

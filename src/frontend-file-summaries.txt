@@ -44,5 +44,5 @@
   "frontend/src/components/AlertCard.tsx": "Card component displaying individual alert entries with cryptocurrency info, signal type badge, trigger reason, timestamp, and confidence level in a mobile-responsive layout.",
   "frontend/src/components/AlertFilters.tsx": "Filter controls component with dropdown selects for cryptocurrency and signal type filtering, plus reset button for clearing active filters.",
   "frontend/src/utils/aiTradeRecommendations.ts": "AI trade recommendation engine that analyzes technical indicators, patterns, support/resistance to generate entry points, take-profit targets (conservative/moderate/aggressive), stop-loss, confidence score, and risk level with detailed reasoning.",
-  "frontend/src/components/AITradeAnalysisCard.tsx": "AI-powered trade analysis card displaying real-time recommendations with entry point, confidence score, risk level, three take-profit targets, stop-loss, reasoning, and auto-updating timestamp."
+  "frontend/src/components/AITradeAnalysisCard.tsx": "AI-powered trade analysis card displaying real-time recommendations with prominently highlighted entry point (with Target icon and larger font), recommended action badge, confidence score, risk level, three take-profit targets, stop-loss, reasoning, and auto-updating timestamp."
 }

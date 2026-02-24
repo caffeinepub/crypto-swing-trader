@@ -1,178 +1,25 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add API retry logic, dashboard timeframe selector, and AI trade recommendations",
+  "title": "Display entry point in AI Trade Analysis card",
   "requirements": [
     {
-      "id": "REQ-23",
-      "summary": "Add retry buttons to CryptoTable and other data-fetching components that display error states",
+      "id": "REQ-31",
+      "summary": "Display entry point prominently at the top of the AI Trade Analysis card with price formatting, color coding based on trade direction, label, reasoning text, and clear visual hierarchy above take-profit targets",
       "acceptanceCriteria": [
-        "Error states in CryptoTable and other data components display a centered 'Retry' button",
-        "Clicking the retry button triggers a refetch of the failed query",
-        "Button styling matches the existing UI design with appropriate hover states",
-        "Error message remains visible alongside the retry button"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/CryptoTable.tsx",
-          "operation": "modify",
-          "description": "Modify the error state UI to include a centered 'Retry' button that calls refetch() from the useCryptoPrices hook. Extract the refetch function from the hook and wire it to a Button component styled with variant='outline' to match existing UI. Position the button below the error message text using flexbox centering."
-        },
-        {
-          "path": "frontend/src/components/WatchlistPanel.tsx",
-          "operation": "modify",
-          "description": "Add retry button to the error state that appears when watchlist data fails to load. Use the same centered button pattern as CryptoTable with refetch callback from useCryptoPrices hook."
-        },
-        {
-          "path": "frontend/src/pages/Dashboard.tsx",
-          "operation": "modify",
-          "description": "Ensure error states for market sentiment and other dashboard data displays include retry buttons with refetch callbacks from their respective hooks."
-        }
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "summary": "Implement exponential backoff retry logic in useCryptoPrices hook to handle CoinGecko API rate limiting",
-      "acceptanceCriteria": [
-        "useCryptoPrices hook implements React Query retry with exponential backoff",
-        "First retry waits 1 second, second waits 2 seconds, third waits 4 seconds (capped at 30 seconds)",
-        "After 3 failed attempts, error state is displayed with retry button",
-        "Successful retry clears error state and displays data normally"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useCryptoPrices.ts",
-          "operation": "modify",
-          "description": "Add retry configuration to the useQuery options: set retry to 3 attempts and retryDelay to a function (attempt => Math.min(1000 * 2 ** attempt, 30000)) to implement exponential backoff. This ensures the first retry waits 1s, second 2s, third 4s before showing the error state to the user."
-        }
-      ]
-    },
-    {
-      "id": "REQ-25",
-      "summary": "Implement request batching in coingecko.ts service to fetch multiple cryptocurrencies in a single API call",
-      "acceptanceCriteria": [
-        "fetchCryptoPrices function uses CoinGecko's batch endpoint with comma-separated IDs",
-        "Single API call retrieves data for all 20-30 tracked cryptocurrencies",
-        "Response parsing correctly handles batch response format",
-        "API call count reduced from 20-30 individual calls to 1 batch call per refresh cycle"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/services/coingecko.ts",
-          "operation": "modify",
-          "description": "Refactor fetchCryptoPrices to use CoinGecko's /coins/markets batch endpoint. Build a comma-separated string of coin IDs (bitcoin,ethereum,cardano,...) and pass it as the 'ids' query parameter instead of making individual requests. Update the response parsing logic to handle the batch array format returned by the endpoint. This reduces API call volume from 20-30 individual calls to a single batch request."
-        }
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "summary": "Add TimeframeSelector to Dashboard page header to control chart preview timeframe across the dashboard",
-      "acceptanceCriteria": [
-        "TimeframeSelector component appears in Dashboard page header above the CryptoTable",
-        "Selector displays three options: 1H, 4H, and Daily with clear visual indication of active selection",
-        "Changing timeframe updates a state variable in Dashboard component",
-        "Selected timeframe persists during the session (stored in component state)",
-        "Timeframe selector styling matches existing UI components"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Dashboard.tsx",
-          "operation": "modify",
-          "description": "Add a state variable to manage the selected timeframe (using useState with '1h' | '4h' | '1d' type). Import and render the existing TimeframeSelector component in the page header section between the page title and CryptoTable. Pass the timeframe state and setter callback to TimeframeSelector. Pass the selected timeframe as a prop to child components that display chart previews or technical data (MarketSentimentPanel, TradingSignalsPanel)."
-        },
-        {
-          "path": "frontend/src/components/MarketSentimentPanel.tsx",
-          "operation": "modify",
-          "description": "Accept a timeframe prop from Dashboard and use it to filter or adjust sentiment calculations if needed. If the sentiment panel does not use timeframe-specific data, this may be a no-op but the prop should be accepted for consistency."
-        },
-        {
-          "path": "frontend/src/components/TradingSignalsPanel.tsx",
-          "operation": "modify",
-          "description": "Accept a timeframe prop from Dashboard and pass it through to any hooks or calculations that generate trading signals based on chart data. Ensure signals are recalculated when the timeframe changes."
-        }
-      ]
-    },
-    {
-      "id": "REQ-27",
-      "summary": "Create AI Trade Analysis card component on CryptoDetail page to display trade recommendations",
-      "acceptanceCriteria": [
-        "New 'AI Trade Analysis' card component created and displayed on CryptoDetail page",
-        "Component positioned below the chart section for visibility",
-        "Card has a distinct visual design that stands out from other panels",
-        "Component receives all technical data as props from parent hooks"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AITradeAnalysisCard.tsx",
-          "operation": "create",
-          "description": "Create a new card component that accepts technical data props (signals, indicators, patterns, supportLevels, resistanceLevels, currentPrice) and displays AI-generated trade recommendations. Use Card, CardHeader, CardTitle, CardContent from shadcn/ui components. Design the card with a distinct visual style (e.g., gradient border or accent color) to make it stand out. This component will call the recommendation generation utility and render the result."
-        },
-        {
-          "path": "frontend/src/pages/CryptoDetail.tsx",
-          "operation": "modify",
-          "description": "Import and render the new AITradeAnalysisCard component, positioning it below the CandlestickChart section. Pass all required technical data as props: active signals from useTradingSignals, support/resistance levels from useChartData, detected patterns from useChartData, and technical indicators (RSI, MACD, MA, BB) from useTechnicalIndicators. Also pass the current price from the crypto data."
-        }
-      ]
-    },
-    {
-      "id": "REQ-28",
-      "summary": "Implement recommendation generation logic in frontend/src/utils/aiTradeRecommendations.ts with structured output including entry point, take-profit targets, stop-loss, confidence score, and risk level",
-      "acceptanceCriteria": [
-        "New file frontend/src/utils/aiTradeRecommendations.ts created with generateTradeRecommendation function",
-        "Function accepts parameters: currentPrice, signals, indicators, patterns, supportLevels, resistanceLevels",
-        "Function returns object with fields: entryPoint, entryReasoning, takeProfitTargets (array of 3 objects with price/percentage/label), stopLoss, confidence (0-100), riskLevel (low/medium/high), reasoning (string)",
-        "Entry point logic considers current price, active signals, and proximity to support/resistance",
-        "Take-profit targets calculated as: conservative (5-8%), moderate (10-15%), aggressive (20-30%) above entry",
-        "Stop-loss positioned at nearest support level below entry or 3-5% below entry if no support exists",
-        "Confidence score increases when multiple indicators align (RSI + MACD + patterns all bullish/bearish)",
-        "Risk level determined by: high if volatility >8%, medium if 4-8%, low if <4%",
-        "Reasoning text generated to explain which indicators drove the recommendation"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/utils/aiTradeRecommendations.ts",
-          "operation": "create",
-          "description": "Create a new utility file exporting a generateTradeRecommendation function that accepts currentPrice (number), signals (from useTradingSignals), indicators (RSI, MACD, MA, BB from useTechnicalIndicators), patterns (from useChartData), supportLevels (array of numbers), and resistanceLevels (array of numbers). The function returns a TradeRecommendation object with: entryPoint (number), entryReasoning (string), takeProfitTargets (array of 3 objects: {label: 'Conservative'|'Moderate'|'Aggressive', price: number, percentage: number}), stopLoss (number), confidence (0-100 number), riskLevel ('low'|'medium'|'high'), and reasoning (string). Logic: determine entry point based on current price and signal direction (buy signals suggest entry near support, sell signals near resistance). Calculate three take-profit targets at 5-8%, 10-15%, and 20-30% from entry. Set stop-loss at nearest support below entry or 3-5% below entry if no support exists. Calculate confidence by checking alignment of RSI (oversold/overbought), MACD (bullish/bearish crossover), and patterns (bullish/bearish), scoring 0-100 based on agreement. Determine risk level from price volatility if available (high >8%, medium 4-8%, low <4%). Generate reasoning text explaining which indicators support the recommendation."
-        }
-      ]
-    },
-    {
-      "id": "REQ-29",
-      "summary": "Display AI-generated trade recommendation in AITradeAnalysisCard with clear visual hierarchy showing entry point, take-profit targets, stop-loss, confidence score, risk level, and reasoning",
-      "acceptanceCriteria": [
-        "Entry point displayed prominently at top of card with green/red color coding",
-        "Three take-profit targets shown in horizontal layout with labeled badges",
-        "Each take-profit displays both absolute price and percentage gain from entry",
-        "Stop-loss shown with warning icon and clear price display",
-        "Confidence score displayed as visual element (progress bar or percentage badge) with color coding",
-        "Risk level shown as badge with appropriate color (green=low, yellow=medium, red=high)",
-        "Reasoning text displayed in readable paragraph format",
-        "Card responsive and adapts layout for mobile screens",
-        "All prices formatted consistently with cryptocurrency decimal precision"
+        "Entry point price is displayed at the top of the AI Trade Analysis card",
+        "Entry point section appears above take-profit targets section",
+        "Entry point has clear label 'Entry Point' or similar",
+        "Entry point price is color-coded green for buy, red for sell/short",
+        "Entry reasoning text is displayed if available in the recommendation object",
+        "Visual hierarchy makes entry point immediately visible (appropriate font size, spacing, icons)",
+        "Entry point formatting matches the existing price display patterns in the card"
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/AITradeAnalysisCard.tsx",
           "operation": "modify",
-          "description": "Implement the recommendation display UI inside AITradeAnalysisCard. Call generateTradeRecommendation with the passed props to get the recommendation object. Render the entry point prominently at the top with color coding (green for buy, red for sell) using text-green-600/text-red-600 classes. Display the three take-profit targets in a horizontal flex layout using Badge components labeled 'Conservative', 'Moderate', 'Aggressive', showing both price (formatted with 2-8 decimal places) and percentage gain. Show stop-loss with an AlertTriangle icon and clear price display. Render confidence score as a Progress component or percentage badge with color coding (green >70%, yellow 50-70%, red <50%). Display risk level as a Badge with appropriate color (green for low, yellow for medium, red for high). Show reasoning text in a paragraph with readable typography. Use responsive flexbox/grid classes to adapt layout for mobile screens."
-        }
-      ]
-    },
-    {
-      "id": "REQ-30",
-      "summary": "Update recommendation generation to trigger in real-time when technical data updates, with loading indicator and timestamp",
-      "acceptanceCriteria": [
-        "Recommendation recalculates automatically when any technical data dependency updates",
-        "Loading indicator appears during recalculation without blocking the entire card",
-        "Timestamp displays when recommendation was last generated (e.g., 'Updated 2 minutes ago')",
-        "Recommendation smoothly updates without jarring UI transitions",
-        "If data is still loading, card shows a loading skeleton or message"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AITradeAnalysisCard.tsx",
-          "operation": "modify",
-          "description": "Wrap the recommendation generation call in a useMemo hook with dependencies on all technical data props (signals, indicators, patterns, supportLevels, resistanceLevels, currentPrice) to trigger recalculation when any dependency changes. Add a state variable to track the last updated timestamp using new Date() when the recommendation updates. Display a subtle loading spinner or skeleton during initial data load (when any prop is undefined/loading). Show the timestamp at the bottom of the card formatted as a relative time string (e.g., 'Updated 2 minutes ago') using a date formatting utility or library. Use CSS transitions to smoothly fade in recommendation changes without jarring UI jumps."
+          "description": "Add a new entry point section at the top of the card component, positioned above the existing take-profit targets section. Display the entry point price from the recommendation object with appropriate currency formatting. Apply color coding: green (text-green-600 dark:text-green-400) for 'buy' direction, red (text-red-600 dark:text-red-400) for 'sell' or 'short' direction. Include a clear 'Entry Point' label using appropriate typography (font-semibold). If recommendation.entryReasoning exists, display it below the price. Use consistent spacing, icons (TrendingUp for buy, TrendingDown for sell), and font sizes to establish clear visual hierarchy that matches existing card patterns for take-profit and stop-loss displays. Ensure the entry point section is immediately visible and distinct from other card sections."
         }
       ]
     }

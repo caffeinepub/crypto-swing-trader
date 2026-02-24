@@ -2,125 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-user-friendly-retry-buttons-in-the-cryptotable-component-and-other-data-fetching-components-that-display-failed-to-load-cryptocurrency-data-errors-add-a-prominent-retry-button-centered-in-the-error-state-ui-that-triggers-a-manual-refetch-of-the-failed-query-style-the-button-consistently-with-the-existing-ui-design",
-      "featureTitle": "Implement user-friendly retry buttons in the CryptoTable component and other data-fetching components that display 'Failed to load cryptocurrency data' errors. Add a prominent 'Retry' button centered in the error state UI that triggers a manual refetch of the failed query. Style the button consistently with the existing UI design.",
-      "files": [
-        "frontend/src/components/CryptoTable.tsx",
-        "frontend/src/components/WatchlistPanel.tsx",
-        "frontend/src/pages/Dashboard.tsx"
-      ],
-      "components": [
-        "http-outcalls@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-23"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-exponential-backoff-retry-logic-to-the-usecryptoprices-hook-to-handle-coingecko-api-rate-limiting-configure-react-query-s-retry-option-with-exponential-backoff-retrydelay-attempt-math-min-1000-2-attempt-30000-and-set-retry-count-to-3-attempts-before-showing-the-error-state",
-      "featureTitle": "Add exponential backoff retry logic to the useCryptoPrices hook to handle CoinGecko API rate limiting. Configure React Query's retry option with exponential backoff (retryDelay: attempt => Math.min(1000 * 2 ** attempt, 30000)) and set retry count to 3 attempts before showing the error state.",
-      "files": [
-        "frontend/src/hooks/useCryptoPrices.ts"
-      ],
-      "components": [
-        "http-outcalls@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-24"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-request-batching-in-the-coingecko-ts-service-to-fetch-cryptocurrency-data-for-multiple-coins-in-a-single-api-call-instead-of-individual-requests-modify-fetchcryptoprices-to-use-coingecko-s-batch-endpoint-that-accepts-comma-separated-coin-ids-e-g-coins-markets-vs-currency-usd-ids-bitcoin-ethereum-cardano-to-reduce-total-api-call-volume",
-      "featureTitle": "Implement request batching in the coingecko.ts service to fetch cryptocurrency data for multiple coins in a single API call instead of individual requests. Modify fetchCryptoPrices to use CoinGecko's batch endpoint that accepts comma-separated coin IDs (e.g., /coins/markets?vs_currency=usd&ids=bitcoin,ethereum,cardano) to reduce total API call volume.",
-      "files": [
-        "frontend/src/services/coingecko.ts"
-      ],
-      "components": [
-        "http-outcalls@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-25"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-timeframeselector-component-to-the-dashboard-page-header-positioned-prominently-between-the-page-title-and-the-cryptotable-the-selector-should-control-the-default-timeframe-for-chart-previews-and-data-displays-across-the-dashboard-add-a-new-state-variable-in-dashboard-tsx-to-manage-the-selected-timeframe-1h-4h-daily-and-pass-it-as-a-prop-to-relevant-child-components-that-display-chart-data-or-technical-indicators",
-      "featureTitle": "Add a TimeframeSelector component to the Dashboard page header, positioned prominently between the page title and the CryptoTable. The selector should control the default timeframe for chart previews and data displays across the dashboard. Add a new state variable in Dashboard.tsx to manage the selected timeframe (1H, 4H, Daily) and pass it as a prop to relevant child components that display chart data or technical indicators.",
-      "files": [
-        "frontend/src/pages/Dashboard.tsx"
-      ],
-      "components": [
-        "http-outcalls@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-26"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-a-new-ai-trade-recommendation-system-in-the-cryptodetail-page-that-analyzes-all-available-technical-data-active-signals-from-usetradingsignals-support-resistance-levels-from-usechartdata-detected-patterns-from-usechartdata-rsi-macd-ma-bb-values-from-usetechnicalindicators-and-generates-actionable-trade-recommendations-display-recommendations-in-a-new-ai-trade-analysis-card-component-positioned-prominently-on-the-cryptodetail-page-below-the-chart-section",
-      "featureTitle": "Create a new AI trade recommendation system in the CryptoDetail page that analyzes all available technical data (active signals from useTradingSignals, support/resistance levels from useChartData, detected patterns from useChartData, RSI/MACD/MA/BB values from useTechnicalIndicators) and generates actionable trade recommendations. Display recommendations in a new 'AI Trade Analysis' card component positioned prominently on the CryptoDetail page below the chart section.",
-      "files": [
-        "frontend/src/components/AITradeAnalysisCard.tsx",
-        "frontend/src/pages/CryptoDetail.tsx"
-      ],
-      "components": [
-        "http-outcalls@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-27"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-the-recommendation-generation-logic-in-a-new-utility-file-frontend-src-utils-aitraderecommendations-ts-create-a-generatetraderecommendation-function-that-accepts-technical-data-signals-indicators-patterns-support-resistance-and-returns-a-structured-recommendation-object-containing-entry-point-price-with-reasoning-three-take-profit-targets-conservative-5-8-moderate-10-15-aggressive-20-30-from-entry-stop-loss-price-positioned-below-nearest-support-or-3-5-below-entry-overall-confidence-score-0-100-based-on-signal-strength-and-indicator-alignment-risk-level-low-medium-high-based-on-volatility-and-signal-clarity-and-detailed-reasoning-text-explaining-the-recommendation-logic",
-      "featureTitle": "Implement the recommendation generation logic in a new utility file frontend/src/utils/aiTradeRecommendations.ts. Create a generateTradeRecommendation function that accepts technical data (signals, indicators, patterns, support/resistance) and returns a structured recommendation object containing: entry point price with reasoning, three take-profit targets (conservative 5-8%, moderate 10-15%, aggressive 20-30% from entry), stop-loss price (positioned below nearest support or 3-5% below entry), overall confidence score (0-100 based on signal strength and indicator alignment), risk level (low/medium/high based on volatility and signal clarity), and detailed reasoning text explaining the recommendation logic.",
-      "files": [
-        "frontend/src/utils/aiTradeRecommendations.ts"
-      ],
-      "components": [
-        "http-outcalls@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-28"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-display-the-ai-generated-trade-recommendation-in-the-ai-trade-analysis-card-component-with-a-clear-visual-hierarchy-show-entry-point-price-prominently-at-the-top-with-an-icon-and-color-coding-green-for-buy-entry-red-for-sell-short-entry-display-the-three-take-profit-targets-in-a-horizontal-row-with-badges-labeled-conservative-moderate-aggressive-showing-both-price-and-percentage-gain-show-stop-loss-price-with-a-warning-icon-display-confidence-score-as-a-progress-bar-or-percentage-badge-with-color-coding-green-70-yellow-50-70-red-50-show-risk-level-with-an-appropriate-badge-display-the-reasoning-text-in-a-readable-paragraph-format-at-the-bottom-of-the-card",
-      "featureTitle": "Display the AI-generated trade recommendation in the 'AI Trade Analysis' card component with a clear visual hierarchy. Show entry point price prominently at the top with an icon and color coding (green for buy entry, red for sell/short entry). Display the three take-profit targets in a horizontal row with badges labeled 'Conservative', 'Moderate', 'Aggressive' showing both price and percentage gain. Show stop-loss price with a warning icon. Display confidence score as a progress bar or percentage badge with color coding (green >70%, yellow 50-70%, red <50%). Show risk level with an appropriate badge. Display the reasoning text in a readable paragraph format at the bottom of the card.",
+      "featureId": "feature-update-the-aitradeanalysiscard-component-frontend-src-components-aitradeanalysiscard-tsx-to-prominently-display-the-entry-point-price-at-the-top-of-the-card-above-the-take-profit-targets-the-entry-point-should-include-the-price-value-with-appropriate-formatting-color-coding-green-for-buy-entry-red-for-sell-short-entry-based-on-recommendation-direction-a-label-entry-point-and-the-entry-reasoning-text-if-available-ensure-the-entry-point-section-uses-clear-visual-hierarchy-with-appropriate-spacing-icons-and-typography-to-make-it-immediately-visible-to-users",
+      "featureTitle": "Update the AITradeAnalysisCard component (frontend/src/components/AITradeAnalysisCard.tsx) to prominently display the entry point price at the top of the card, above the take-profit targets. The entry point should include: the price value with appropriate formatting, color coding (green for buy entry, red for sell/short entry based on recommendation direction), a label 'Entry Point', and the entry reasoning text if available. Ensure the entry point section uses clear visual hierarchy with appropriate spacing, icons, and typography to make it immediately visible to users.",
       "files": [
         "frontend/src/components/AITradeAnalysisCard.tsx"
       ],
@@ -133,26 +16,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-29"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-recommendation-generation-logic-to-trigger-in-real-time-whenever-technical-data-updates-configure-the-ai-trade-analysis-component-to-automatically-recalculate-recommendations-when-any-of-the-underlying-data-sources-change-new-price-data-updated-indicators-new-patterns-detected-changed-signals-display-a-subtle-loading-indicator-when-recalculating-recommendations-add-a-timestamp-to-show-when-the-recommendation-was-last-generated",
-      "featureTitle": "Update the recommendation generation logic to trigger in real-time whenever technical data updates. Configure the AI Trade Analysis component to automatically recalculate recommendations when any of the underlying data sources change (new price data, updated indicators, new patterns detected, changed signals). Display a subtle loading indicator when recalculating recommendations. Add a timestamp to show when the recommendation was last generated.",
-      "files": [
-        "frontend/src/components/AITradeAnalysisCard.tsx"
-      ],
-      "components": [
-        "http-outcalls@3.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-30"
+        "REQ-31"
       ],
       "confidence": "high"
     }

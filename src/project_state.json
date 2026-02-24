@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 9,
   "summary": "Professional crypto swing trading dashboard with real-time price tracking for 20-30 top cryptocurrencies, technical indicators (RSI, MACD, Moving Averages, Bollinger Bands), swing trading signals, portfolio tracker with manual entry, multi-timeframe chart analysis, candlestick pattern recognition, support/resistance detection, market sentiment dashboard, trading journal, dark/light mode, mobile-responsive design, Internet Identity authentication, CoinGecko API integration, Motoko backend, React + TypeScript frontend",
   "architectural_notes": [
     "React + TypeScript frontend with Tailwind CSS for styling",
@@ -15,7 +15,8 @@
     "Dedicated heatmap page with interactive grid visualization"
   ],
   "known_issues": [
-    "CoinGecko API rate limiting causing dashboard data load failures"
+    "CoinGecko API rate limiting causing dashboard data load failures",
+    "AI Trade Analysis card on crypto detail page not displaying entry point price in UI (generateTradeRecommendation calculates it but component doesn't render it)"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -224,6 +225,14 @@
       "title": "Update the recommendation generation logic to trigger in real-time whenever technical data updates. Configure the AI Trade Analysis component to automatically recalculate recommendations when any of the underlying data sources change (new price data, updated indicators, new patterns detected, changed signals). Display a subtle loading indicator when recalculating recommendations. Add a timestamp to show when the recommendation was last generated.",
       "reqIds": [
         "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-aitradeanalysiscard-component-frontend-src-components-aitradeanalysiscard-tsx-to-prominently-display-the-entry-point-price-at-the-top-of-the-card-above-the-take-profit-targets-the-entry-point-should-include-the-price-value-with-appropriate-formatting-color-coding-green-for-buy-entry-red-for-sell-short-entry-based-on-recommendation-direction-a-label-entry-point-and-the-entry-reasoning-text-if-available-ensure-the-entry-point-section-uses-clear-visual-hierarchy-with-appropriate-spacing-icons-and-typography-to-make-it-immediately-visible-to-users",
+      "title": "Update the AITradeAnalysisCard component (frontend/src/components/AITradeAnalysisCard.tsx) to prominently display the entry point price at the top of the card, above the take-profit targets. The entry point should include: the price value with appropriate formatting, color coding (green for buy entry, red for sell/short entry based on recommendation direction), a label 'Entry Point', and the entry reasoning text if available. Ensure the entry point section uses clear visual hierarchy with appropriate spacing, icons, and typography to make it immediately visible to users.",
+      "reqIds": [
+        "REQ-31"
       ],
       "version": 1
     }

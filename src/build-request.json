@@ -1,199 +1,41 @@
 {
   "kind": "build_request",
-  "title": "Add API retry logic, dashboard timeframe selector, and AI trade recommendations",
+  "title": "Display entry point in AI Trade Analysis card",
   "projectName": "Crypto Swing Trader",
-  "priority": "high",
+  "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-23",
-      "text": "Implement user-friendly retry buttons in the CryptoTable component and other data-fetching components that display 'Failed to load cryptocurrency data' errors. Add a prominent 'Retry' button centered in the error state UI that triggers a manual refetch of the failed query. Style the button consistently with the existing UI design.",
+      "id": "REQ-31",
+      "text": "Update the AITradeAnalysisCard component (frontend/src/components/AITradeAnalysisCard.tsx) to prominently display the entry point price at the top of the card, above the take-profit targets. The entry point should include: the price value with appropriate formatting, color coding (green for buy entry, red for sell/short entry based on recommendation direction), a label 'Entry Point', and the entry reasoning text if available. Ensure the entry point section uses clear visual hierarchy with appropriate spacing, icons, and typography to make it immediately visible to users.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "user-request"
+          "msg-user-go-ahead"
         ],
         "quotes": [
-          "add user-friendly retry buttons",
-          "it keeps fail to load",
-          "Failed to load cryptocurrency data. Please try again later."
+          "i click on the crypto it take me to a page and give me all the info on that crypto and ai trade analysis give me take profit and stoploss but not entry"
         ]
       },
       "acceptanceCriteria": [
-        "Error states in CryptoTable and other data components display a centered 'Retry' button",
-        "Clicking the retry button triggers a refetch of the failed query",
-        "Button styling matches the existing UI design with appropriate hover states",
-        "Error message remains visible alongside the retry button"
-      ]
-    },
-    {
-      "id": "REQ-24",
-      "text": "Add exponential backoff retry logic to the useCryptoPrices hook to handle CoinGecko API rate limiting. Configure React Query's retry option with exponential backoff (retryDelay: attempt => Math.min(1000 * 2 ** attempt, 30000)) and set retry count to 3 attempts before showing the error state.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "user-request"
-        ],
-        "quotes": [
-          "add user-friendly retry buttons",
-          "exponential backoff"
-        ]
-      },
-      "acceptanceCriteria": [
-        "useCryptoPrices hook implements React Query retry with exponential backoff",
-        "First retry waits 1 second, second waits 2 seconds, third waits 4 seconds (capped at 30 seconds)",
-        "After 3 failed attempts, error state is displayed with retry button",
-        "Successful retry clears error state and displays data normally"
-      ]
-    },
-    {
-      "id": "REQ-25",
-      "text": "Implement request batching in the coingecko.ts service to fetch cryptocurrency data for multiple coins in a single API call instead of individual requests. Modify fetchCryptoPrices to use CoinGecko's batch endpoint that accepts comma-separated coin IDs (e.g., /coins/markets?vs_currency=usd&ids=bitcoin,ethereum,cardano) to reduce total API call volume.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "user-request"
-        ],
-        "quotes": [
-          "request batching to reduce API calls",
-          "fetch multiple coins in one request"
-        ]
-      },
-      "acceptanceCriteria": [
-        "fetchCryptoPrices function uses CoinGecko's batch endpoint with comma-separated IDs",
-        "Single API call retrieves data for all 20-30 tracked cryptocurrencies",
-        "Response parsing correctly handles batch response format",
-        "API call count reduced from 20-30 individual calls to 1 batch call per refresh cycle"
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "text": "Add a TimeframeSelector component to the Dashboard page header, positioned prominently between the page title and the CryptoTable. The selector should control the default timeframe for chart previews and data displays across the dashboard. Add a new state variable in Dashboard.tsx to manage the selected timeframe (1H, 4H, Daily) and pass it as a prop to relevant child components that display chart data or technical indicators.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "user-request"
-        ],
-        "quotes": [
-          "on the main page i dont see a section to adjust timeframe",
-          "add a prominent timeframe selector in the dashboard header that controls chart displays across the watchlist"
-        ]
-      },
-      "acceptanceCriteria": [
-        "TimeframeSelector component appears in Dashboard page header above the CryptoTable",
-        "Selector displays three options: 1H, 4H, and Daily with clear visual indication of active selection",
-        "Changing timeframe updates a state variable in Dashboard component",
-        "Selected timeframe persists during the session (stored in component state)",
-        "Timeframe selector styling matches existing UI components"
-      ]
-    },
-    {
-      "id": "REQ-27",
-      "text": "Create a new AI trade recommendation system in the CryptoDetail page that analyzes all available technical data (active signals from useTradingSignals, support/resistance levels from useChartData, detected patterns from useChartData, RSI/MACD/MA/BB values from useTechnicalIndicators) and generates actionable trade recommendations. Display recommendations in a new 'AI Trade Analysis' card component positioned prominently on the CryptoDetail page below the chart section.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "user-request"
-        ],
-        "quotes": [
-          "is there a way to have ai or something use that information to give me entry point and take profit point?",
-          "analyze technical indicators (signals, support/resistance, patterns, RSI, MACD, MA, BB) to generate actionable entry points and take-profit levels"
-        ]
-      },
-      "acceptanceCriteria": [
-        "New 'AI Trade Analysis' card component created and displayed on CryptoDetail page",
-        "Component positioned below the chart section for visibility",
-        "Card has a distinct visual design that stands out from other panels",
-        "Component receives all technical data as props from parent hooks"
-      ]
-    },
-    {
-      "id": "REQ-28",
-      "text": "Implement the recommendation generation logic in a new utility file frontend/src/utils/aiTradeRecommendations.ts. Create a generateTradeRecommendation function that accepts technical data (signals, indicators, patterns, support/resistance) and returns a structured recommendation object containing: entry point price with reasoning, three take-profit targets (conservative 5-8%, moderate 10-15%, aggressive 20-30% from entry), stop-loss price (positioned below nearest support or 3-5% below entry), overall confidence score (0-100 based on signal strength and indicator alignment), risk level (low/medium/high based on volatility and signal clarity), and detailed reasoning text explaining the recommendation logic.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "user-request"
-        ],
-        "quotes": [
-          "generate actionable entry points and take-profit levels",
-          "Recommendations will include multiple take-profit targets (conservative, moderate, aggressive) plus stop-loss suggestions",
-          "confidence scores, risk levels, and reasoning"
-        ]
-      },
-      "acceptanceCriteria": [
-        "New file frontend/src/utils/aiTradeRecommendations.ts created with generateTradeRecommendation function",
-        "Function accepts parameters: currentPrice, signals, indicators, patterns, supportLevels, resistanceLevels",
-        "Function returns object with fields: entryPoint, entryReasoning, takeProfitTargets (array of 3 objects with price/percentage/label), stopLoss, confidence (0-100), riskLevel (low/medium/high), reasoning (string)",
-        "Entry point logic considers current price, active signals, and proximity to support/resistance",
-        "Take-profit targets calculated as: conservative (5-8%), moderate (10-15%), aggressive (20-30%) above entry",
-        "Stop-loss positioned at nearest support level below entry or 3-5% below entry if no support exists",
-        "Confidence score increases when multiple indicators align (RSI + MACD + patterns all bullish/bearish)",
-        "Risk level determined by: high if volatility >8%, medium if 4-8%, low if <4%",
-        "Reasoning text generated to explain which indicators drove the recommendation"
-      ]
-    },
-    {
-      "id": "REQ-29",
-      "text": "Display the AI-generated trade recommendation in the 'AI Trade Analysis' card component with a clear visual hierarchy. Show entry point price prominently at the top with an icon and color coding (green for buy entry, red for sell/short entry). Display the three take-profit targets in a horizontal row with badges labeled 'Conservative', 'Moderate', 'Aggressive' showing both price and percentage gain. Show stop-loss price with a warning icon. Display confidence score as a progress bar or percentage badge with color coding (green >70%, yellow 50-70%, red <50%). Show risk level with an appropriate badge. Display the reasoning text in a readable paragraph format at the bottom of the card.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "user-request"
-        ],
-        "quotes": [
-          "The AI will display real-time recommendations on the coin detail page with confidence scores, risk levels, and reasoning"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Entry point displayed prominently at top of card with green/red color coding",
-        "Three take-profit targets shown in horizontal layout with labeled badges",
-        "Each take-profit displays both absolute price and percentage gain from entry",
-        "Stop-loss shown with warning icon and clear price display",
-        "Confidence score displayed as visual element (progress bar or percentage badge) with color coding",
-        "Risk level shown as badge with appropriate color (green=low, yellow=medium, red=high)",
-        "Reasoning text displayed in readable paragraph format",
-        "Card responsive and adapts layout for mobile screens",
-        "All prices formatted consistently with cryptocurrency decimal precision"
-      ]
-    },
-    {
-      "id": "REQ-30",
-      "text": "Update the recommendation generation logic to trigger in real-time whenever technical data updates. Configure the AI Trade Analysis component to automatically recalculate recommendations when any of the underlying data sources change (new price data, updated indicators, new patterns detected, changed signals). Display a subtle loading indicator when recalculating recommendations. Add a timestamp to show when the recommendation was last generated.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "user-request"
-        ],
-        "quotes": [
-          "The AI will display real-time recommendations",
-          "Recommendations will appear in real-time when you view a coin"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Recommendation recalculates automatically when any technical data dependency updates",
-        "Loading indicator appears during recalculation without blocking the entire card",
-        "Timestamp displays when recommendation was last generated (e.g., 'Updated 2 minutes ago')",
-        "Recommendation smoothly updates without jarring UI transitions",
-        "If data is still loading, card shows a loading skeleton or message"
+        "Entry point price is displayed at the top of the AI Trade Analysis card",
+        "Entry point section appears above take-profit targets section",
+        "Entry point has clear label 'Entry Point' or similar",
+        "Entry point price is color-coded green for buy, red for sell/short",
+        "Entry reasoning text is displayed if available in the recommendation object",
+        "Visual hierarchy makes entry point immediately visible (appropriate font size, spacing, icons)",
+        "Entry point formatting matches the existing price display patterns in the card"
       ]
     }
   ],
   "constraints": [
-    "Do not modify frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or files in frontend/src/components/ui",
-    "All Motoko backend logic must remain in backend/main.mo single-actor architecture",
-    "Use CoinGecko API endpoints and data formats already established in frontend/src/services/coingecko.ts",
-    "Maintain React Query caching patterns already used in existing hooks",
-    "Preserve existing TimeframeSelector component implementation from frontend/src/components/TimeframeSelector.tsx",
-    "Do not integrate external AI services (OpenAI, Anthropic, etc.) - implement recommendation logic as pure frontend calculation"
+    "Do not modify the generateTradeRecommendation function in frontend/src/utils/aiTradeRecommendations.ts - it already calculates the entry point correctly",
+    "Maintain consistency with existing UI patterns in the AITradeAnalysisCard component",
+    "Preserve all existing functionality (take-profit targets, stop-loss, confidence, risk level, reasoning)"
   ],
   "nonGoals": [
-    "Backend storage of AI recommendations",
-    "Automatic trade execution based on recommendations",
-    "Real-time notifications for recommendation changes",
-    "Machine learning model training or integration",
-    "Historical backtesting of recommendation accuracy",
-    "Integration with external trading platforms or APIs",
-    "Email or SMS notifications for trade recommendations"
+    "Changing the entry point calculation logic",
+    "Modifying any other components or pages",
+    "Adding new recommendation features or data points"
   ],
   "imageRequirements": {
     "required": [],

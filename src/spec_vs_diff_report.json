@@ -1,21 +1,23 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T03:33:48.980Z",
-  "summary": "The implementation successfully addresses all 8 requirements (REQ-23 through REQ-30). Retry buttons with exponential backoff were added to error states in Dashboard and WatchlistPanel. Request batching was implemented in coingecko.ts using comma-separated coin IDs. TimeframeSelector was integrated into Dashboard header with state management. A comprehensive AI Trade Analysis card was created with real-time recommendation generation, displaying entry points, take-profit targets, stop-loss, confidence scores, risk levels, and reasoning. All acceptance criteria appear to be met based on the diff evidence.",
-  "missing_requirements": [],
+  "generatedAt": "2026-02-23T18:57:42.708Z",
+  "summary": "The diff shows modifications to AITradeAnalysisCard.tsx that implement entry point display functionality with color coding, formatting, and visual hierarchy. The implementation appears to align with REQ-31 requirements for displaying entry point information prominently at the top of the card.",
+  "missing_requirements": [
+    {
+      "id": "REQ-31",
+      "requirement": "Entry reasoning text is displayed if available in the recommendation object",
+      "reason": "The truncated diff does not show evidence of entry reasoning text being displayed. While the entry point price and label appear to be implemented, there is no visible code rendering the entry reasoning field from the recommendation object.",
+      "evidence": [
+        "frontend/src/components/AITradeAnalysisCard.tsx"
+      ]
+    }
+  ],
   "hallucinated_features": [],
-  "confidence": 0.92,
+  "confidence": 0.65,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/src/components/AITradeAnalysisCard.tsx",
-    "frontend/src/components/CryptoTable.tsx",
-    "frontend/src/components/WatchlistPanel.tsx",
-    "frontend/src/hooks/useCryptoPrices.ts",
-    "frontend/src/pages/CryptoDetail.tsx",
-    "frontend/src/pages/Dashboard.tsx",
-    "frontend/src/services/coingecko.ts",
-    "frontend/src/utils/aiTradeRecommendations.ts",
     "project_state.json"
   ]
 }

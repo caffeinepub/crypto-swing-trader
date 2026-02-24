@@ -1,103 +1,18 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T03:33:48.985Z",
+  "generatedAt": "2026-02-23T18:57:42.712Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 8,
-    "implemented": 8,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-23",
-        "summary": "Implement user-friendly retry buttons in the CryptoTable component and other data-fetching components that display 'Failed to load cryptocurrency data' errors. Add a prominent 'Retry' button centered in the error state UI that triggers a manual refetch of the failed query. Style the button consistently with the existing UI design.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/CryptoTable.tsx",
-          "frontend/src/components/WatchlistPanel.tsx",
-          "frontend/src/pages/Dashboard.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/CryptoTable.tsx",
-          "frontend/src/components/WatchlistPanel.tsx",
-          "frontend/src/pages/Dashboard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-24",
-        "summary": "Add exponential backoff retry logic to the useCryptoPrices hook to handle CoinGecko API rate limiting. Configure React Query's retry option with exponential backoff (retryDelay: attempt => Math.min(1000 * 2 ** attempt, 30000)) and set retry count to 3 attempts before showing the error state.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useCryptoPrices.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useCryptoPrices.ts"
-        ]
-      },
-      {
-        "id": "REQ-25",
-        "summary": "Implement request batching in the coingecko.ts service to fetch cryptocurrency data for multiple coins in a single API call instead of individual requests. Modify fetchCryptoPrices to use CoinGecko's batch endpoint that accepts comma-separated coin IDs (e.g., /coins/markets?vs_currency=usd&ids=bitcoin,ethereum,cardano) to reduce total API call volume.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/services/coingecko.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/services/coingecko.ts"
-        ]
-      },
-      {
-        "id": "REQ-26",
-        "summary": "Add a TimeframeSelector component to the Dashboard page header, positioned prominently between the page title and the CryptoTable. The selector should control the default timeframe for chart previews and data displays across the dashboard. Add a new state variable in Dashboard.tsx to manage the selected timeframe (1H, 4H, Daily) and pass it as a prop to relevant child components that display chart data or technical indicators.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/Dashboard.tsx",
-          "frontend/src/components/MarketSentimentPanel.tsx",
-          "frontend/src/components/TradingSignalsPanel.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/Dashboard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-27",
-        "summary": "Create a new AI trade recommendation system in the CryptoDetail page that analyzes all available technical data (active signals from useTradingSignals, support/resistance levels from useChartData, detected patterns from useChartData, RSI/MACD/MA/BB values from useTechnicalIndicators) and generates actionable trade recommendations. Display recommendations in a new 'AI Trade Analysis' card component positioned prominently on the CryptoDetail page below the chart section.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AITradeAnalysisCard.tsx",
-          "frontend/src/pages/CryptoDetail.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AITradeAnalysisCard.tsx",
-          "frontend/src/pages/CryptoDetail.tsx"
-        ]
-      },
-      {
-        "id": "REQ-28",
-        "summary": "Implement the recommendation generation logic in a new utility file frontend/src/utils/aiTradeRecommendations.ts. Create a generateTradeRecommendation function that accepts technical data (signals, indicators, patterns, support/resistance) and returns a structured recommendation object containing: entry point price with reasoning, three take-profit targets (conservative 5-8%, moderate 10-15%, aggressive 20-30% from entry), stop-loss price (positioned below nearest support or 3-5% below entry), overall confidence score (0-100 based on signal strength and indicator alignment), risk level (low/medium/high based on volatility and signal clarity), and detailed reasoning text explaining the recommendation logic.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/utils/aiTradeRecommendations.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/utils/aiTradeRecommendations.ts"
-        ]
-      },
-      {
-        "id": "REQ-29",
-        "summary": "Display the AI-generated trade recommendation in the 'AI Trade Analysis' card component with a clear visual hierarchy. Show entry point price prominently at the top with an icon and color coding (green for buy entry, red for sell/short entry). Display the three take-profit targets in a horizontal row with badges labeled 'Conservative', 'Moderate', 'Aggressive' showing both price and percentage gain. Show stop-loss price with a warning icon. Display confidence score as a progress bar or percentage badge with color coding (green >70%, yellow 50-70%, red <50%). Show risk level with an appropriate badge. Display the reasoning text in a readable paragraph format at the bottom of the card.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AITradeAnalysisCard.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AITradeAnalysisCard.tsx"
-        ]
-      },
-      {
-        "id": "REQ-30",
-        "summary": "Update the recommendation generation logic to trigger in real-time whenever technical data updates. Configure the AI Trade Analysis component to automatically recalculate recommendations when any of the underlying data sources change (new price data, updated indicators, new patterns detected, changed signals). Display a subtle loading indicator when recalculating recommendations. Add a timestamp to show when the recommendation was last generated.",
+        "id": "REQ-31",
+        "summary": "Update the AITradeAnalysisCard component (frontend/src/components/AITradeAnalysisCard.tsx) to prominently display the entry point price at the top of the card, above the take-profit targets. The entry point should include: the price value with appropriate formatting, color coding (green for buy entry, red for sell/short entry based on recommendation direction), a label 'Entry Point', and the entry reasoning text if available. Ensure the entry point section uses clear visual hierarchy with appropriate spacing, icons, and typography to make it immediately visible to users.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/components/AITradeAnalysisCard.tsx"
@@ -114,13 +29,6 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/components/AITradeAnalysisCard.tsx",
-    "frontend/src/components/CryptoTable.tsx",
-    "frontend/src/components/WatchlistPanel.tsx",
-    "frontend/src/hooks/useCryptoPrices.ts",
-    "frontend/src/pages/CryptoDetail.tsx",
-    "frontend/src/pages/Dashboard.tsx",
-    "frontend/src/services/coingecko.ts",
-    "frontend/src/utils/aiTradeRecommendations.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",
