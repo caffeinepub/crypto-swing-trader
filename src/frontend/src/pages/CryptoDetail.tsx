@@ -1,127 +1,104 @@
-import { useParams, Link } from '@tanstack/react-router';
-import { useCryptoPrices } from '@/hooks/useCryptoPrices';
+import { useParams } from '@tanstack/react-router';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import { Button } from '@/components/ui/button';
+import CandlestickChart from '@/components/CandlestickChart';
+import IndicatorsPanel from '@/components/IndicatorsPanel';
+import TimeframeSelector from '@/components/TimeframeSelector';
+import AITradeAnalysisCard from '@/components/AITradeAnalysisCard';
 import { useChartData } from '@/hooks/useChartData';
 import { useTechnicalIndicators } from '@/hooks/useTechnicalIndicators';
 import { useTradingSignals } from '@/hooks/useTradingSignals';
-import { useState, useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Loader2 } from 'lucide-react';
-import CandlestickChart from '@/components/CandlestickChart';
-import TimeframeSelector from '@/components/TimeframeSelector';
-import IndicatorsPanel from '@/components/IndicatorsPanel';
-import TradingSignalsPanel from '@/components/TradingSignalsPanel';
-import PatternLegend from '@/components/PatternLegend';
-import AITradeAnalysisCard from '@/components/AITradeAnalysisCard';
+import { useCryptoPrices } from '@/hooks/useCryptoPrices';
 import { generateTradeRecommendation } from '@/utils/aiTradeRecommendations';
+import type { TradeRecommendation } from '@/utils/aiTradeRecommendations';
 
 export default function CryptoDetail() {
   const { cryptoId } = useParams({ from: '/crypto/$cryptoId' });
   const [timeframe, setTimeframe] = useState<'1H' | '4H' | 'Daily'>('4H');
+  const [tradeRecommendation, setTradeRecommendation] = useState<TradeRecommendation | null>(null);
+
   const { data: cryptos } = useCryptoPrices();
   const crypto = cryptos?.find((c) => c.id === cryptoId);
-  const { data: chartData, isLoading: chartLoading } = useChartData(cryptoId, timeframe);
-  const { data: indicators } = useTechnicalIndicators(cryptoId, timeframe);
+
+  const { data: chartData, isLoading: chartLoading, error: chartError, refetch: refetchChart, isFetching: chartFetching } = useChartData(cryptoId, timeframe);
+  const { data: indicators, isLoading: indicatorsLoading } = useTechnicalIndicators(cryptoId, timeframe);
   const { data: signals } = useTradingSignals(cryptoId, timeframe);
 
-  // Generate trade recommendation for chart markers
-  const tradeRecommendation = useMemo(() => {
-    if (!crypto || !signals || !indicators || !chartData) return undefined;
+  // Generate trade recommendation when data is available
+  useEffect(() => {
+    if (chartData && indicators && signals && crypto) {
+      const supportLevels = chartData.supportResistance.filter((l) => l.type === 'support').map((l) => l.price);
+      const resistanceLevels = chartData.supportResistance.filter((l) => l.type === 'resistance').map((l) => l.price);
 
-    const supportLevels = chartData.supportResistance.filter((l) => l.type === 'support').map((l) => l.price);
-    const resistanceLevels = chartData.supportResistance.filter((l) => l.type === 'resistance').map((l) => l.price);
-
-    return generateTradeRecommendation(
-      crypto.current_price,
-      signals,
-      indicators,
-      chartData.patterns,
-      supportLevels,
-      resistanceLevels
-    );
-  }, [crypto, signals, indicators, chartData]);
+      const recommendation = generateTradeRecommendation(
+        crypto.current_price,
+        signals,
+        indicators,
+        chartData.patterns,
+        supportLevels,
+        resistanceLevels
+      );
+      setTradeRecommendation(recommendation);
+    }
+  }, [chartData, indicators, signals, crypto]);
 
   if (!crypto) {
     return (
-      <div className="space-y-4">
-        <Link to="/">
-          <Button variant="ghost" className="gap-2 glow-hover">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Market
-          </Button>
-        </Link>
-        <Card className="border-neon-cyan/30 bg-card glow-ambient">
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">Cryptocurrency not found</p>
-          </CardContent>
-        </Card>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-neon-cyan glow-icon" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
         <Link to="/">
-          <Button variant="ghost" className="gap-2 glow-hover">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Market
+          <Button variant="ghost" size="icon" className="glow-hover">
+            <ArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
-      </div>
-
-      <div>
         <div className="flex items-center gap-3">
-          {crypto.image && <img src={crypto.image} alt={crypto.name} className="h-10 w-10" />}
+          <img src={crypto.image} alt={crypto.name} className="h-10 w-10" />
           <div>
             <h1 className="text-3xl font-bold tracking-tight font-heading text-neon-cyan glow-text">{crypto.name}</h1>
             <p className="text-muted-foreground font-mono">{crypto.symbol.toUpperCase()}</p>
           </div>
         </div>
-        <div className="mt-4 flex items-baseline gap-3">
-          <span className="text-4xl font-bold font-mono text-foreground">${crypto.current_price.toLocaleString()}</span>
-          <span
-            className={`text-lg font-semibold font-mono ${
+        <div className="ml-auto flex items-center gap-3">
+          <span className="text-sm text-muted-foreground font-heading">Timeframe:</span>
+          <TimeframeSelector selected={timeframe} onSelect={setTimeframe} />
+        </div>
+      </div>
+
+      {/* Price Info */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="rounded-lg border border-neon-cyan/30 bg-card p-4 glow-ambient">
+          <div className="text-sm text-muted-foreground mb-1">Current Price</div>
+          <div className="text-2xl font-bold font-mono text-neon-cyan glow-text">${crypto.current_price.toLocaleString()}</div>
+        </div>
+        <div className="rounded-lg border border-neon-cyan/30 bg-card p-4 glow-ambient">
+          <div className="text-sm text-muted-foreground mb-1">24h Change</div>
+          <div
+            className={`text-2xl font-bold font-mono ${
               crypto.price_change_percentage_24h >= 0 ? 'text-neon-green glow-text' : 'text-neon-red glow-text'
             }`}
           >
             {crypto.price_change_percentage_24h >= 0 ? '+' : ''}
             {crypto.price_change_percentage_24h.toFixed(2)}%
-          </span>
+          </div>
+        </div>
+        <div className="rounded-lg border border-neon-cyan/30 bg-card p-4 glow-ambient">
+          <div className="text-sm text-muted-foreground mb-1">Market Cap</div>
+          <div className="text-2xl font-bold font-mono text-foreground">${(crypto.market_cap / 1e9).toFixed(2)}B</div>
         </div>
       </div>
 
-      {signals && <TradingSignalsPanel signals={signals} supportResistance={chartData?.supportResistance} />}
-
-      <Card className="border-neon-cyan/30 bg-card glow-ambient">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="font-heading text-neon-cyan">Price Chart</CardTitle>
-          <TimeframeSelector selected={timeframe} onSelect={setTimeframe} />
-        </CardHeader>
-        <CardContent>
-          {chartLoading ? (
-            <div className="flex items-center justify-center h-[400px]">
-              <Loader2 className="h-8 w-8 animate-spin text-neon-cyan glow-icon" />
-            </div>
-          ) : chartData ? (
-            <CandlestickChart
-              data={chartData.ohlc}
-              indicators={indicators}
-              patterns={chartData.patterns}
-              supportResistance={chartData.supportResistance}
-              tradeRecommendation={tradeRecommendation}
-              coinId={cryptoId}
-              timeframe={timeframe}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-[400px] text-muted-foreground">No chart data available</div>
-          )}
-        </CardContent>
-      </Card>
-
-      {chartData?.patterns && chartData.patterns.length > 0 && <PatternLegend patterns={chartData.patterns} />}
-
-      {indicators && signals && chartData && (
+      {/* AI Trade Analysis */}
+      {chartData && indicators && signals && (
         <AITradeAnalysisCard
           currentPrice={crypto.current_price}
           signals={signals}
@@ -131,7 +108,34 @@ export default function CryptoDetail() {
         />
       )}
 
-      {indicators && <IndicatorsPanel indicators={indicators} />}
+      {/* Chart */}
+      {chartLoading ? (
+        <div className="flex items-center justify-center h-[400px] rounded-lg border border-neon-cyan/30 bg-card glow-ambient">
+          <Loader2 className="h-8 w-8 animate-spin text-neon-cyan glow-icon" />
+        </div>
+      ) : (
+        <CandlestickChart
+          data={chartData?.ohlc || []}
+          indicators={indicators}
+          patterns={chartData?.patterns}
+          supportResistance={chartData?.supportResistance}
+          tradeRecommendation={tradeRecommendation || undefined}
+          coinId={cryptoId}
+          timeframe={timeframe}
+          isError={!!chartError}
+          onRetry={refetchChart}
+          isRetrying={chartFetching}
+        />
+      )}
+
+      {/* Technical Indicators */}
+      {indicatorsLoading ? (
+        <div className="flex items-center justify-center h-[200px] rounded-lg border border-neon-cyan/30 bg-card glow-ambient">
+          <Loader2 className="h-8 w-8 animate-spin text-neon-cyan glow-icon" />
+        </div>
+      ) : (
+        indicators && <IndicatorsPanel indicators={indicators} />
+      )}
     </div>
   );
 }

@@ -1,83 +1,110 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T01:27:55.436Z",
+  "generatedAt": "2026-02-24T01:58:06.079Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 6,
-    "implemented": 6,
+    "total": 8,
+    "implemented": 8,
     "items": [
       {
-        "id": "REQ-49",
-        "summary": "Add visual entry point markers directly on the CandlestickChart component. Display green upward arrows or vertical lines for long (buy) entry positions and red downward arrows or vertical lines for short (sell) entry positions. Position the markers at the exact entry price level recommended by the AI trade analysis. Use neon glow effects matching the cyberpunk aesthetic (neon green for long entries with glow shadow, neon red for short entries with glow shadow).",
+        "id": "REQ-55",
+        "summary": "Implement staggered request sequencing in the useCryptoPrices hook to reduce initial load API pressure. When fetching cryptocurrency data on dashboard first load, introduce a small delay (100-200ms) between batches of API requests to prevent hitting CoinGecko rate limits all at once. Split the 30 coin requests into 2-3 batches that execute sequentially.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/hooks/useCryptoPrices.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useCryptoPrices.ts"
+        ]
+      },
+      {
+        "id": "REQ-56",
+        "summary": "Add client-side response caching to the coingecko.ts service using a Map-based cache with timestamps. Cache successful API responses for 30-45 seconds to prevent redundant calls when components remount or queries refetch. Include cache invalidation logic that respects the 45-second auto-refresh interval already configured in useCryptoPrices.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/services/coingecko.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/services/coingecko.ts"
+        ]
+      },
+      {
+        "id": "REQ-57",
+        "summary": "Implement graceful partial data rendering in the CryptoTable component. When some cryptocurrency data fails to load but others succeed, display the successful data immediately instead of showing a complete error state. Add individual row-level error indicators for coins that failed to load with mini retry buttons.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useCryptoPrices.ts",
+          "frontend/src/components/CryptoTable.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useCryptoPrices.ts",
+          "frontend/src/components/CryptoTable.tsx"
+        ]
+      },
+      {
+        "id": "REQ-58",
+        "summary": "Add enhanced retry logic specifically for initial page load in the Dashboard component. Implement a more aggressive retry strategy (4-5 attempts instead of 3) with longer backoff delays specifically when isInitialLoading is true in React Query. Display a loading overlay with progress indicator showing retry attempts during initial load.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useCryptoPrices.ts",
+          "frontend/src/pages/Dashboard.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useCryptoPrices.ts",
+          "frontend/src/pages/Dashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-59",
+        "summary": "Improve chart data error handling in the useChartData hook. When OHLC data fails to fetch, implement automatic retry with exponential backoff (similar to useCryptoPrices) and display a user-friendly error message with a prominent retry button in the CandlestickChart component instead of showing blank/empty chart state.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useChartData.ts",
           "frontend/src/components/CandlestickChart.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/hooks/useChartData.ts",
           "frontend/src/components/CandlestickChart.tsx"
         ]
       },
       {
-        "id": "REQ-50",
-        "summary": "Add three horizontal take-profit level lines on the CandlestickChart component corresponding to the conservative, moderate, and aggressive take-profit targets from the AI trade analysis. Display each level as a horizontal line with a label showing the target type and price. Use gradient neon colors to differentiate the three levels (e.g., dim neon green for conservative, medium intensity neon green for moderate, bright neon green for aggressive). Include subtle glow effects on the lines.",
+        "id": "REQ-60",
+        "summary": "Add a global API health indicator in the Layout component header that monitors CoinGecko API availability. Display a small status badge (green=healthy, yellow=degraded, red=issues) based on recent request success rates. When API issues are detected, show a banner notification explaining that data may be temporarily unavailable with an estimated recovery time.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/CandlestickChart.tsx"
+          "frontend/src/hooks/useApiHealthMonitor.ts",
+          "frontend/src/components/Layout.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/CandlestickChart.tsx"
+          "frontend/src/hooks/useApiHealthMonitor.ts",
+          "frontend/src/components/Layout.tsx"
         ]
       },
       {
-        "id": "REQ-51",
-        "summary": "Add a stop-loss level marker on the CandlestickChart component as a horizontal line positioned at the stop-loss price from the AI trade analysis. Use neon red or neon orange color with a warning icon or label. Include a glow effect to make it clearly visible. Position the line below the entry point for long positions or above the entry point for short positions.",
+        "id": "REQ-61",
+        "summary": "Optimize React Query configuration in main.tsx to add smarter cache management. Increase staleTime to 30 seconds (from default) and cacheTime to 5 minutes to reduce unnecessary refetches. Add refetchOnWindowFocus: false for crypto price queries to prevent excessive API calls when user switches browser tabs.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/CandlestickChart.tsx"
+          "frontend/src/main.tsx",
+          "frontend/src/hooks/useCryptoPrices.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/CandlestickChart.tsx"
+          "frontend/src/hooks/useCryptoPrices.ts"
         ]
       },
       {
-        "id": "REQ-52",
-        "summary": "Implement pattern explanation tooltips on the CandlestickChart component that appear when hovering over detected candlestick patterns. The tooltip should display the pattern name (e.g., 'Bullish Engulfing', 'Doji', 'Hammer'), a brief description of what the pattern means, and the recommended trading action (e.g., 'Typically signals upward price movement - consider entering long position'). Style tooltips with cyberpunk dark background, neon borders, and clear typography. Position tooltips near the pattern location on the chart without obscuring price data.",
+        "id": "REQ-62",
+        "summary": "Add request deduplication to the coingecko.ts service to prevent multiple identical API calls from executing simultaneously. Use a promise cache that stores in-flight requests by their URL and returns the same promise for duplicate concurrent requests.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/CandlestickChart.tsx",
-          "frontend/src/utils/candlestickPatterns.ts"
+          "frontend/src/services/coingecko.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/CandlestickChart.tsx",
-          "frontend/src/utils/candlestickPatterns.ts"
-        ]
-      },
-      {
-        "id": "REQ-53",
-        "summary": "Update the CandlestickChart component to integrate with the AI trade recommendation data from the AITradeAnalysisCard component. Ensure the chart receives the entry point price, take-profit targets (conservative/moderate/aggressive), stop-loss price, and trading direction (long/short) as props or through shared state. Synchronize the visual markers with the AI recommendation data so that markers appear/update whenever recommendations are generated or recalculated.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/CandlestickChart.tsx",
-          "frontend/src/pages/CryptoDetail.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/CandlestickChart.tsx",
-          "frontend/src/pages/CryptoDetail.tsx"
-        ]
-      },
-      {
-        "id": "REQ-54",
-        "summary": "Ensure all chart markers (entry points, take-profit levels, stop-loss) remain visible and readable on mobile devices. Optimize touch interactions for pattern tooltips on mobile (tap to show instead of hover). Scale marker sizes and label fonts appropriately for smaller screens. Test on various mobile screen sizes to ensure markers do not overlap or obscure critical chart data.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/CandlestickChart.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/CandlestickChart.tsx"
+          "frontend/src/services/coingecko.ts"
         ]
       }
     ]
@@ -88,8 +115,14 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/src/components/CandlestickChart.tsx",
+    "frontend/src/components/CryptoTable.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/hooks/useApiHealthMonitor.ts",
+    "frontend/src/hooks/useChartData.ts",
+    "frontend/src/hooks/useCryptoPrices.ts",
     "frontend/src/pages/CryptoDetail.tsx",
-    "frontend/src/utils/candlestickPatterns.ts",
+    "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/services/coingecko.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

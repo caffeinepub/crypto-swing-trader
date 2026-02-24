@@ -5,7 +5,9 @@ import type { TechnicalIndicators } from '@/utils/technicalIndicators';
 import type { CandlestickPattern } from '@/utils/candlestickPatterns';
 import type { SupportResistanceLevel } from '@/utils/supportResistance';
 import type { TradeRecommendation } from '@/utils/aiTradeRecommendations';
-import { ArrowUp, ArrowDown, AlertTriangle } from 'lucide-react';
+import { ArrowUp, ArrowDown, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface CandlestickChartProps {
   data: OHLCData[];
@@ -15,6 +17,9 @@ interface CandlestickChartProps {
   tradeRecommendation?: TradeRecommendation;
   coinId?: string;
   timeframe?: string;
+  isError?: boolean;
+  onRetry?: () => void;
+  isRetrying?: boolean;
 }
 
 export default function CandlestickChart({ 
@@ -24,11 +29,15 @@ export default function CandlestickChart({
   supportResistance,
   tradeRecommendation,
   coinId,
-  timeframe
+  timeframe,
+  isError,
+  onRetry,
+  isRetrying
 }: CandlestickChartProps) {
   const [hoveredPattern, setHoveredPattern] = useState<CandlestickPattern | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null);
 
+  // All hooks must be called before any conditional returns
   const chartData = useMemo(() => {
     return data.map((d, index) => ({
       timestamp: new Date(d.timestamp).toLocaleDateString(),
@@ -51,6 +60,43 @@ export default function CandlestickChart({
       price: tradeRecommendation.entryPoint,
     };
   }, [tradeRecommendation, chartData]);
+
+  // Show error state when chart data fails to load (after all hooks)
+  if (isError) {
+    return (
+      <div className="w-full h-[400px] rounded-lg border border-neon-red/30 bg-background-elevated/50 p-8 flex flex-col items-center justify-center gap-4">
+        <Alert variant="destructive" className="max-w-md border-neon-red/30 glow-red">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            Unable to load chart data. The API may be temporarily unavailable.
+          </AlertDescription>
+        </Alert>
+        {onRetry && (
+          <Button 
+            onClick={onRetry} 
+            disabled={isRetrying}
+            className="gap-2 glow-hover"
+            variant="outline"
+          >
+            {isRetrying ? (
+              <>
+                <RefreshCw className="h-4 w-4 animate-spin" />
+                Retrying...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="h-4 w-4" />
+                Retry Loading Chart
+              </>
+            )}
+          </Button>
+        )}
+        <p className="text-xs text-muted-foreground text-center max-w-md">
+          Chart data is temporarily unavailable. This usually resolves within a few moments.
+        </p>
+      </div>
+    );
+  }
 
   // Custom entry marker shape - must always return an SVG element
   const renderEntryMarker = (props: any) => {
@@ -226,35 +272,63 @@ export default function CandlestickChart({
                   fill: tradeRecommendation.direction === 'buy' ? '#22c55e' : '#ef4444',
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace',
-                  fontWeight: 'bold',
                 }}
               />
             )}
 
-            {/* Take Profit Targets */}
-            {tradeRecommendation && tradeRecommendation.direction !== 'hold' && tradeRecommendation.takeProfitTargets.map((target, i) => {
-              const opacity = i === 0 ? 0.4 : i === 1 ? 0.7 : 1.0;
-              const strokeWidth = i === 0 ? 1 : i === 1 ? 1.5 : 2;
-              
-              return (
-                <ReferenceLine
-                  key={`tp-${i}`}
-                  y={target.price}
-                  stroke="#22c55e"
-                  strokeWidth={strokeWidth}
-                  strokeOpacity={opacity}
-                  strokeDasharray="3 3"
-                  label={{
-                    value: `TP${i + 1}: $${formatPrice(target.price)} (${target.label})`,
-                    position: 'insideTopRight',
-                    fill: '#22c55e',
-                    fontSize: 9,
-                    fontFamily: 'JetBrains Mono, monospace',
-                    opacity: opacity,
-                  }}
-                />
-              );
-            })}
+            {/* Take Profit Levels */}
+            {tradeRecommendation && tradeRecommendation.direction !== 'hold' && tradeRecommendation.takeProfitTargets && (
+              <>
+                {tradeRecommendation.takeProfitTargets[0] && (
+                  <ReferenceLine
+                    y={tradeRecommendation.takeProfitTargets[0].price}
+                    stroke="#22c55e"
+                    strokeWidth={1.5}
+                    strokeDasharray="3 3"
+                    strokeOpacity={0.8}
+                    label={{
+                      value: `TP1: $${formatPrice(tradeRecommendation.takeProfitTargets[0].price)}`,
+                      position: 'insideTopRight',
+                      fill: '#22c55e',
+                      fontSize: 9,
+                      fontFamily: 'JetBrains Mono, monospace',
+                    }}
+                  />
+                )}
+                {tradeRecommendation.takeProfitTargets[1] && (
+                  <ReferenceLine
+                    y={tradeRecommendation.takeProfitTargets[1].price}
+                    stroke="#22c55e"
+                    strokeWidth={1.5}
+                    strokeDasharray="3 3"
+                    strokeOpacity={0.6}
+                    label={{
+                      value: `TP2: $${formatPrice(tradeRecommendation.takeProfitTargets[1].price)}`,
+                      position: 'insideTopRight',
+                      fill: '#22c55e',
+                      fontSize: 9,
+                      fontFamily: 'JetBrains Mono, monospace',
+                    }}
+                  />
+                )}
+                {tradeRecommendation.takeProfitTargets[2] && (
+                  <ReferenceLine
+                    y={tradeRecommendation.takeProfitTargets[2].price}
+                    stroke="#22c55e"
+                    strokeWidth={1.5}
+                    strokeDasharray="3 3"
+                    strokeOpacity={0.4}
+                    label={{
+                      value: `TP3: $${formatPrice(tradeRecommendation.takeProfitTargets[2].price)}`,
+                      position: 'insideTopRight',
+                      fill: '#22c55e',
+                      fontSize: 9,
+                      fontFamily: 'JetBrains Mono, monospace',
+                    }}
+                  />
+                )}
+              </>
+            )}
 
             {/* Stop Loss */}
             {tradeRecommendation && tradeRecommendation.direction !== 'hold' && (
@@ -262,14 +336,13 @@ export default function CandlestickChart({
                 y={tradeRecommendation.stopLoss}
                 stroke="#ef4444"
                 strokeWidth={2}
-                strokeDasharray="3 3"
+                strokeDasharray="5 5"
                 label={{
-                  value: `⚠️ Stop Loss: $${formatPrice(tradeRecommendation.stopLoss)}`,
+                  value: `Stop Loss: $${formatPrice(tradeRecommendation.stopLoss)}`,
                   position: 'insideBottomRight',
                   fill: '#ef4444',
                   fontSize: 11,
                   fontFamily: 'JetBrains Mono, monospace',
-                  fontWeight: 'bold',
                 }}
               />
             )}
@@ -283,65 +356,49 @@ export default function CandlestickChart({
       {/* Pattern Tooltip */}
       {hoveredPattern && tooltipPosition && (
         <div
-          className="fixed z-50 max-w-xs p-4 rounded-lg border-2 border-neon-cyan bg-background/95 backdrop-blur-sm shadow-lg animate-fade-in"
+          className="fixed z-50 max-w-xs p-3 rounded-lg border border-neon-purple/50 bg-card/95 backdrop-blur-sm glow-ambient shadow-lg"
           style={{
-            left: `${tooltipPosition.x + 10}px`,
-            top: `${tooltipPosition.y + 10}px`,
-            pointerEvents: 'none',
+            left: tooltipPosition.x + 10,
+            top: tooltipPosition.y + 10,
           }}
         >
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div 
-                className={`w-3 h-3 rounded-full ${
-                  hoveredPattern.type === 'bullish' 
-                    ? 'bg-neon-green shadow-[0_0_10px_rgba(34,197,94,0.6)]' 
-                    : hoveredPattern.type === 'bearish'
-                    ? 'bg-neon-red shadow-[0_0_10px_rgba(239,68,68,0.6)]'
-                    : 'bg-neon-purple shadow-[0_0_10px_rgba(168,85,247,0.6)]'
-                }`}
-              />
-              <h4 className="font-semibold text-neon-cyan font-heading">{hoveredPattern.name}</h4>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {hoveredPattern.description}
-            </p>
-            {hoveredPattern.tradingAction && (
-              <div className="pt-2 border-t border-neon-cyan/20">
-                <p className="text-xs font-semibold text-foreground">
-                  💡 {hoveredPattern.tradingAction}
-                </p>
-              </div>
-            )}
-          </div>
+          <div className="font-semibold text-neon-purple mb-1">{hoveredPattern.name}</div>
+          <div className="text-xs text-muted-foreground mb-2">{hoveredPattern.description}</div>
+          {hoveredPattern.tradingAction && (
+            <div className="text-xs font-medium text-foreground">{hoveredPattern.tradingAction}</div>
+          )}
         </div>
       )}
 
-      {/* Mobile Legend */}
+      {/* Trading Legend - Mobile Friendly */}
       {tradeRecommendation && tradeRecommendation.direction !== 'hold' && (
-        <div className="mt-4 p-3 rounded-lg border border-neon-cyan/30 bg-background-elevated/50 space-y-2 sm:hidden">
-          <h4 className="text-xs font-semibold text-neon-cyan font-heading">Chart Legend</h4>
-          <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+        <div className="mt-4 p-4 rounded-lg border border-neon-cyan/20 bg-background-elevated/30">
+          <div className="text-xs font-heading text-neon-cyan mb-2">Trading Markers Legend</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
             <div className="flex items-center gap-2">
               {tradeRecommendation.direction === 'buy' ? (
                 <ArrowUp className="h-3 w-3 text-neon-green" />
               ) : (
                 <ArrowDown className="h-3 w-3 text-neon-red" />
               )}
-              <span className="text-muted-foreground">Entry Point</span>
+              <span className="text-muted-foreground">
+                Entry Point ({tradeRecommendation.direction === 'buy' ? 'Long' : 'Short'})
+              </span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-0.5 bg-neon-green"></div>
-              <span className="text-muted-foreground">Take Profit</span>
+              <div className="w-3 h-0.5 bg-neon-green" />
+              <span className="text-muted-foreground">Take Profit Targets (TP1, TP2, TP3)</span>
             </div>
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-3 w-3 text-neon-red" />
-              <span className="text-muted-foreground">Stop Loss</span>
+              <span className="text-muted-foreground">Stop Loss Level</span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-neon-cyan"></div>
-              <span className="text-muted-foreground">Patterns</span>
-            </div>
+            {patterns && patterns.length > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-neon-purple" />
+                <span className="text-muted-foreground">Candlestick Patterns (hover for details)</span>
+              </div>
+            )}
           </div>
         </div>
       )}

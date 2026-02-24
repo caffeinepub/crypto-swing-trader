@@ -27,5 +27,7 @@ export function useChartData(coinId: string, timeframe: '1H' | '4H' | 'Daily') {
     },
     enabled: !!coinId,
     staleTime: 60000,
+    retry: 4,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 8000),
   });
 }

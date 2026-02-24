@@ -1,123 +1,165 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add visual trading markers on candlestick charts with entry points, take-profit levels, stop-loss, and pattern tooltips",
+  "title": "Enhance API reliability with advanced error recovery and caching",
   "requirements": [
     {
-      "id": "REQ-49",
-      "summary": "Add visual entry point markers directly on the CandlestickChart component with neon glow effects for long and short positions",
+      "id": "REQ-55",
+      "summary": "Implement staggered request sequencing in useCryptoPrices hook to reduce initial load API pressure by splitting 30 coin requests into 2-3 sequential batches with 100-200ms delays",
       "acceptanceCriteria": [
-        "Entry point markers appear as arrows or vertical lines on the chart at the recommended entry price",
-        "Long entry markers use neon green color with glow effect",
-        "Short entry markers use neon red color with glow effect",
-        "Markers are clearly visible against the dark chart background",
-        "Markers sync with AI trade recommendation data in real-time"
+        "Initial dashboard load splits API requests into sequential batches",
+        "Each batch has 100-200ms delay before next batch starts",
+        "Rate limit errors on first load are significantly reduced"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/CandlestickChart.tsx",
+          "path": "frontend/src/hooks/useCryptoPrices.ts",
           "operation": "modify",
-          "description": "Add entry point markers (green upward arrows for long, red downward arrows for short) using Recharts ReferenceDot or custom SVG shapes. Accept AI trade recommendation data as props (entryPrice, direction). Position markers at exact entry price level with neon glow effects (shadow-[0_0_10px_rgba(0,255,0,0.6)] for long, shadow-[0_0_10px_rgba(255,0,0,0.6)] for short). Render markers on the chart using ReferenceDot with custom shape prop or add custom SVG layer."
+          "description": "Add staggered batch request logic that splits the 30 cryptocurrency requests into 2-3 sequential batches with 100-200ms delays between batches. Track initial load state to apply staggered sequencing only on first dashboard load. Maintain existing 45-second auto-refresh interval and retry logic."
         }
       ]
     },
     {
-      "id": "REQ-50",
-      "summary": "Add three horizontal take-profit level lines on the CandlestickChart with gradient neon colors and labels",
+      "id": "REQ-56",
+      "summary": "Add client-side response caching to coingecko.ts service using Map-based cache with 30-45 second TTL to prevent redundant API calls during component remounts",
       "acceptanceCriteria": [
-        "Three horizontal lines appear on the chart at the exact take-profit target prices",
-        "Each line is labeled with target type (Conservative/Moderate/Aggressive) and price value",
-        "Lines use gradient neon green colors with varying intensity to differentiate targets",
-        "Lines have subtle glow effects matching cyberpunk styling",
-        "Lines update in real-time when AI recommendations change"
+        "Successful CoinGecko responses are cached for 30-45 seconds",
+        "Cached data is returned immediately without making new API calls",
+        "Cache respects existing 45-second auto-refresh interval",
+        "Cache is properly invalidated when stale"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/CandlestickChart.tsx",
+          "path": "frontend/src/services/coingecko.ts",
           "operation": "modify",
-          "description": "Add three horizontal take-profit level lines using Recharts ReferenceLine components. Accept takeProfitTargets prop containing conservative, moderate, and aggressive target prices. Style each line with different neon green intensities: dim (#22c55e with 40% opacity) for conservative, medium (#22c55e with 70% opacity) for moderate, bright (#22c55e with 100% opacity + glow) for aggressive. Add labels showing target type and price using the label prop of ReferenceLine. Apply glow effects using strokeWidth and custom stroke colors."
+          "description": "Implement Map-based response cache with timestamp tracking for both fetchTopCryptos and fetchOHLC functions. Cache successful responses for 30-45 seconds with automatic invalidation. Return cached data immediately if valid cache entry exists. Ensure cache TTL aligns with the 45-second auto-refresh interval configured in React Query."
         }
       ]
     },
     {
-      "id": "REQ-51",
-      "summary": "Add stop-loss level marker on the CandlestickChart as a horizontal line with warning styling",
+      "id": "REQ-57",
+      "summary": "Implement graceful partial data rendering in CryptoTable component to display successful cryptocurrency data even when some requests fail, with row-level error indicators and retry buttons",
       "acceptanceCriteria": [
-        "Stop-loss level appears as a horizontal line at the recommended stop-loss price",
-        "Line uses neon red or orange color with warning icon/label",
-        "Line has glow effect for high visibility",
-        "Line position makes logical sense relative to entry point (below for long, above for short)",
-        "Line updates when AI recommendation changes"
+        "Successfully loaded cryptocurrencies display immediately even if some requests fail",
+        "Failed coin rows show inline error indicators with retry buttons",
+        "Users can see and interact with partial data while failures are isolated",
+        "Overall UX remains functional with partial data"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/CandlestickChart.tsx",
+          "path": "frontend/src/hooks/useCryptoPrices.ts",
           "operation": "modify",
-          "description": "Add stop-loss horizontal line using Recharts ReferenceLine component. Accept stopLossPrice and direction props. Style with neon red (#ef4444) or orange (#f97316) color and glow effect (strokeWidth: 2, stroke with shadow). Add label with warning icon (⚠️) and price value. Ensure line positioning is logical: below entry for long positions, above entry for short positions."
-        }
-      ]
-    },
-    {
-      "id": "REQ-52",
-      "summary": "Implement pattern explanation tooltips on the CandlestickChart that appear when hovering over detected candlestick patterns",
-      "acceptanceCriteria": [
-        "Tooltips appear on hover over detected candlestick pattern locations on the chart",
-        "Tooltips show pattern name, description, and recommended trading action",
-        "Tooltip styling uses cyberpunk aesthetic (dark background, neon borders, clear text)",
-        "Tooltips are positioned near pattern without obscuring important chart data",
-        "Tooltips display for all detected pattern types (Doji, Hammer, Engulfing, etc.)"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/CandlestickChart.tsx",
-          "operation": "modify",
-          "description": "Add pattern tooltip functionality by rendering invisible overlay markers at detected pattern locations using ReferenceDot or custom SVG. Accept detectedPatterns prop containing pattern data (timestamp, type, description, sentiment). On hover, display custom tooltip with pattern name, description, and recommended action (e.g., 'Bullish Engulfing typically signals upward price movement - consider entering long position'). Style tooltip with dark background (bg-background/95), neon cyan border (border-2 border-neon-cyan), and clear text (text-foreground). Position tooltip near pattern location using Recharts Tooltip component or custom positioned div."
+          "description": "Modify the hook to return both successful and failed cryptocurrency data separately. Track failed requests with error information per coin. Allow partial success states where some coins load successfully while others fail. Provide retry function for individual failed coins."
         },
         {
-          "path": "frontend/src/utils/candlestickPatterns.ts",
+          "path": "frontend/src/components/CryptoTable.tsx",
           "operation": "modify",
-          "description": "Extend pattern detection functions to include recommended trading actions for each pattern type. Add tradingAction field to pattern objects with values like 'Consider entering long position', 'Wait for confirmation', 'Consider short position', etc. based on pattern sentiment (bullish/bearish/neutral)."
+          "description": "Update table to render successfully loaded cryptocurrencies immediately even when some requests fail. Add inline error rows for failed coins with error indicators and individual retry buttons. Remove full error state that blocks display of partial data. Maintain existing trading signals and table sorting functionality for successful rows."
         }
       ]
     },
     {
-      "id": "REQ-53",
-      "summary": "Update the CandlestickChart component to integrate with AI trade recommendation data and synchronize visual markers",
+      "id": "REQ-58",
+      "summary": "Add enhanced retry logic for initial page load in Dashboard component with 4-5 retry attempts, longer backoff delays, and loading overlay showing retry progress",
       "acceptanceCriteria": [
-        "CandlestickChart component receives AI recommendation data (entry, targets, stop-loss, direction)",
-        "Chart markers synchronize with AI recommendation updates in real-time",
-        "Markers appear immediately when AI analysis generates new recommendations",
-        "Markers clear or update when switching between different cryptocurrencies or timeframes",
-        "No visual lag between recommendation generation and marker display"
+        "Initial dashboard load uses 4-5 retry attempts instead of 3",
+        "Retry delays are longer for initial load (2-5 seconds between attempts)",
+        "Loading overlay shows current retry attempt number",
+        "First load reliability is significantly improved"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/CandlestickChart.tsx",
+          "path": "frontend/src/hooks/useCryptoPrices.ts",
           "operation": "modify",
-          "description": "Add new props to CandlestickChart component: tradeRecommendation (containing entryPrice, direction, takeProfitTargets, stopLossPrice) and detectedPatterns. Update component to conditionally render all markers only when tradeRecommendation is provided. Use React key prop with coin+timeframe to force re-render when switching cryptocurrencies or timeframes, ensuring markers clear/update properly."
+          "description": "Implement enhanced retry configuration specifically for initial load detection. Increase retry attempts to 4-5 when isInitialLoading is true. Configure longer exponential backoff delays (2-5 seconds) for initial load. Track current retry attempt number and expose it for UI display. Preserve existing 3-retry configuration for subsequent refreshes."
         },
         {
-          "path": "frontend/src/pages/CryptoDetail.tsx",
+          "path": "frontend/src/pages/Dashboard.tsx",
           "operation": "modify",
-          "description": "Wire AI trade recommendation data from AITradeAnalysisCard to CandlestickChart component. Extract trade recommendation data from the generateAITradeRecommendation result and pass it as props to CandlestickChart. Also pass detected patterns from useChartData hook. Ensure data flows properly so chart markers update whenever recommendations are regenerated or when coin/timeframe changes."
+          "description": "Add loading overlay component that displays when initial data fetch is in progress and retries are occurring. Show current retry attempt number and progress indicator. Use isInitialLoading state from useCryptoPrices to control overlay visibility. Maintain existing 45-second auto-refresh and timeframe selector functionality."
         }
       ]
     },
     {
-      "id": "REQ-54",
-      "summary": "Ensure all chart markers remain visible and readable on mobile devices with optimized touch interactions",
+      "id": "REQ-59",
+      "summary": "Improve chart data error handling in useChartData hook with exponential backoff retry and display user-friendly error message with retry button in CandlestickChart component",
       "acceptanceCriteria": [
-        "All markers are clearly visible on mobile screen sizes (320px width and up)",
-        "Pattern tooltips work with tap interactions on mobile devices",
-        "Marker labels use appropriate font sizes for mobile readability",
-        "Markers do not overlap or obscure candlestick data on small screens",
-        "Touch targets for interactive elements meet minimum 44x44px size requirement"
+        "useChartData hook implements exponential backoff retry logic",
+        "CandlestickChart displays clear error message when data fails",
+        "Retry button is prominently displayed in chart error state",
+        "Automatic retry attempts before showing error to user"
       ],
       "file_operations": [
         {
+          "path": "frontend/src/hooks/useChartData.ts",
+          "operation": "modify",
+          "description": "Add React Query retry configuration with exponential backoff (similar to useCryptoPrices implementation) for OHLC data fetching. Configure 3-4 retry attempts with increasing delays. Track error state and retry count. Provide manual retry function for user-triggered retries."
+        },
+        {
           "path": "frontend/src/components/CandlestickChart.tsx",
           "operation": "modify",
-          "description": "Add responsive styling for mobile devices using Tailwind responsive classes. Scale marker sizes and label fonts for screens <640px (text-xs on mobile, text-sm on desktop). Implement touch event handling for pattern tooltips using onTouchStart/onTouchEnd in addition to onMouseEnter/onMouseLeave. Ensure interactive overlay elements have minimum touch target size of 44x44px using w-11 h-11 or larger. Test marker positioning to prevent overlap with candlestick data by adjusting label offsets on small screens."
+          "description": "Replace blank/empty chart state with user-friendly error message component when OHLC data fails to load. Display prominent retry button that triggers manual refetch. Show clear error explanation and maintain cyberpunk styling. Preserve existing chart rendering, technical indicators, and pattern detection when data loads successfully."
+        }
+      ]
+    },
+    {
+      "id": "REQ-60",
+      "summary": "Add global API health indicator in Layout component header showing CoinGecko availability status with colored badge and banner notification when issues are detected",
+      "acceptanceCriteria": [
+        "Status badge in header shows API health (green/yellow/red)",
+        "Status is calculated from recent request success/failure rates",
+        "Banner notification appears when API issues are widespread",
+        "Users are informed proactively about data availability issues"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useApiHealthMonitor.ts",
+          "operation": "create",
+          "description": "Create custom hook that monitors CoinGecko API health by tracking recent request success/failure rates from useCryptoPrices and useChartData hooks. Calculate health status (healthy/degraded/issues) based on success rate thresholds. Provide status color (green/yellow/red) and estimated recovery time when issues detected. Track rolling window of recent requests."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add API health status badge to header navigation area using useApiHealthMonitor hook. Display small colored indicator (green=healthy, yellow=degraded, red=issues) with tooltip. Add conditional banner notification below header when API issues are widespread, explaining data may be temporarily unavailable with estimated recovery time. Maintain existing navigation, theme toggle, and authentication button layout."
+        }
+      ]
+    },
+    {
+      "id": "REQ-61",
+      "summary": "Optimize React Query configuration in main.tsx to add smarter cache management with increased staleTime, cacheTime, and disabled window focus refetch",
+      "acceptanceCriteria": [
+        "React Query staleTime set to 30 seconds for crypto data",
+        "React Query cacheTime set to 5 minutes",
+        "Window focus refetch disabled for price queries",
+        "Total API call volume reduced by 30-50%"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/main.tsx",
+          "operation": "modify",
+          "description": "Update QueryClient defaultOptions to set staleTime to 30 seconds and cacheTime to 5 minutes for all queries. Add refetchOnWindowFocus: false to prevent excessive API calls when users switch browser tabs. Maintain existing React Query setup, Internet Identity provider, and app rendering logic."
+        },
+        {
+          "path": "frontend/src/hooks/useCryptoPrices.ts",
+          "operation": "modify",
+          "description": "Ensure useQuery configuration respects the global React Query defaults while maintaining the existing 45-second refetchInterval. Verify staleTime and cacheTime settings work correctly with auto-refresh behavior."
+        }
+      ]
+    },
+    {
+      "id": "REQ-62",
+      "summary": "Add request deduplication to coingecko.ts service to prevent multiple identical API calls from executing simultaneously using a promise cache",
+      "acceptanceCriteria": [
+        "Concurrent identical API requests share the same promise",
+        "Only one actual HTTP request is made for duplicate concurrent calls",
+        "Request deduplication works across different components",
+        "No race conditions or stale data issues from deduplication"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/services/coingecko.ts",
+          "operation": "modify",
+          "description": "Implement in-flight request cache using Map to store promises by request URL. When identical concurrent requests occur, return the same promise instead of making multiple HTTP calls. Clear promise from cache when request completes (success or failure). Ensure request deduplication works alongside the response caching from REQ-56. Handle edge cases like request failures and cache cleanup."
         }
       ]
     }

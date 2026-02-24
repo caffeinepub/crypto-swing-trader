@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-visual-entry-point-markers-directly-on-the-candlestickchart-component-display-green-upward-arrows-or-vertical-lines-for-long-buy-entry-positions-and-red-downward-arrows-or-vertical-lines-for-short-sell-entry-positions-position-the-markers-at-the-exact-entry-price-level-recommended-by-the-ai-trade-analysis-use-neon-glow-effects-matching-the-cyberpunk-aesthetic-neon-green-for-long-entries-with-glow-shadow-neon-red-for-short-entries-with-glow-shadow",
-      "featureTitle": "Add visual entry point markers directly on the CandlestickChart component. Display green upward arrows or vertical lines for long (buy) entry positions and red downward arrows or vertical lines for short (sell) entry positions. Position the markers at the exact entry price level recommended by the AI trade analysis. Use neon glow effects matching the cyberpunk aesthetic (neon green for long entries with glow shadow, neon red for short entries with glow shadow).",
+      "featureId": "feature-implement-staggered-request-sequencing-in-the-usecryptoprices-hook-to-reduce-initial-load-api-pressure-when-fetching-cryptocurrency-data-on-dashboard-first-load-introduce-a-small-delay-100-200ms-between-batches-of-api-requests-to-prevent-hitting-coingecko-rate-limits-all-at-once-split-the-30-coin-requests-into-2-3-batches-that-execute-sequentially",
+      "featureTitle": "Implement staggered request sequencing in the useCryptoPrices hook to reduce initial load API pressure. When fetching cryptocurrency data on dashboard first load, introduce a small delay (100-200ms) between batches of API requests to prevent hitting CoinGecko rate limits all at once. Split the 30 coin requests into 2-3 batches that execute sequentially.",
       "files": [
-        "frontend/src/components/CandlestickChart.tsx"
+        "frontend/src/hooks/useCryptoPrices.ts"
       ],
       "components": [
         "http-outcalls@3.0.0",
@@ -16,15 +16,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-49"
+        "REQ-55"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-three-horizontal-take-profit-level-lines-on-the-candlestickchart-component-corresponding-to-the-conservative-moderate-and-aggressive-take-profit-targets-from-the-ai-trade-analysis-display-each-level-as-a-horizontal-line-with-a-label-showing-the-target-type-and-price-use-gradient-neon-colors-to-differentiate-the-three-levels-e-g-dim-neon-green-for-conservative-medium-intensity-neon-green-for-moderate-bright-neon-green-for-aggressive-include-subtle-glow-effects-on-the-lines",
-      "featureTitle": "Add three horizontal take-profit level lines on the CandlestickChart component corresponding to the conservative, moderate, and aggressive take-profit targets from the AI trade analysis. Display each level as a horizontal line with a label showing the target type and price. Use gradient neon colors to differentiate the three levels (e.g., dim neon green for conservative, medium intensity neon green for moderate, bright neon green for aggressive). Include subtle glow effects on the lines.",
+      "featureId": "feature-add-client-side-response-caching-to-the-coingecko-ts-service-using-a-map-based-cache-with-timestamps-cache-successful-api-responses-for-30-45-seconds-to-prevent-redundant-calls-when-components-remount-or-queries-refetch-include-cache-invalidation-logic-that-respects-the-45-second-auto-refresh-interval-already-configured-in-usecryptoprices",
+      "featureTitle": "Add client-side response caching to the coingecko.ts service using a Map-based cache with timestamps. Cache successful API responses for 30-45 seconds to prevent redundant calls when components remount or queries refetch. Include cache invalidation logic that respects the 45-second auto-refresh interval already configured in useCryptoPrices.",
       "files": [
-        "frontend/src/components/CandlestickChart.tsx"
+        "frontend/src/services/coingecko.ts"
       ],
       "components": [
         "http-outcalls@3.0.0",
@@ -35,15 +35,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-50"
+        "REQ-56"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-stop-loss-level-marker-on-the-candlestickchart-component-as-a-horizontal-line-positioned-at-the-stop-loss-price-from-the-ai-trade-analysis-use-neon-red-or-neon-orange-color-with-a-warning-icon-or-label-include-a-glow-effect-to-make-it-clearly-visible-position-the-line-below-the-entry-point-for-long-positions-or-above-the-entry-point-for-short-positions",
-      "featureTitle": "Add a stop-loss level marker on the CandlestickChart component as a horizontal line positioned at the stop-loss price from the AI trade analysis. Use neon red or neon orange color with a warning icon or label. Include a glow effect to make it clearly visible. Position the line below the entry point for long positions or above the entry point for short positions.",
+      "featureId": "feature-implement-graceful-partial-data-rendering-in-the-cryptotable-component-when-some-cryptocurrency-data-fails-to-load-but-others-succeed-display-the-successful-data-immediately-instead-of-showing-a-complete-error-state-add-individual-row-level-error-indicators-for-coins-that-failed-to-load-with-mini-retry-buttons",
+      "featureTitle": "Implement graceful partial data rendering in the CryptoTable component. When some cryptocurrency data fails to load but others succeed, display the successful data immediately instead of showing a complete error state. Add individual row-level error indicators for coins that failed to load with mini retry buttons.",
       "files": [
-        "frontend/src/components/CandlestickChart.tsx"
+        "frontend/src/components/CryptoTable.tsx",
+        "frontend/src/hooks/useCryptoPrices.ts"
       ],
       "components": [
         "http-outcalls@3.0.0",
@@ -54,16 +55,36 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-51"
+        "REQ-57"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-pattern-explanation-tooltips-on-the-candlestickchart-component-that-appear-when-hovering-over-detected-candlestick-patterns-the-tooltip-should-display-the-pattern-name-e-g-bullish-engulfing-doji-hammer-a-brief-description-of-what-the-pattern-means-and-the-recommended-trading-action-e-g-typically-signals-upward-price-movement-consider-entering-long-position-style-tooltips-with-cyberpunk-dark-background-neon-borders-and-clear-typography-position-tooltips-near-the-pattern-location-on-the-chart-without-obscuring-price-data",
-      "featureTitle": "Implement pattern explanation tooltips on the CandlestickChart component that appear when hovering over detected candlestick patterns. The tooltip should display the pattern name (e.g., 'Bullish Engulfing', 'Doji', 'Hammer'), a brief description of what the pattern means, and the recommended trading action (e.g., 'Typically signals upward price movement - consider entering long position'). Style tooltips with cyberpunk dark background, neon borders, and clear typography. Position tooltips near the pattern location on the chart without obscuring price data.",
+      "featureId": "feature-add-enhanced-retry-logic-specifically-for-initial-page-load-in-the-dashboard-component-implement-a-more-aggressive-retry-strategy-4-5-attempts-instead-of-3-with-longer-backoff-delays-specifically-when-isinitialloading-is-true-in-react-query-display-a-loading-overlay-with-progress-indicator-showing-retry-attempts-during-initial-load",
+      "featureTitle": "Add enhanced retry logic specifically for initial page load in the Dashboard component. Implement a more aggressive retry strategy (4-5 attempts instead of 3) with longer backoff delays specifically when isInitialLoading is true in React Query. Display a loading overlay with progress indicator showing retry attempts during initial load.",
+      "files": [
+        "frontend/src/hooks/useCryptoPrices.ts",
+        "frontend/src/pages/Dashboard.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-58"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-improve-chart-data-error-handling-in-the-usechartdata-hook-when-ohlc-data-fails-to-fetch-implement-automatic-retry-with-exponential-backoff-similar-to-usecryptoprices-and-display-a-user-friendly-error-message-with-a-prominent-retry-button-in-the-candlestickchart-component-instead-of-showing-blank-empty-chart-state",
+      "featureTitle": "Improve chart data error handling in the useChartData hook. When OHLC data fails to fetch, implement automatic retry with exponential backoff (similar to useCryptoPrices) and display a user-friendly error message with a prominent retry button in the CandlestickChart component instead of showing blank/empty chart state.",
       "files": [
         "frontend/src/components/CandlestickChart.tsx",
-        "frontend/src/utils/candlestickPatterns.ts"
+        "frontend/src/hooks/useChartData.ts"
       ],
       "components": [
         "http-outcalls@3.0.0",
@@ -74,16 +95,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-52"
+        "REQ-59"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-candlestickchart-component-to-integrate-with-the-ai-trade-recommendation-data-from-the-aitradeanalysiscard-component-ensure-the-chart-receives-the-entry-point-price-take-profit-targets-conservative-moderate-aggressive-stop-loss-price-and-trading-direction-long-short-as-props-or-through-shared-state-synchronize-the-visual-markers-with-the-ai-recommendation-data-so-that-markers-appear-update-whenever-recommendations-are-generated-or-recalculated",
-      "featureTitle": "Update the CandlestickChart component to integrate with the AI trade recommendation data from the AITradeAnalysisCard component. Ensure the chart receives the entry point price, take-profit targets (conservative/moderate/aggressive), stop-loss price, and trading direction (long/short) as props or through shared state. Synchronize the visual markers with the AI recommendation data so that markers appear/update whenever recommendations are generated or recalculated.",
+      "featureId": "feature-add-a-global-api-health-indicator-in-the-layout-component-header-that-monitors-coingecko-api-availability-display-a-small-status-badge-green-healthy-yellow-degraded-red-issues-based-on-recent-request-success-rates-when-api-issues-are-detected-show-a-banner-notification-explaining-that-data-may-be-temporarily-unavailable-with-an-estimated-recovery-time",
+      "featureTitle": "Add a global API health indicator in the Layout component header that monitors CoinGecko API availability. Display a small status badge (green=healthy, yellow=degraded, red=issues) based on recent request success rates. When API issues are detected, show a banner notification explaining that data may be temporarily unavailable with an estimated recovery time.",
       "files": [
-        "frontend/src/components/CandlestickChart.tsx",
-        "frontend/src/pages/CryptoDetail.tsx"
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/hooks/useApiHealthMonitor.ts"
       ],
       "components": [
         "http-outcalls@3.0.0",
@@ -94,15 +115,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-53"
+        "REQ-60"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-all-chart-markers-entry-points-take-profit-levels-stop-loss-remain-visible-and-readable-on-mobile-devices-optimize-touch-interactions-for-pattern-tooltips-on-mobile-tap-to-show-instead-of-hover-scale-marker-sizes-and-label-fonts-appropriately-for-smaller-screens-test-on-various-mobile-screen-sizes-to-ensure-markers-do-not-overlap-or-obscure-critical-chart-data",
-      "featureTitle": "Ensure all chart markers (entry points, take-profit levels, stop-loss) remain visible and readable on mobile devices. Optimize touch interactions for pattern tooltips on mobile (tap to show instead of hover). Scale marker sizes and label fonts appropriately for smaller screens. Test on various mobile screen sizes to ensure markers do not overlap or obscure critical chart data.",
+      "featureId": "feature-optimize-react-query-configuration-in-main-tsx-to-add-smarter-cache-management-increase-staletime-to-30-seconds-from-default-and-cachetime-to-5-minutes-to-reduce-unnecessary-refetches-add-refetchonwindowfocus-false-for-crypto-price-queries-to-prevent-excessive-api-calls-when-user-switches-browser-tabs",
+      "featureTitle": "Optimize React Query configuration in main.tsx to add smarter cache management. Increase staleTime to 30 seconds (from default) and cacheTime to 5 minutes to reduce unnecessary refetches. Add refetchOnWindowFocus: false for crypto price queries to prevent excessive API calls when user switches browser tabs.",
       "files": [
-        "frontend/src/components/CandlestickChart.tsx"
+        "frontend/src/hooks/useCryptoPrices.ts"
       ],
       "components": [
         "http-outcalls@3.0.0",
@@ -113,7 +134,26 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-54"
+        "REQ-61"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-request-deduplication-to-the-coingecko-ts-service-to-prevent-multiple-identical-api-calls-from-executing-simultaneously-use-a-promise-cache-that-stores-in-flight-requests-by-their-url-and-returns-the-same-promise-for-duplicate-concurrent-requests",
+      "featureTitle": "Add request deduplication to the coingecko.ts service to prevent multiple identical API calls from executing simultaneously. Use a promise cache that stores in-flight requests by their URL and returns the same promise for duplicate concurrent requests.",
+      "files": [
+        "frontend/src/services/coingecko.ts"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-62"
       ],
       "confidence": "high"
     }

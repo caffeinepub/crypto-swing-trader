@@ -1,25 +1,56 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T01:27:55.431Z",
-  "summary": "The diff implements most visual trading marker requirements on the CandlestickChart component including entry points, take-profit levels, stop-loss markers, and pattern tooltips with cyberpunk styling. Trade recommendations are generated and passed to the chart. However, evidence for mobile optimization (REQ-54) is not present in the truncated diff.",
+  "generatedAt": "2026-02-24T01:58:06.073Z",
+  "summary": "The diff implements most core requirements for API reliability enhancements, including response caching, request deduplication, staggered batching, exponential backoff retry, API health monitoring, and React Query configuration. However, several specific implementation details and UI components are missing or incomplete.",
   "missing_requirements": [
     {
-      "id": "REQ-54",
-      "requirement": "Ensure all chart markers remain visible and readable on mobile devices with optimized touch interactions for pattern tooltips (tap instead of hover), appropriately scaled marker sizes and label fonts, and testing on various mobile screen sizes to prevent overlap",
-      "reason": "No evidence of mobile-specific CSS media queries, touch event handlers (onTouchStart/onTouchEnd), responsive marker sizing, or mobile font scaling in the truncated CandlestickChart.tsx code",
+      "id": "REQ-57",
+      "requirement": "Implement graceful partial data rendering in the CryptoTable component with individual row-level error indicators and mini retry buttons",
+      "reason": "CryptoTable shows error states at the row level with retry buttons, but there is no evidence that partial data rendering works when some coins succeed and others fail. The diff shows error handling for individual rows but does not demonstrate that successfully loaded cryptocurrencies display immediately when some requests fail during batch loading.",
       "evidence": [
-        "frontend/src/components/CandlestickChart.tsx"
+        "frontend/src/components/CryptoTable.tsx"
+      ]
+    },
+    {
+      "id": "REQ-58",
+      "requirement": "Display a loading overlay with progress indicator showing retry attempts during initial load",
+      "reason": "Dashboard shows retry attempt number in the loading overlay (retryAttempt state is displayed), but the implementation does not show a progress indicator as specified. The UI shows text but lacks a visual progress bar or similar progress indicator component.",
+      "evidence": [
+        "frontend/src/pages/Dashboard.tsx"
+      ]
+    },
+    {
+      "id": "REQ-60",
+      "requirement": "Display banner notification with estimated recovery time when API issues are detected",
+      "reason": "The banner notification appears when status is issues, but it shows a generic message without any estimated recovery time as required by the acceptance criteria.",
+      "evidence": [
+        "frontend/src/components/Layout.tsx"
+      ]
+    },
+    {
+      "id": "REQ-61",
+      "requirement": "Add refetchOnWindowFocus: false for crypto price queries to prevent excessive API calls when user switches browser tabs",
+      "reason": "The diff shows React Query configuration changes in useCryptoPrices.ts and useChartData.ts, but there is no evidence in main.tsx or query client configuration showing refetchOnWindowFocus being disabled globally or per-query for crypto price queries.",
+      "evidence": [
+        "frontend/src/hooks/useCryptoPrices.ts",
+        "frontend/src/hooks/useChartData.ts"
       ]
     }
   ],
   "hallucinated_features": [],
-  "confidence": 0.75,
+  "confidence": 0.85,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/src/components/CandlestickChart.tsx",
+    "frontend/src/components/CryptoTable.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/hooks/useApiHealthMonitor.ts",
+    "frontend/src/hooks/useChartData.ts",
+    "frontend/src/hooks/useCryptoPrices.ts",
     "frontend/src/pages/CryptoDetail.tsx",
-    "frontend/src/utils/candlestickPatterns.ts",
+    "frontend/src/pages/Dashboard.tsx",
+    "frontend/src/services/coingecko.ts",
     "project_state.json"
   ]
 }

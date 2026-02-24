@@ -1,138 +1,177 @@
 {
   "kind": "build_request",
-  "title": "Add visual trading markers on candlestick charts with entry points, take-profit levels, stop-loss, and pattern tooltips",
-  "priority": "normal",
+  "title": "Enhance API reliability with advanced error recovery and caching",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-49",
-      "text": "Add visual entry point markers directly on the CandlestickChart component. Display green upward arrows or vertical lines for long (buy) entry positions and red downward arrows or vertical lines for short (sell) entry positions. Position the markers at the exact entry price level recommended by the AI trade analysis. Use neon glow effects matching the cyberpunk aesthetic (neon green for long entries with glow shadow, neon red for short entries with glow shadow).",
+      "id": "REQ-55",
+      "text": "Implement staggered request sequencing in the useCryptoPrices hook to reduce initial load API pressure. When fetching cryptocurrency data on dashboard first load, introduce a small delay (100-200ms) between batches of API requests to prevent hitting CoinGecko rate limits all at once. Split the 30 coin requests into 2-3 batches that execute sequentially.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-user-build"
         ],
         "quotes": [
-          "Add visual markers directly on the candlestick charts showing where to enter long (buy) positions with green arrows/lines and short (sell) positions with red arrows/lines"
+          "first load",
+          "Optimized API call sequencing - Stagger requests on initial load to reduce rate limit pressure"
         ]
       },
       "acceptanceCriteria": [
-        "Entry point markers appear as arrows or vertical lines on the chart at the recommended entry price",
-        "Long entry markers use neon green color with glow effect",
-        "Short entry markers use neon red color with glow effect",
-        "Markers are clearly visible against the dark chart background",
-        "Markers sync with AI trade recommendation data in real-time"
+        "Initial dashboard load splits API requests into sequential batches",
+        "Each batch has 100-200ms delay before next batch starts",
+        "Rate limit errors on first load are significantly reduced"
       ]
     },
     {
-      "id": "REQ-50",
-      "text": "Add three horizontal take-profit level lines on the CandlestickChart component corresponding to the conservative, moderate, and aggressive take-profit targets from the AI trade analysis. Display each level as a horizontal line with a label showing the target type and price. Use gradient neon colors to differentiate the three levels (e.g., dim neon green for conservative, medium intensity neon green for moderate, bright neon green for aggressive). Include subtle glow effects on the lines.",
+      "id": "REQ-56",
+      "text": "Add client-side response caching to the coingecko.ts service using a Map-based cache with timestamps. Cache successful API responses for 30-45 seconds to prevent redundant calls when components remount or queries refetch. Include cache invalidation logic that respects the 45-second auto-refresh interval already configured in useCryptoPrices.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-user-build"
         ],
         "quotes": [
-          "Take-profit target levels (the 3 targets from AI analysis: conservative, moderate, aggressive)"
+          "Better caching strategy - Store successful responses temporarily to reduce redundant API calls"
         ]
       },
       "acceptanceCriteria": [
-        "Three horizontal lines appear on the chart at the exact take-profit target prices",
-        "Each line is labeled with target type (Conservative/Moderate/Aggressive) and price value",
-        "Lines use gradient neon green colors with varying intensity to differentiate targets",
-        "Lines have subtle glow effects matching cyberpunk styling",
-        "Lines update in real-time when AI recommendations change"
+        "Successful CoinGecko responses are cached for 30-45 seconds",
+        "Cached data is returned immediately without making new API calls",
+        "Cache respects existing 45-second auto-refresh interval",
+        "Cache is properly invalidated when stale"
       ]
     },
     {
-      "id": "REQ-51",
-      "text": "Add a stop-loss level marker on the CandlestickChart component as a horizontal line positioned at the stop-loss price from the AI trade analysis. Use neon red or neon orange color with a warning icon or label. Include a glow effect to make it clearly visible. Position the line below the entry point for long positions or above the entry point for short positions.",
+      "id": "REQ-57",
+      "text": "Implement graceful partial data rendering in the CryptoTable component. When some cryptocurrency data fails to load but others succeed, display the successful data immediately instead of showing a complete error state. Add individual row-level error indicators for coins that failed to load with mini retry buttons.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-user-build"
         ],
         "quotes": [
-          "Stop-loss level markers clearly visible"
+          "Smarter fallback handling - Implement graceful degradation so partial data displays even if some API calls fail"
         ]
       },
       "acceptanceCriteria": [
-        "Stop-loss level appears as a horizontal line at the recommended stop-loss price",
-        "Line uses neon red or orange color with warning icon/label",
-        "Line has glow effect for high visibility",
-        "Line position makes logical sense relative to entry point (below for long, above for short)",
-        "Line updates when AI recommendation changes"
+        "Successfully loaded cryptocurrencies display immediately even if some requests fail",
+        "Failed coin rows show inline error indicators with retry buttons",
+        "Users can see and interact with partial data while failures are isolated",
+        "Overall UX remains functional with partial data"
       ]
     },
     {
-      "id": "REQ-52",
-      "text": "Implement pattern explanation tooltips on the CandlestickChart component that appear when hovering over detected candlestick patterns. The tooltip should display the pattern name (e.g., 'Bullish Engulfing', 'Doji', 'Hammer'), a brief description of what the pattern means, and the recommended trading action (e.g., 'Typically signals upward price movement - consider entering long position'). Style tooltips with cyberpunk dark background, neon borders, and clear typography. Position tooltips near the pattern location on the chart without obscuring price data.",
+      "id": "REQ-58",
+      "text": "Add enhanced retry logic specifically for initial page load in the Dashboard component. Implement a more aggressive retry strategy (4-5 attempts instead of 3) with longer backoff delays specifically when isInitialLoading is true in React Query. Display a loading overlay with progress indicator showing retry attempts during initial load.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-user-build"
         ],
         "quotes": [
-          "Pattern explanation tooltips that appear when you hover over detected patterns, explaining what each pattern means and what action to take"
+          "first load",
+          "Enhanced error recovery on initial load - Add more robust retry logic specifically for the first data fetch when the dashboard loads"
         ]
       },
       "acceptanceCriteria": [
-        "Tooltips appear on hover over detected candlestick pattern locations on the chart",
-        "Tooltips show pattern name, description, and recommended trading action",
-        "Tooltip styling uses cyberpunk aesthetic (dark background, neon borders, clear text)",
-        "Tooltips are positioned near pattern without obscuring important chart data",
-        "Tooltips display for all detected pattern types (Doji, Hammer, Engulfing, etc.)"
+        "Initial dashboard load uses 4-5 retry attempts instead of 3",
+        "Retry delays are longer for initial load (2-5 seconds between attempts)",
+        "Loading overlay shows current retry attempt number",
+        "First load reliability is significantly improved"
       ]
     },
     {
-      "id": "REQ-53",
-      "text": "Update the CandlestickChart component to integrate with the AI trade recommendation data from the AITradeAnalysisCard component. Ensure the chart receives the entry point price, take-profit targets (conservative/moderate/aggressive), stop-loss price, and trading direction (long/short) as props or through shared state. Synchronize the visual markers with the AI recommendation data so that markers appear/update whenever recommendations are generated or recalculated.",
+      "id": "REQ-59",
+      "text": "Improve chart data error handling in the useChartData hook. When OHLC data fails to fetch, implement automatic retry with exponential backoff (similar to useCryptoPrices) and display a user-friendly error message with a prominent retry button in the CandlestickChart component instead of showing blank/empty chart state.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-user-build"
         ],
         "quotes": [
-          "visual markers directly on the candlestick charts",
-          "The markers will use the cyberpunk neon styling to fit perfectly with your futuristic design"
+          "No chart data available",
+          "Improved chart error states - Better handling when chart data is missing, with clearer messaging and automatic retry attempts"
         ]
       },
       "acceptanceCriteria": [
-        "CandlestickChart component receives AI recommendation data (entry, targets, stop-loss, direction)",
-        "Chart markers synchronize with AI recommendation updates in real-time",
-        "Markers appear immediately when AI analysis generates new recommendations",
-        "Markers clear or update when switching between different cryptocurrencies or timeframes",
-        "No visual lag between recommendation generation and marker display"
+        "useChartData hook implements exponential backoff retry logic",
+        "CandlestickChart displays clear error message when data fails",
+        "Retry button is prominently displayed in chart error state",
+        "Automatic retry attempts before showing error to user"
       ]
     },
     {
-      "id": "REQ-54",
-      "text": "Ensure all chart markers (entry points, take-profit levels, stop-loss) remain visible and readable on mobile devices. Optimize touch interactions for pattern tooltips on mobile (tap to show instead of hover). Scale marker sizes and label fonts appropriately for smaller screens. Test on various mobile screen sizes to ensure markers do not overlap or obscure critical chart data.",
+      "id": "REQ-60",
+      "text": "Add a global API health indicator in the Layout component header that monitors CoinGecko API availability. Display a small status badge (green=healthy, yellow=degraded, red=issues) based on recent request success rates. When API issues are detected, show a banner notification explaining that data may be temporarily unavailable with an estimated recovery time.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-user-build"
+        ],
+        "quotes": [
+          "Improved error messaging with clearer user feedback"
         ]
       },
       "acceptanceCriteria": [
-        "All markers are clearly visible on mobile screen sizes (320px width and up)",
-        "Pattern tooltips work with tap interactions on mobile devices",
-        "Marker labels use appropriate font sizes for mobile readability",
-        "Markers do not overlap or obscure candlestick data on small screens",
-        "Touch targets for interactive elements meet minimum 44x44px size requirement"
+        "Status badge in header shows API health (green/yellow/red)",
+        "Status is calculated from recent request success/failure rates",
+        "Banner notification appears when API issues are widespread",
+        "Users are informed proactively about data availability issues"
+      ]
+    },
+    {
+      "id": "REQ-61",
+      "text": "Optimize React Query configuration in main.tsx to add smarter cache management. Increase staleTime to 30 seconds (from default) and cacheTime to 5 minutes to reduce unnecessary refetches. Add refetchOnWindowFocus: false for crypto price queries to prevent excessive API calls when user switches browser tabs.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-build"
+        ],
+        "quotes": [
+          "Better caching strategy to reduce redundant API calls"
+        ]
+      },
+      "acceptanceCriteria": [
+        "React Query staleTime set to 30 seconds for crypto data",
+        "React Query cacheTime set to 5 minutes",
+        "Window focus refetch disabled for price queries",
+        "Total API call volume reduced by 30-50%"
+      ]
+    },
+    {
+      "id": "REQ-62",
+      "text": "Add request deduplication to the coingecko.ts service to prevent multiple identical API calls from executing simultaneously. Use a promise cache that stores in-flight requests by their URL and returns the same promise for duplicate concurrent requests.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-build"
+        ],
+        "quotes": [
+          "reduce redundant API calls",
+          "Optimized API call sequencing"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Concurrent identical API requests share the same promise",
+        "Only one actual HTTP request is made for duplicate concurrent calls",
+        "Request deduplication works across different components",
+        "No race conditions or stale data issues from deduplication"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the existing support/resistance level display logic on charts",
-    "Maintain the cyberpunk aesthetic with neon glow effects for all new chart markers",
-    "Ensure chart performance remains smooth (60fps) with all markers and tooltips displayed",
-    "Use the existing AI trade recommendation data structure from aiTradeRecommendations.ts"
+    "Maintain existing 45-second auto-refresh interval for real-time price updates",
+    "Preserve current exponential backoff retry logic (do not remove, only enhance)",
+    "Do not modify useInternetIdentity hook or authentication flow",
+    "Keep cyberpunk UI styling consistent with existing design",
+    "Ensure all improvements work on mobile devices without performance degradation"
   ],
   "nonGoals": [
-    "Adding new technical indicators beyond what already exists",
-    "Modifying the AI recommendation generation logic itself",
-    "Changing the existing candlestick pattern detection algorithms",
-    "Adding manual trade entry/annotation features on charts"
+    "Switching to a different cryptocurrency data API provider",
+    "Implementing WebSocket connections for real-time data streaming",
+    "Adding server-side caching in the Motoko backend",
+    "Creating a fallback data source when CoinGecko is unavailable",
+    "Implementing offline mode or service worker caching"
   ],
   "imageRequirements": {
     "required": [],

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 13,
+  "projectStateVersion": 15,
   "summary": "Professional crypto swing trading dashboard with cyberpunk/futuristic visual design featuring neon accents on dark backgrounds, real-time price tracking for 20-30 top cryptocurrencies, technical indicators (RSI, MACD, Moving Averages, Bollinger Bands), swing trading signals, multi-timeframe chart analysis, candlestick pattern recognition, support/resistance detection, market sentiment dashboard, dark mode with neon cyberpunk styling, mobile-responsive design, Internet Identity authentication, CoinGecko API integration, Motoko backend, React + TypeScript frontend. Portfolio tracker and trading journal features removed.",
   "architectural_notes": [
     "React + TypeScript frontend with Tailwind CSS for styling",
@@ -15,9 +15,11 @@
     "Cyberpunk UI theme with neon accents (electric blue, vibrant purple, neon green) on deep black backgrounds"
   ],
   "known_issues": [
-    "CoinGecko API rate limiting causing dashboard data load failures"
+    "CoinGecko API rate limiting causing dashboard data load failures",
+    "Intermittent 'Failed to load cryptocurrency data' errors on initial page load",
+    "Charts occasionally display 'No chart data available' instead of rendering properly"
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-real-time-price-tracking-for-20-30-top-cryptocurrencies-using-coingecko-api-with-30-60-second-refresh-intervals-display-current-price-24h-change-percentage-24h-volume-and-market-cap-for-each-cryptocurrency",
@@ -416,6 +418,70 @@
       "title": "Ensure all chart markers (entry points, take-profit levels, stop-loss) remain visible and readable on mobile devices. Optimize touch interactions for pattern tooltips on mobile (tap to show instead of hover). Scale marker sizes and label fonts appropriately for smaller screens. Test on various mobile screen sizes to ensure markers do not overlap or obscure critical chart data.",
       "reqIds": [
         "REQ-54"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-staggered-request-sequencing-in-the-usecryptoprices-hook-to-reduce-initial-load-api-pressure-when-fetching-cryptocurrency-data-on-dashboard-first-load-introduce-a-small-delay-100-200ms-between-batches-of-api-requests-to-prevent-hitting-coingecko-rate-limits-all-at-once-split-the-30-coin-requests-into-2-3-batches-that-execute-sequentially",
+      "title": "Implement staggered request sequencing in the useCryptoPrices hook to reduce initial load API pressure. When fetching cryptocurrency data on dashboard first load, introduce a small delay (100-200ms) between batches of API requests to prevent hitting CoinGecko rate limits all at once. Split the 30 coin requests into 2-3 batches that execute sequentially.",
+      "reqIds": [
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-client-side-response-caching-to-the-coingecko-ts-service-using-a-map-based-cache-with-timestamps-cache-successful-api-responses-for-30-45-seconds-to-prevent-redundant-calls-when-components-remount-or-queries-refetch-include-cache-invalidation-logic-that-respects-the-45-second-auto-refresh-interval-already-configured-in-usecryptoprices",
+      "title": "Add client-side response caching to the coingecko.ts service using a Map-based cache with timestamps. Cache successful API responses for 30-45 seconds to prevent redundant calls when components remount or queries refetch. Include cache invalidation logic that respects the 45-second auto-refresh interval already configured in useCryptoPrices.",
+      "reqIds": [
+        "REQ-56"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-graceful-partial-data-rendering-in-the-cryptotable-component-when-some-cryptocurrency-data-fails-to-load-but-others-succeed-display-the-successful-data-immediately-instead-of-showing-a-complete-error-state-add-individual-row-level-error-indicators-for-coins-that-failed-to-load-with-mini-retry-buttons",
+      "title": "Implement graceful partial data rendering in the CryptoTable component. When some cryptocurrency data fails to load but others succeed, display the successful data immediately instead of showing a complete error state. Add individual row-level error indicators for coins that failed to load with mini retry buttons.",
+      "reqIds": [
+        "REQ-57"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-enhanced-retry-logic-specifically-for-initial-page-load-in-the-dashboard-component-implement-a-more-aggressive-retry-strategy-4-5-attempts-instead-of-3-with-longer-backoff-delays-specifically-when-isinitialloading-is-true-in-react-query-display-a-loading-overlay-with-progress-indicator-showing-retry-attempts-during-initial-load",
+      "title": "Add enhanced retry logic specifically for initial page load in the Dashboard component. Implement a more aggressive retry strategy (4-5 attempts instead of 3) with longer backoff delays specifically when isInitialLoading is true in React Query. Display a loading overlay with progress indicator showing retry attempts during initial load.",
+      "reqIds": [
+        "REQ-58"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-improve-chart-data-error-handling-in-the-usechartdata-hook-when-ohlc-data-fails-to-fetch-implement-automatic-retry-with-exponential-backoff-similar-to-usecryptoprices-and-display-a-user-friendly-error-message-with-a-prominent-retry-button-in-the-candlestickchart-component-instead-of-showing-blank-empty-chart-state",
+      "title": "Improve chart data error handling in the useChartData hook. When OHLC data fails to fetch, implement automatic retry with exponential backoff (similar to useCryptoPrices) and display a user-friendly error message with a prominent retry button in the CandlestickChart component instead of showing blank/empty chart state.",
+      "reqIds": [
+        "REQ-59"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-global-api-health-indicator-in-the-layout-component-header-that-monitors-coingecko-api-availability-display-a-small-status-badge-green-healthy-yellow-degraded-red-issues-based-on-recent-request-success-rates-when-api-issues-are-detected-show-a-banner-notification-explaining-that-data-may-be-temporarily-unavailable-with-an-estimated-recovery-time",
+      "title": "Add a global API health indicator in the Layout component header that monitors CoinGecko API availability. Display a small status badge (green=healthy, yellow=degraded, red=issues) based on recent request success rates. When API issues are detected, show a banner notification explaining that data may be temporarily unavailable with an estimated recovery time.",
+      "reqIds": [
+        "REQ-60"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-optimize-react-query-configuration-in-main-tsx-to-add-smarter-cache-management-increase-staletime-to-30-seconds-from-default-and-cachetime-to-5-minutes-to-reduce-unnecessary-refetches-add-refetchonwindowfocus-false-for-crypto-price-queries-to-prevent-excessive-api-calls-when-user-switches-browser-tabs",
+      "title": "Optimize React Query configuration in main.tsx to add smarter cache management. Increase staleTime to 30 seconds (from default) and cacheTime to 5 minutes to reduce unnecessary refetches. Add refetchOnWindowFocus: false for crypto price queries to prevent excessive API calls when user switches browser tabs.",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-request-deduplication-to-the-coingecko-ts-service-to-prevent-multiple-identical-api-calls-from-executing-simultaneously-use-a-promise-cache-that-stores-in-flight-requests-by-their-url-and-returns-the-same-promise-for-duplicate-concurrent-requests",
+      "title": "Add request deduplication to the coingecko.ts service to prevent multiple identical API calls from executing simultaneously. Use a promise cache that stores in-flight requests by their URL and returns the same promise for duplicate concurrent requests.",
+      "reqIds": [
+        "REQ-62"
       ],
       "version": 1
     }

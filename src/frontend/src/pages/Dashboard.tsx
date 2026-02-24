@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
   const [timeframe, setTimeframe] = useState<'1H' | '4H' | 'Daily'>('4H');
-  const { data: cryptos, isLoading, error, refetch, isFetching } = useCryptoPrices();
+  const { data: cryptos, isLoading, error, refetch, isFetching, isInitialLoading, retryAttempt } = useCryptoPrices();
   useAlertNotifications();
 
   useEffect(() => {
@@ -21,10 +21,24 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [refetch]);
 
-  if (isLoading) {
+  // Loading overlay for initial load with retry progress
+  if (isInitialLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-neon-cyan glow-icon" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm">
+        <div className="flex flex-col items-center gap-4 p-8 rounded-lg border border-neon-cyan/30 bg-card glow-ambient">
+          <Loader2 className="h-12 w-12 animate-spin text-neon-cyan glow-icon" />
+          <div className="text-center">
+            <p className="text-lg font-heading text-neon-cyan">Loading Market Data</p>
+            {retryAttempt > 0 && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Retry attempt {retryAttempt} of 5...
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground mt-1">
+              Fetching real-time cryptocurrency prices
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
