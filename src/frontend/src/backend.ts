@@ -98,25 +98,9 @@ export interface TransformationOutput {
     body: Uint8Array;
     headers: Array<http_header>;
 }
-export interface Position {
-    quantity: number;
-    symbol: string;
-}
 export interface TransformationInput {
     context: Uint8Array;
     response: http_request_result;
-}
-export interface Trade {
-    id: bigint;
-    direction: Direction;
-    date: string;
-    crypto: string;
-    notes: string;
-    rationale: string;
-    quantity: number;
-    entryPrice: number;
-    exitPrice?: number;
-    outcome: string;
 }
 export interface Preferences {
     theme: string;
@@ -160,19 +144,12 @@ export interface http_request_result {
     body: Uint8Array;
     headers: Array<http_header>;
 }
-export enum Direction {
-    long_ = "long",
-    short_ = "short"
-}
 export enum SignalType {
     buy = "buy",
     hold = "hold",
     sell = "sell"
 }
 export interface backendInterface {
-    addPosition(symbol: string, quantity: number): Promise<void>;
-    addToWatchlist(coin: string): Promise<void>;
-    addTrade(trade: Trade): Promise<void>;
     clearAlerts(): Promise<void>;
     fetchTopCryptoNews(): Promise<string>;
     fetchTopCryptos(): Promise<string>;
@@ -180,64 +157,16 @@ export interface backendInterface {
     getAlertStats(): Promise<[bigint, bigint, bigint]>;
     getAlertsLast24Hours(): Promise<Array<Alert>>;
     getCryptoAlertHistory(crypto: string): Promise<Array<Alert>>;
-    getJournal(): Promise<Array<Trade>>;
-    getPortfolio(): Promise<Array<Position>>;
     getTheme(): Promise<string>;
-    getWatchlist(): Promise<Array<string>>;
     initializeUser(preferences: Preferences): Promise<void>;
     purgeOldAlerts(): Promise<void>;
-    removeFromJournal(tradeId: bigint): Promise<void>;
-    removeFromWatchlist(coin: string): Promise<void>;
-    removePosition(symbol: string): Promise<void>;
     saveAlert(crypto: string, signalType: SignalType, triggerReason: TriggerReason | null, confidence: bigint, priceAtTrigger: number): Promise<void>;
     transform(input: TransformationInput): Promise<TransformationOutput>;
     updateTheme(theme: string): Promise<void>;
 }
-import type { Alert as _Alert, Direction as _Direction, SignalType as _SignalType, Trade as _Trade, TriggerReason as _TriggerReason } from "./declarations/backend.did.d.ts";
+import type { Alert as _Alert, SignalType as _SignalType, TriggerReason as _TriggerReason } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
-    async addPosition(arg0: string, arg1: number): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.addPosition(arg0, arg1);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.addPosition(arg0, arg1);
-            return result;
-        }
-    }
-    async addToWatchlist(arg0: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.addToWatchlist(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.addToWatchlist(arg0);
-            return result;
-        }
-    }
-    async addTrade(arg0: Trade): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.addTrade(to_candid_Trade_n1(this._uploadFile, this._downloadFile, arg0));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.addTrade(to_candid_Trade_n1(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
     async clearAlerts(): Promise<void> {
         if (this.processError) {
             try {
@@ -283,15 +212,15 @@ export class Backend implements backendInterface {
     async getAlertHistory(arg0: string | null, arg1: SignalType | null): Promise<Array<Alert>> {
         if (this.processError) {
             try {
-                const result = await this.actor.getAlertHistory(to_candid_opt_n5(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n6(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.getAlertHistory(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n2(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_vec_n5(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getAlertHistory(to_candid_opt_n5(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n6(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.getAlertHistory(to_candid_opt_n1(this._uploadFile, this._downloadFile, arg0), to_candid_opt_n2(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_vec_n5(this._uploadFile, this._downloadFile, result);
         }
     }
     async getAlertStats(): Promise<[bigint, bigint, bigint]> {
@@ -320,56 +249,28 @@ export class Backend implements backendInterface {
         if (this.processError) {
             try {
                 const result = await this.actor.getAlertsLast24Hours();
-                return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n5(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAlertsLast24Hours();
-            return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n5(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCryptoAlertHistory(arg0: string): Promise<Array<Alert>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCryptoAlertHistory(arg0);
-                return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n5(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCryptoAlertHistory(arg0);
-            return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getJournal(): Promise<Array<Trade>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getJournal();
-                return from_candid_vec_n18(this._uploadFile, this._downloadFile, result);
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getJournal();
-            return from_candid_vec_n18(this._uploadFile, this._downloadFile, result);
-        }
-    }
-    async getPortfolio(): Promise<Array<Position>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getPortfolio();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getPortfolio();
-            return result;
+            return from_candid_vec_n5(this._uploadFile, this._downloadFile, result);
         }
     }
     async getTheme(): Promise<string> {
@@ -383,20 +284,6 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.getTheme();
-            return result;
-        }
-    }
-    async getWatchlist(): Promise<Array<string>> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.getWatchlist();
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.getWatchlist();
             return result;
         }
     }
@@ -428,59 +315,17 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async removeFromJournal(arg0: bigint): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.removeFromJournal(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.removeFromJournal(arg0);
-            return result;
-        }
-    }
-    async removeFromWatchlist(arg0: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.removeFromWatchlist(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.removeFromWatchlist(arg0);
-            return result;
-        }
-    }
-    async removePosition(arg0: string): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.removePosition(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.removePosition(arg0);
-            return result;
-        }
-    }
     async saveAlert(arg0: string, arg1: SignalType, arg2: TriggerReason | null, arg3: bigint, arg4: number): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.saveAlert(arg0, to_candid_SignalType_n7(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n23(this._uploadFile, this._downloadFile, arg2), arg3, arg4);
+                const result = await this.actor.saveAlert(arg0, to_candid_SignalType_n3(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n14(this._uploadFile, this._downloadFile, arg2), arg3, arg4);
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.saveAlert(arg0, to_candid_SignalType_n7(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n23(this._uploadFile, this._downloadFile, arg2), arg3, arg4);
+            const result = await this.actor.saveAlert(arg0, to_candid_SignalType_n3(this._uploadFile, this._downloadFile, arg1), to_candid_opt_n14(this._uploadFile, this._downloadFile, arg2), arg3, arg4);
             return result;
         }
     }
@@ -513,28 +358,22 @@ export class Backend implements backendInterface {
         }
     }
 }
-function from_candid_Alert_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Alert): Alert {
-    return from_candid_record_n11(_uploadFile, _downloadFile, value);
+function from_candid_Alert_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Alert): Alert {
+    return from_candid_record_n7(_uploadFile, _downloadFile, value);
 }
-function from_candid_Direction_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Direction): Direction {
-    return from_candid_variant_n22(_uploadFile, _downloadFile, value);
+function from_candid_SignalType_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SignalType): SignalType {
+    return from_candid_variant_n13(_uploadFile, _downloadFile, value);
 }
-function from_candid_SignalType_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _SignalType): SignalType {
-    return from_candid_variant_n17(_uploadFile, _downloadFile, value);
+function from_candid_TriggerReason_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _TriggerReason): TriggerReason {
+    return from_candid_variant_n10(_uploadFile, _downloadFile, value);
 }
-function from_candid_Trade_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Trade): Trade {
-    return from_candid_record_n20(_uploadFile, _downloadFile, value);
-}
-function from_candid_TriggerReason_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _TriggerReason): TriggerReason {
-    return from_candid_variant_n14(_uploadFile, _downloadFile, value);
-}
-function from_candid_opt_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_TriggerReason]): TriggerReason | null {
-    return value.length === 0 ? null : from_candid_TriggerReason_n13(_uploadFile, _downloadFile, value[0]);
-}
-function from_candid_opt_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [number]): number | null {
+function from_candid_opt_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [number]): number | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_record_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_TriggerReason]): TriggerReason | null {
+    return value.length === 0 ? null : from_candid_TriggerReason_n9(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_record_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     triggerReason: [] | [_TriggerReason];
     priceAtTrigger: number;
     crypto: string;
@@ -550,51 +389,15 @@ function from_candid_record_n11(_uploadFile: (file: ExternalBlob) => Promise<Uin
     signalType: SignalType;
 } {
     return {
-        triggerReason: record_opt_to_undefined(from_candid_opt_n12(_uploadFile, _downloadFile, value.triggerReason)),
+        triggerReason: record_opt_to_undefined(from_candid_opt_n8(_uploadFile, _downloadFile, value.triggerReason)),
         priceAtTrigger: value.priceAtTrigger,
         crypto: value.crypto,
         timestamp: value.timestamp,
         confidence: value.confidence,
-        signalType: from_candid_SignalType_n16(_uploadFile, _downloadFile, value.signalType)
+        signalType: from_candid_SignalType_n12(_uploadFile, _downloadFile, value.signalType)
     };
 }
-function from_candid_record_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: bigint;
-    direction: _Direction;
-    date: string;
-    crypto: string;
-    notes: string;
-    rationale: string;
-    quantity: number;
-    entryPrice: number;
-    exitPrice: [] | [number];
-    outcome: string;
-}): {
-    id: bigint;
-    direction: Direction;
-    date: string;
-    crypto: string;
-    notes: string;
-    rationale: string;
-    quantity: number;
-    entryPrice: number;
-    exitPrice?: number;
-    outcome: string;
-} {
-    return {
-        id: value.id,
-        direction: from_candid_Direction_n21(_uploadFile, _downloadFile, value.direction),
-        date: value.date,
-        crypto: value.crypto,
-        notes: value.notes,
-        rationale: value.rationale,
-        quantity: value.quantity,
-        entryPrice: value.entryPrice,
-        exitPrice: record_opt_to_undefined(from_candid_opt_n15(_uploadFile, _downloadFile, value.exitPrice)),
-        outcome: value.outcome
-    };
-}
-function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     trendFollowing: boolean;
 } | {
     priceBreak: string;
@@ -643,16 +446,16 @@ function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Ui
         priceBreak: value.priceBreak
     } : "takeProfit" in value ? {
         __kind__: "takeProfit",
-        takeProfit: from_candid_opt_n15(_uploadFile, _downloadFile, value.takeProfit)
+        takeProfit: from_candid_opt_n11(_uploadFile, _downloadFile, value.takeProfit)
     } : "rsiBelow30" in value ? {
         __kind__: "rsiBelow30",
         rsiBelow30: value.rsiBelow30
     } : "riskReward" in value ? {
         __kind__: "riskReward",
-        riskReward: from_candid_opt_n15(_uploadFile, _downloadFile, value.riskReward)
+        riskReward: from_candid_opt_n11(_uploadFile, _downloadFile, value.riskReward)
     } : "stopLoss" in value ? {
         __kind__: "stopLoss",
-        stopLoss: from_candid_opt_n15(_uploadFile, _downloadFile, value.stopLoss)
+        stopLoss: from_candid_opt_n11(_uploadFile, _downloadFile, value.stopLoss)
     } : "macdCrossover" in value ? {
         __kind__: "macdCrossover",
         macdCrossover: value.macdCrossover
@@ -661,7 +464,7 @@ function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Ui
         rsiAbove70: value.rsiAbove70
     } : value;
 }
-function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     buy: null;
 } | {
     hold: null;
@@ -670,77 +473,25 @@ function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): SignalType {
     return "buy" in value ? SignalType.buy : "hold" in value ? SignalType.hold : "sell" in value ? SignalType.sell : value;
 }
-function from_candid_variant_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    long: null;
-} | {
-    short: null;
-}): Direction {
-    return "long" in value ? Direction.long : "short" in value ? Direction.short : value;
+function from_candid_vec_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Alert>): Array<Alert> {
+    return value.map((x)=>from_candid_Alert_n6(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Trade>): Array<Trade> {
-    return value.map((x)=>from_candid_Trade_n19(_uploadFile, _downloadFile, x));
-}
-function from_candid_vec_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Alert>): Array<Alert> {
-    return value.map((x)=>from_candid_Alert_n10(_uploadFile, _downloadFile, x));
-}
-function to_candid_Direction_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Direction): _Direction {
+function to_candid_SignalType_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SignalType): _SignalType {
     return to_candid_variant_n4(_uploadFile, _downloadFile, value);
 }
-function to_candid_SignalType_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SignalType): _SignalType {
-    return to_candid_variant_n8(_uploadFile, _downloadFile, value);
+function to_candid_TriggerReason_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: TriggerReason): _TriggerReason {
+    return to_candid_variant_n16(_uploadFile, _downloadFile, value);
 }
-function to_candid_Trade_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Trade): _Trade {
-    return to_candid_record_n2(_uploadFile, _downloadFile, value);
-}
-function to_candid_TriggerReason_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: TriggerReason): _TriggerReason {
-    return to_candid_variant_n25(_uploadFile, _downloadFile, value);
-}
-function to_candid_opt_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: TriggerReason | null): [] | [_TriggerReason] {
-    return value === null ? candid_none() : candid_some(to_candid_TriggerReason_n24(_uploadFile, _downloadFile, value));
-}
-function to_candid_opt_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
+function to_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: string | null): [] | [string] {
     return value === null ? candid_none() : candid_some(value);
 }
-function to_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SignalType | null): [] | [_SignalType] {
-    return value === null ? candid_none() : candid_some(to_candid_SignalType_n7(_uploadFile, _downloadFile, value));
+function to_candid_opt_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: TriggerReason | null): [] | [_TriggerReason] {
+    return value === null ? candid_none() : candid_some(to_candid_TriggerReason_n15(_uploadFile, _downloadFile, value));
 }
-function to_candid_record_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: bigint;
-    direction: Direction;
-    date: string;
-    crypto: string;
-    notes: string;
-    rationale: string;
-    quantity: number;
-    entryPrice: number;
-    exitPrice?: number;
-    outcome: string;
-}): {
-    id: bigint;
-    direction: _Direction;
-    date: string;
-    crypto: string;
-    notes: string;
-    rationale: string;
-    quantity: number;
-    entryPrice: number;
-    exitPrice: [] | [number];
-    outcome: string;
-} {
-    return {
-        id: value.id,
-        direction: to_candid_Direction_n3(_uploadFile, _downloadFile, value.direction),
-        date: value.date,
-        crypto: value.crypto,
-        notes: value.notes,
-        rationale: value.rationale,
-        quantity: value.quantity,
-        entryPrice: value.entryPrice,
-        exitPrice: value.exitPrice ? candid_some(value.exitPrice) : candid_none(),
-        outcome: value.outcome
-    };
+function to_candid_opt_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SignalType | null): [] | [_SignalType] {
+    return value === null ? candid_none() : candid_some(to_candid_SignalType_n3(_uploadFile, _downloadFile, value));
 }
-function to_candid_variant_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     __kind__: "trendFollowing";
     trendFollowing: boolean;
 } | {
@@ -799,18 +550,7 @@ function to_candid_variant_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint
         rsiAbove70: value.rsiAbove70
     } : value;
 }
-function to_candid_variant_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Direction): {
-    long: null;
-} | {
-    short: null;
-} {
-    return value == Direction.long ? {
-        long_: null
-    } : value == Direction.short ? {
-        short_: null
-    } : value;
-}
-function to_candid_variant_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SignalType): {
+function to_candid_variant_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SignalType): {
     buy: null;
 } | {
     hold: null;

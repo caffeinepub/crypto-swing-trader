@@ -27,12 +27,12 @@ export default function CryptoDetail() {
     return (
       <div className="space-y-4">
         <Link to="/">
-          <Button variant="ghost" className="gap-2">
+          <Button variant="ghost" className="gap-2 glow-hover">
             <ArrowLeft className="h-4 w-4" />
             Back to Market
           </Button>
         </Link>
-        <Card>
+        <Card className="border-neon-cyan/30 bg-card glow-ambient">
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">Cryptocurrency not found</p>
           </CardContent>
@@ -42,10 +42,10 @@ export default function CryptoDetail() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <Link to="/">
-          <Button variant="ghost" className="gap-2">
+          <Button variant="ghost" className="gap-2 glow-hover">
             <ArrowLeft className="h-4 w-4" />
             Back to Market
           </Button>
@@ -56,15 +56,15 @@ export default function CryptoDetail() {
         <div className="flex items-center gap-3">
           {crypto.image && <img src={crypto.image} alt={crypto.name} className="h-10 w-10" />}
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{crypto.name}</h1>
-            <p className="text-muted-foreground">{crypto.symbol.toUpperCase()}</p>
+            <h1 className="text-3xl font-bold tracking-tight font-heading text-neon-cyan glow-text">{crypto.name}</h1>
+            <p className="text-muted-foreground font-mono">{crypto.symbol.toUpperCase()}</p>
           </div>
         </div>
         <div className="mt-4 flex items-baseline gap-3">
-          <span className="text-4xl font-bold">${crypto.current_price.toLocaleString()}</span>
+          <span className="text-4xl font-bold font-mono text-foreground">${crypto.current_price.toLocaleString()}</span>
           <span
-            className={`text-lg font-semibold ${
-              crypto.price_change_percentage_24h >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+            className={`text-lg font-semibold font-mono ${
+              crypto.price_change_percentage_24h >= 0 ? 'text-neon-green glow-text' : 'text-neon-red glow-text'
             }`}
           >
             {crypto.price_change_percentage_24h >= 0 ? '+' : ''}
@@ -75,15 +75,15 @@ export default function CryptoDetail() {
 
       {signals && <TradingSignalsPanel signals={signals} supportResistance={chartData?.supportResistance} />}
 
-      <Card>
+      <Card className="border-neon-cyan/30 bg-card glow-ambient">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle>Price Chart</CardTitle>
+          <CardTitle className="font-heading text-neon-cyan">Price Chart</CardTitle>
           <TimeframeSelector selected={timeframe} onSelect={setTimeframe} />
         </CardHeader>
         <CardContent>
           {chartLoading ? (
             <div className="flex items-center justify-center h-[400px]">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              <Loader2 className="h-8 w-8 animate-spin text-neon-cyan glow-icon" />
             </div>
           ) : chartData ? (
             <CandlestickChart

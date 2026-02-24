@@ -1,41 +1,398 @@
 {
   "kind": "build_request",
-  "title": "Display entry point in AI Trade Analysis card",
+  "title": "Cyberpunk Visual Redesign with Portfolio & Journal Removal",
   "projectName": "Crypto Swing Trader",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-31",
-      "text": "Update the AITradeAnalysisCard component (frontend/src/components/AITradeAnalysisCard.tsx) to prominently display the entry point price at the top of the card, above the take-profit targets. The entry point should include: the price value with appropriate formatting, color coding (green for buy entry, red for sell/short entry based on recommendation direction), a label 'Entry Point', and the entry reasoning text if available. Ensure the entry point section uses clear visual hierarchy with appropriate spacing, icons, and typography to make it immediately visible to users.",
-      "target": "frontend",
+      "id": "REQ-32",
+      "text": "Remove all Portfolio feature code and UI from the application. Delete the Portfolio page (frontend/src/pages/Portfolio.tsx), remove Portfolio navigation links from Layout.tsx, delete AddPositionDialog.tsx, PositionCard.tsx, and PortfolioSummary.tsx components, remove the usePortfolio hook (frontend/src/hooks/usePortfolio.ts), and remove all portfolio-related backend functions and state from backend/main.mo (portfolio Map, addPosition, removePosition, getPositions functions). Update the Router configuration in App.tsx to remove the Portfolio route.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-user-go-ahead"
+          "msg-user-final"
         ],
         "quotes": [
-          "i click on the crypto it take me to a page and give me all the info on that crypto and ai trade analysis give me take profit and stoploss but not entry"
+          "remove them unless it will cause issues then you can just hide them"
         ]
       },
       "acceptanceCriteria": [
-        "Entry point price is displayed at the top of the AI Trade Analysis card",
-        "Entry point section appears above take-profit targets section",
-        "Entry point has clear label 'Entry Point' or similar",
-        "Entry point price is color-coded green for buy, red for sell/short",
-        "Entry reasoning text is displayed if available in the recommendation object",
-        "Visual hierarchy makes entry point immediately visible (appropriate font size, spacing, icons)",
-        "Entry point formatting matches the existing price display patterns in the card"
+        "Portfolio page deleted from frontend/src/pages/",
+        "Portfolio navigation link removed from Layout.tsx",
+        "Portfolio-related components (AddPositionDialog, PositionCard, PortfolioSummary) deleted",
+        "usePortfolio hook deleted",
+        "Portfolio route removed from App.tsx router configuration",
+        "Portfolio backend functions and state removed from main.mo",
+        "No broken imports or references to portfolio code remain"
+      ]
+    },
+    {
+      "id": "REQ-33",
+      "text": "Remove all Trading Journal feature code and UI from the application. Delete the Journal page (frontend/src/pages/Journal.tsx), remove Journal navigation links from Layout.tsx, delete AddTradeDialog.tsx, TradeCard.tsx, JournalFilters.tsx, and JournalStats.tsx components, remove the useJournal hook (frontend/src/hooks/useJournal.ts), and remove all journal-related backend functions and state from backend/main.mo (journal Map, addTrade, deleteTrade, getTrades functions). Update the Router configuration in App.tsx to remove the Journal route.",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "I will probably never use portfolio and journal"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Journal page deleted from frontend/src/pages/",
+        "Journal navigation link removed from Layout.tsx",
+        "Journal-related components (AddTradeDialog, TradeCard, JournalFilters, JournalStats) deleted",
+        "useJournal hook deleted",
+        "Journal route removed from App.tsx router configuration",
+        "Journal backend functions and state removed from main.mo",
+        "No broken imports or references to journal code remain"
+      ]
+    },
+    {
+      "id": "REQ-34",
+      "text": "Implement a cyberpunk color scheme with deep black backgrounds and neon accent colors throughout the entire application. Update frontend/src/index.css and frontend/tailwind.config.js to define new CSS custom properties for the cyberpunk theme: near-black background (#0a0a0f or darker), electric blue accent (#00d9ff or #0ff), vibrant purple accent (#b300ff or #c0f), neon green accent (#39ff14 or #0f0), dark card backgrounds (#121218 or similar), and subtle border colors with low opacity. Replace all existing color references in components to use the new cyberpunk palette. Ensure text remains highly readable with appropriate contrast ratios (white/light gray text on dark backgrounds).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Neon accents with dark backgrounds (cyberpunk style)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "index.css updated with cyberpunk CSS custom properties (near-black bg, neon blue/purple/green accents)",
+        "tailwind.config.js color palette reflects cyberpunk theme",
+        "Background colors changed to deep black/near-black (#0a0a0f or darker)",
+        "Primary accent color is electric blue or neon cyan",
+        "Secondary accent colors include vibrant purple and neon green",
+        "All text colors provide high contrast on dark backgrounds",
+        "Card backgrounds use dark tones (#121218 or similar) with subtle borders"
+      ]
+    },
+    {
+      "id": "REQ-35",
+      "text": "Add glowing effects to interactive elements and data cards throughout the application to enhance the cyberpunk aesthetic. Apply CSS box-shadow with neon-colored glows (using the accent colors: electric blue, vibrant purple, neon green) to buttons on hover, active cards, important data points, and interactive chart elements. Use subtle glow effects (low spread, medium blur) for ambient lighting on cards and stronger glows for focus/hover states. Implement glow animations using CSS keyframes for pulsing effects on critical alerts or high-confidence trading signals.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Glowing effects on cards and interactive elements"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Buttons display neon glow effect on hover using box-shadow",
+        "Cards have subtle ambient glow with neon accent colors",
+        "Interactive elements (links, tabs, controls) glow on focus/hover",
+        "High-confidence signals or critical alerts have pulsing glow animation",
+        "Glow intensity varies appropriately (subtle for ambient, strong for interactive states)",
+        "CSS keyframe animations implemented for pulsing glow effects"
+      ]
+    },
+    {
+      "id": "REQ-36",
+      "text": "Update typography across the application to use tech-inspired fonts that complement the cyberpunk aesthetic. Configure tailwind.config.js to use a modern, geometric sans-serif font for headings (such as Rajdhani, Orbitron, Exo 2, or Space Grotesk) and a clean monospace font for numerical data, prices, and technical values (such as JetBrains Mono, Fira Code, or Roboto Mono). Ensure fonts are loaded via Google Fonts or similar CDN. Apply appropriate font weights (bold for headings, medium for body, regular for data) and maintain clear typographic hierarchy across all pages and components.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Enhanced typography with tech-inspired fonts"
+        ]
+      },
+      "acceptanceCriteria": [
+        "tailwind.config.js configured with tech-inspired font for headings",
+        "Monospace font applied to all numerical data, prices, and technical indicators",
+        "Fonts loaded from Google Fonts or similar CDN",
+        "Typography hierarchy maintained with appropriate font weights",
+        "Headings use geometric/tech-inspired sans-serif font",
+        "Data displays (prices, percentages, volumes) use monospace font"
+      ]
+    },
+    {
+      "id": "REQ-37",
+      "text": "Add smooth CSS transitions and animations to enhance interactivity throughout the application. Implement transitions for hover states (0.2-0.3s duration), page transitions, card appearances, and data updates. Add subtle entrance animations for cards and list items using CSS keyframes or Tailwind animate utilities (fade-in, slide-in effects). Ensure animations feel responsive and modern without causing performance issues or motion sickness (use reduced-motion media queries for accessibility). Apply cyberpunk-style animations like scanline effects, glitch transitions, or data-stream aesthetics where appropriate.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Smooth animations and transitions"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All interactive elements have smooth hover transitions (0.2-0.3s)",
+        "Cards and list items have entrance animations (fade-in or slide-in)",
+        "Data updates animate smoothly without jarring changes",
+        "Reduced-motion media queries implemented for accessibility",
+        "Animations perform smoothly without frame drops",
+        "Cyberpunk-style effects (scanlines, glitches, data-streams) applied tastefully to enhance theme"
+      ]
+    },
+    {
+      "id": "REQ-38",
+      "text": "Redesign the CryptoTable component with cyberpunk styling: neon price displays, glowing signal badges, electric accent colors for positive/negative changes, dark table rows with subtle hover glow effects, and tech-inspired borders. Price values should glow in neon green for gains and neon red for losses. Signal badges should have strong neon glow effects. Table headers should use the tech-inspired font with neon underline or border accent. Maintain readability while maximizing visual impact.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Watchlist with neon price displays",
+          "Cyberpunk-style data visualization"
+        ]
+      },
+      "acceptanceCriteria": [
+        "CryptoTable rows have dark backgrounds with subtle hover glow",
+        "Price values display in neon green (gains) or neon red (losses) with glow effect",
+        "Signal badges have strong neon glow in accent colors",
+        "Table headers use tech-inspired font with neon accent underline/border",
+        "24h change percentages color-coded with neon colors",
+        "Table maintains readability with high contrast text"
+      ]
+    },
+    {
+      "id": "REQ-39",
+      "text": "Redesign the AITradeAnalysisCard component with cyberpunk aesthetic: glowing recommendation cards, neon-colored entry point display, electric accent borders, pulsing glow effects for high-confidence recommendations, tech-inspired layout with geometric shapes, and vibrant color coding for buy/sell directions. Entry point should have a strong neon glow. Take-profit targets should use gradient badges with neon colors. Confidence score progress bar should glow. Risk level badges should use appropriate neon warning colors.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "AI Trade Analysis with glowing recommendation cards"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Card has dark background with neon-colored border glow",
+        "Entry point prominently displayed with strong neon glow effect",
+        "Take-profit targets use gradient badges with electric blue/purple/green",
+        "Confidence score bar glows with color-coded intensity (green/yellow/red)",
+        "High-confidence recommendations have pulsing glow animation",
+        "Risk level badges use neon warning colors (green=low, yellow=medium, red=high)",
+        "Overall layout uses geometric shapes and tech-inspired design elements"
+      ]
+    },
+    {
+      "id": "REQ-40",
+      "text": "Redesign the Market Heatmap page with cyberpunk visualization: neon-colored blocks with intense glow effects, electric gradients for price changes (neon green to dark for gains, neon red to dark for losses), glowing borders on hover, pulsing animations for high volatility coins, dark grid background with subtle neon gridlines, and futuristic block styling with geometric shapes. Clicking a block should trigger a neon flash animation before navigation.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Market Heatmap with cyberpunk styling"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Heatmap blocks use neon color gradients (green shades for gains, red shades for losses)",
+        "Each block has glowing border effect that intensifies on hover",
+        "High volatility coins display pulsing glow animation",
+        "Grid background is dark with subtle neon gridlines",
+        "Blocks styled with geometric shapes and tech-inspired design",
+        "Click animation triggers neon flash before navigation to detail page"
+      ]
+    },
+    {
+      "id": "REQ-41",
+      "text": "Update the Alert History page with cyberpunk styling: dark card backgrounds with neon borders, glowing signal type badges (buy=neon green glow, sell=neon red glow, hold=neon blue glow), tech-inspired timestamp displays with monospace font, electric accent colors for confidence levels, and subtle scanline effects on alert cards. Filter controls should have neon focus states and glowing dropdown menus.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Alert History with futuristic layout"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Alert cards have dark backgrounds with neon-colored borders",
+        "Signal badges glow with type-specific neon colors (green/red/blue)",
+        "Timestamps use monospace font with subtle neon color",
+        "Confidence levels display with electric accent color coding",
+        "Subtle scanline or data-stream effects applied to cards",
+        "Filter dropdowns have neon borders and glowing focus states"
+      ]
+    },
+    {
+      "id": "REQ-42",
+      "text": "Redesign chart visualizations (CandlestickChart component) with cyberpunk aesthetics: neon-colored candlesticks (green for bullish, red for bearish with glow effects), electric accent lines for support/resistance levels, glowing gridlines, dark chart background with subtle neon gradient overlay, and vibrant color coding for technical indicators. Chart axes should use monospace font with neon color. Hovering over data points should trigger neon glow effects.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Chart analysis with cyberpunk aesthetics"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Candlesticks colored with neon green (bullish) and neon red (bearish)",
+        "Support/resistance lines use electric accent colors with glow",
+        "Chart gridlines glow subtly with neon color",
+        "Chart background is dark with optional subtle neon gradient",
+        "Axes use monospace font with neon accent color",
+        "Hover states trigger neon glow effects on data points",
+        "Technical indicator overlays use vibrant cyberpunk colors"
+      ]
+    },
+    {
+      "id": "REQ-43",
+      "text": "Update the Layout component navigation with cyberpunk styling: dark nav background with neon borders, glowing navigation links on hover, electric accent for active route indicator, tech-inspired logo/branding with neon glow, and futuristic mobile menu with slide-in animation and neon backdrop. Theme toggle button should have cyberpunk icon styling with glow effect. Auth button should have prominent neon accent.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "keep features- feel free to enhance, upgrade and visual redesign"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Navigation bar has dark background with subtle neon bottom border",
+        "Nav links glow with neon accent color on hover",
+        "Active route indicator uses electric accent color with glow",
+        "Logo/branding styled with tech font and neon glow effect",
+        "Mobile menu slides in with neon backdrop overlay",
+        "Theme toggle displays cyberpunk icon with glow on interaction",
+        "Auth button prominently styled with neon accent and glow"
+      ]
+    },
+    {
+      "id": "REQ-44",
+      "text": "Redesign the WatchlistPanel component with cyberpunk styling: dark panel background with neon border accent, glowing crypto icons/logos, neon price displays with pulsing effects for rapid changes, electric color coding for price movements, tech-inspired remove buttons with glow on hover, and futuristic list item styling with geometric separators. Empty state should display cyberpunk-styled message.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Watchlist with neon price displays"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Panel has dark background with neon accent border",
+        "Crypto icons have subtle glow effect",
+        "Prices display in neon colors with pulsing animation on rapid changes",
+        "Price change percentages color-coded with electric green/red",
+        "Remove buttons styled with tech aesthetic and glow on hover",
+        "List items separated with geometric dividers in neon accent color",
+        "Empty state message uses cyberpunk styling"
+      ]
+    },
+    {
+      "id": "REQ-45",
+      "text": "Update the MarketSentimentPanel with cyberpunk visualization: glowing sentiment indicators, neon-colored fear/greed index display with animated arc or progress bar, electric accent colors for top gainers (neon green) and losers (neon red), tech-inspired card layouts with geometric shapes, and pulsing glow effects for extreme sentiment values. Overall sentiment badge should have strong neon glow.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Market sentiment dashboard"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Sentiment cards have dark backgrounds with neon borders",
+        "Fear/greed index displays with animated neon arc or progress bar",
+        "Overall sentiment badge glows strongly with color-coded neon (green=bullish, red=bearish, blue=neutral)",
+        "Top gainers list uses neon green accents with glow",
+        "Top losers list uses neon red accents with glow",
+        "Card layouts use geometric shapes and tech-inspired design",
+        "Extreme sentiment values trigger pulsing glow animation"
+      ]
+    },
+    {
+      "id": "REQ-46",
+      "text": "Redesign the IndicatorsPanel component with cyberpunk styling: dark indicator cards with neon borders, glowing technical indicator values, electric color coding for overbought/oversold zones (neon red for >70 RSI, neon green for <30 RSI), tech-inspired labels with monospace font, and pulsing glow effects for extreme indicator values. MACD and Bollinger Bands displays should use neon accent colors for visualization.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "Technical indicators with neon highlights"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Indicator cards have dark backgrounds with neon accent borders",
+        "Indicator values display with neon glow effect",
+        "RSI values color-coded with neon red (>70) and neon green (<30)",
+        "Labels use tech-inspired monospace font",
+        "Extreme values trigger pulsing glow animation",
+        "MACD displays use electric blue/purple for line visualization",
+        "Bollinger Bands use neon accent colors for upper/lower bands"
+      ]
+    },
+    {
+      "id": "REQ-47",
+      "text": "Update toast notifications with cyberpunk styling: dark toast background with neon border glow, electric accent colors for notification types (info=blue, success=green, warning=yellow, error=red), tech-inspired typography, smooth slide-in animation with neon trail effect, and glowing icons. Notification content should be highly readable with strong contrast.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "keep features- feel free to enhance, upgrade and visual redesign"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Toasts have dark background with type-specific neon border glow",
+        "Notification types color-coded with electric neon accents",
+        "Typography uses tech-inspired font with high contrast",
+        "Slide-in animation includes subtle neon trail effect",
+        "Icons glow with neon color matching notification type",
+        "Text remains highly readable on dark toast background"
+      ]
+    },
+    {
+      "id": "REQ-48",
+      "text": "Enhance mobile responsiveness for the cyberpunk redesign across all components and pages. Ensure neon glow effects remain visible and performant on mobile devices without excessive battery drain. Optimize touch targets for glowing interactive elements (minimum 44x44px). Adapt complex layouts (heatmap, charts, multi-column displays) to mobile screens while preserving cyberpunk aesthetic. Test glow effects, animations, and transitions on mobile browsers to ensure smooth 60fps performance.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-final"
+        ],
+        "quotes": [
+          "keep features- feel free to enhance, upgrade and visual redesign"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All neon glow effects display correctly on mobile devices",
+        "Touch targets meet 44x44px minimum size requirement",
+        "Glow effects optimized for mobile performance (no excessive battery drain)",
+        "Heatmap grid adapts to mobile with readable, tappable blocks",
+        "Charts scale appropriately on mobile screens",
+        "Animations maintain 60fps performance on mobile browsers",
+        "Mobile layout preserves cyberpunk aesthetic without clutter"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the generateTradeRecommendation function in frontend/src/utils/aiTradeRecommendations.ts - it already calculates the entry point correctly",
-    "Maintain consistency with existing UI patterns in the AITradeAnalysisCard component",
-    "Preserve all existing functionality (take-profit targets, stop-loss, confidence, risk level, reasoning)"
+    "Maintain all existing core features: watchlist, AI trade analysis, market heatmap, alert history, technical indicators, trading signals, chart analysis, and pattern detection",
+    "Keep single-actor backend architecture in backend/main.mo",
+    "Do not modify read-only paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui",
+    "Preserve CoinGecko API integration and all data fetching logic",
+    "Maintain Internet Identity authentication flow",
+    "Do not change backend data structures for watchlist, alerts, and user preferences",
+    "Ensure all text remains highly readable with appropriate contrast ratios on dark backgrounds",
+    "Optimize animations and glow effects for performance (target 60fps)",
+    "Preserve mobile responsiveness across all redesigned components"
   ],
   "nonGoals": [
-    "Changing the entry point calculation logic",
-    "Modifying any other components or pages",
-    "Adding new recommendation features or data points"
+    "Do not add new cryptocurrency tracking features beyond existing 20-30 coins",
+    "Do not implement new technical indicators beyond RSI, MACD, MA, BB",
+    "Do not add third-party authentication methods beyond Internet Identity",
+    "Do not integrate external databases or services",
+    "Do not implement real-time WebSocket connections",
+    "Do not add cryptocurrency trading/exchange functionality",
+    "Do not restore Portfolio or Journal features after removal",
+    "Do not implement light mode theme (focus on dark cyberpunk aesthetic only)"
   ],
   "imageRequirements": {
     "required": [],

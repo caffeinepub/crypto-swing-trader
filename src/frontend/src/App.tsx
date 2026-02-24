@@ -4,8 +4,6 @@ import { Toaster } from '@/components/ui/sonner';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import CryptoDetail from './pages/CryptoDetail';
-import Portfolio from './pages/Portfolio';
-import Journal from './pages/Journal';
 import Alerts from './pages/Alerts';
 
 const rootRoute = createRootRoute({
@@ -28,18 +26,6 @@ const cryptoDetailRoute = createRoute({
   component: CryptoDetail,
 });
 
-const portfolioRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/portfolio',
-  component: Portfolio,
-});
-
-const journalRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/journal',
-  component: Journal,
-});
-
 const alertsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/alerts',
@@ -49,8 +35,6 @@ const alertsRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   cryptoDetailRoute,
-  portfolioRoute,
-  journalRoute,
   alertsRoute,
 ]);
 
@@ -64,7 +48,7 @@ declare module '@tanstack/react-router' {
 
 export default function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <RouterProvider router={router} />
       <Toaster />
     </ThemeProvider>

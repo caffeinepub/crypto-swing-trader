@@ -8,19 +8,6 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const Direction = IDL.Variant({ 'long' : IDL.Null, 'short' : IDL.Null });
-export const Trade = IDL.Record({
-  'id' : IDL.Nat,
-  'direction' : Direction,
-  'date' : IDL.Text,
-  'crypto' : IDL.Text,
-  'notes' : IDL.Text,
-  'rationale' : IDL.Text,
-  'quantity' : IDL.Float64,
-  'entryPrice' : IDL.Float64,
-  'exitPrice' : IDL.Opt(IDL.Float64),
-  'outcome' : IDL.Text,
-});
 export const SignalType = IDL.Variant({
   'buy' : IDL.Null,
   'hold' : IDL.Null,
@@ -43,10 +30,6 @@ export const Alert = IDL.Record({
   'timestamp' : IDL.Int,
   'confidence' : IDL.Nat,
   'signalType' : SignalType,
-});
-export const Position = IDL.Record({
-  'quantity' : IDL.Float64,
-  'symbol' : IDL.Text,
 });
 export const Preferences = IDL.Record({
   'theme' : IDL.Text,
@@ -72,9 +55,6 @@ export const TransformationOutput = IDL.Record({
 });
 
 export const idlService = IDL.Service({
-  'addPosition' : IDL.Func([IDL.Text, IDL.Float64], [], []),
-  'addToWatchlist' : IDL.Func([IDL.Text], [], []),
-  'addTrade' : IDL.Func([Trade], [], []),
   'clearAlerts' : IDL.Func([], [], []),
   'fetchTopCryptoNews' : IDL.Func([], [IDL.Text], []),
   'fetchTopCryptos' : IDL.Func([], [IDL.Text], []),
@@ -86,15 +66,9 @@ export const idlService = IDL.Service({
   'getAlertStats' : IDL.Func([], [IDL.Nat, IDL.Nat, IDL.Nat], ['query']),
   'getAlertsLast24Hours' : IDL.Func([], [IDL.Vec(Alert)], ['query']),
   'getCryptoAlertHistory' : IDL.Func([IDL.Text], [IDL.Vec(Alert)], ['query']),
-  'getJournal' : IDL.Func([], [IDL.Vec(Trade)], ['query']),
-  'getPortfolio' : IDL.Func([], [IDL.Vec(Position)], ['query']),
   'getTheme' : IDL.Func([], [IDL.Text], ['query']),
-  'getWatchlist' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
   'initializeUser' : IDL.Func([Preferences], [], []),
   'purgeOldAlerts' : IDL.Func([], [], []),
-  'removeFromJournal' : IDL.Func([IDL.Nat], [], []),
-  'removeFromWatchlist' : IDL.Func([IDL.Text], [], []),
-  'removePosition' : IDL.Func([IDL.Text], [], []),
   'saveAlert' : IDL.Func(
       [IDL.Text, SignalType, IDL.Opt(TriggerReason), IDL.Nat, IDL.Float64],
       [],
@@ -111,19 +85,6 @@ export const idlService = IDL.Service({
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
-  const Direction = IDL.Variant({ 'long' : IDL.Null, 'short' : IDL.Null });
-  const Trade = IDL.Record({
-    'id' : IDL.Nat,
-    'direction' : Direction,
-    'date' : IDL.Text,
-    'crypto' : IDL.Text,
-    'notes' : IDL.Text,
-    'rationale' : IDL.Text,
-    'quantity' : IDL.Float64,
-    'entryPrice' : IDL.Float64,
-    'exitPrice' : IDL.Opt(IDL.Float64),
-    'outcome' : IDL.Text,
-  });
   const SignalType = IDL.Variant({
     'buy' : IDL.Null,
     'hold' : IDL.Null,
@@ -147,10 +108,6 @@ export const idlFactory = ({ IDL }) => {
     'confidence' : IDL.Nat,
     'signalType' : SignalType,
   });
-  const Position = IDL.Record({
-    'quantity' : IDL.Float64,
-    'symbol' : IDL.Text,
-  });
   const Preferences = IDL.Record({
     'theme' : IDL.Text,
     'notifications' : IDL.Bool,
@@ -172,9 +129,6 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
-    'addPosition' : IDL.Func([IDL.Text, IDL.Float64], [], []),
-    'addToWatchlist' : IDL.Func([IDL.Text], [], []),
-    'addTrade' : IDL.Func([Trade], [], []),
     'clearAlerts' : IDL.Func([], [], []),
     'fetchTopCryptoNews' : IDL.Func([], [IDL.Text], []),
     'fetchTopCryptos' : IDL.Func([], [IDL.Text], []),
@@ -186,15 +140,9 @@ export const idlFactory = ({ IDL }) => {
     'getAlertStats' : IDL.Func([], [IDL.Nat, IDL.Nat, IDL.Nat], ['query']),
     'getAlertsLast24Hours' : IDL.Func([], [IDL.Vec(Alert)], ['query']),
     'getCryptoAlertHistory' : IDL.Func([IDL.Text], [IDL.Vec(Alert)], ['query']),
-    'getJournal' : IDL.Func([], [IDL.Vec(Trade)], ['query']),
-    'getPortfolio' : IDL.Func([], [IDL.Vec(Position)], ['query']),
     'getTheme' : IDL.Func([], [IDL.Text], ['query']),
-    'getWatchlist' : IDL.Func([], [IDL.Vec(IDL.Text)], ['query']),
     'initializeUser' : IDL.Func([Preferences], [], []),
     'purgeOldAlerts' : IDL.Func([], [], []),
-    'removeFromJournal' : IDL.Func([IDL.Nat], [], []),
-    'removeFromWatchlist' : IDL.Func([IDL.Text], [], []),
-    'removePosition' : IDL.Func([IDL.Text], [], []),
     'saveAlert' : IDL.Func(
         [IDL.Text, SignalType, IDL.Opt(TriggerReason), IDL.Nat, IDL.Float64],
         [],

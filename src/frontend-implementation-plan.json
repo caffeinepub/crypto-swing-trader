@@ -1,25 +1,451 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Display entry point in AI Trade Analysis card",
+  "title": "Cyberpunk Visual Redesign with Portfolio & Journal Removal",
   "requirements": [
     {
-      "id": "REQ-31",
-      "summary": "Display entry point prominently at the top of the AI Trade Analysis card with price formatting, color coding based on trade direction, label, reasoning text, and clear visual hierarchy above take-profit targets",
+      "id": "REQ-32",
+      "summary": "Remove all Portfolio feature code and UI from the frontend",
       "acceptanceCriteria": [
-        "Entry point price is displayed at the top of the AI Trade Analysis card",
-        "Entry point section appears above take-profit targets section",
-        "Entry point has clear label 'Entry Point' or similar",
-        "Entry point price is color-coded green for buy, red for sell/short",
-        "Entry reasoning text is displayed if available in the recommendation object",
-        "Visual hierarchy makes entry point immediately visible (appropriate font size, spacing, icons)",
-        "Entry point formatting matches the existing price display patterns in the card"
+        "Portfolio page deleted from frontend/src/pages/",
+        "Portfolio navigation link removed from Layout.tsx",
+        "Portfolio-related components (AddPositionDialog, PositionCard, PortfolioSummary) deleted",
+        "usePortfolio hook deleted",
+        "Portfolio route removed from App.tsx router configuration",
+        "No broken imports or references to portfolio code remain"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Portfolio.tsx",
+          "operation": "delete",
+          "description": "Delete the Portfolio page component"
+        },
+        {
+          "path": "frontend/src/components/AddPositionDialog.tsx",
+          "operation": "delete",
+          "description": "Delete the AddPositionDialog component used for adding portfolio positions"
+        },
+        {
+          "path": "frontend/src/components/PositionCard.tsx",
+          "operation": "delete",
+          "description": "Delete the PositionCard component used to display individual portfolio positions"
+        },
+        {
+          "path": "frontend/src/components/PortfolioSummary.tsx",
+          "operation": "delete",
+          "description": "Delete the PortfolioSummary component used to display portfolio overview metrics"
+        },
+        {
+          "path": "frontend/src/hooks/usePortfolio.ts",
+          "operation": "delete",
+          "description": "Delete the usePortfolio hook that manages portfolio data and operations"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Remove the Portfolio route from the router configuration and remove any Portfolio-related imports"
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Remove the Portfolio navigation link from the main navigation menu and mobile sheet menu"
+        }
+      ]
+    },
+    {
+      "id": "REQ-33",
+      "summary": "Remove all Trading Journal feature code and UI from the frontend",
+      "acceptanceCriteria": [
+        "Journal page deleted from frontend/src/pages/",
+        "Journal navigation link removed from Layout.tsx",
+        "Journal-related components (AddTradeDialog, TradeCard, JournalFilters, JournalStats) deleted",
+        "useJournal hook deleted",
+        "Journal route removed from App.tsx router configuration",
+        "No broken imports or references to journal code remain"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Journal.tsx",
+          "operation": "delete",
+          "description": "Delete the Journal page component"
+        },
+        {
+          "path": "frontend/src/components/AddTradeDialog.tsx",
+          "operation": "delete",
+          "description": "Delete the AddTradeDialog component used for adding journal trades"
+        },
+        {
+          "path": "frontend/src/components/TradeCard.tsx",
+          "operation": "delete",
+          "description": "Delete the TradeCard component used to display individual trades"
+        },
+        {
+          "path": "frontend/src/components/JournalFilters.tsx",
+          "operation": "delete",
+          "description": "Delete the JournalFilters component used for filtering journal entries"
+        },
+        {
+          "path": "frontend/src/components/JournalStats.tsx",
+          "operation": "delete",
+          "description": "Delete the JournalStats component used to display journal statistics"
+        },
+        {
+          "path": "frontend/src/hooks/useJournal.ts",
+          "operation": "delete",
+          "description": "Delete the useJournal hook that manages journal data and operations"
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Remove the Journal route from the router configuration and remove any Journal-related imports"
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Remove the Journal navigation link from the main navigation menu and mobile sheet menu"
+        }
+      ]
+    },
+    {
+      "id": "REQ-34",
+      "summary": "Implement cyberpunk color scheme with deep black backgrounds and neon accent colors",
+      "acceptanceCriteria": [
+        "index.css updated with cyberpunk CSS custom properties (near-black bg, neon blue/purple/green accents)",
+        "tailwind.config.js color palette reflects cyberpunk theme",
+        "Background colors changed to deep black/near-black (#0a0a0f or darker)",
+        "Primary accent color is electric blue or neon cyan",
+        "Secondary accent colors include vibrant purple and neon green",
+        "All text colors provide high contrast on dark backgrounds",
+        "Card backgrounds use dark tones (#121218 or similar) with subtle borders"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Update CSS custom properties to define cyberpunk color palette: near-black background (#0a0a0f), electric blue accent (#00d9ff), vibrant purple accent (#b300ff), neon green accent (#39ff14), dark card backgrounds (#121218), and high-contrast text colors (white/light gray). Remove light theme variables or set them to dark cyberpunk colors as well."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Extend the Tailwind theme to include cyberpunk colors using OKLCH format: near-black backgrounds, electric blue primary, vibrant purple and neon green accents, dark card colors, and neon border colors. Map these to Tailwind utilities for consistent usage across components."
+        }
+      ]
+    },
+    {
+      "id": "REQ-35",
+      "summary": "Add glowing effects to interactive elements and data cards",
+      "acceptanceCriteria": [
+        "Buttons display neon glow effect on hover using box-shadow",
+        "Cards have subtle ambient glow with neon accent colors",
+        "Interactive elements (links, tabs, controls) glow on focus/hover",
+        "High-confidence signals or critical alerts have pulsing glow animation",
+        "Glow intensity varies appropriately (subtle for ambient, strong for interactive states)",
+        "CSS keyframe animations implemented for pulsing glow effects"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add global CSS classes for glow effects using box-shadow with neon colors (electric blue, purple, green). Define base glow classes (.glow-ambient, .glow-hover, .glow-strong) with varying shadow spreads and blur radii. Create @keyframes animations for pulsing glow effects (.glow-pulse) that animate between low and high shadow intensity. Include hover and focus-visible pseudo-classes for interactive elements."
+        }
+      ]
+    },
+    {
+      "id": "REQ-36",
+      "summary": "Update typography to use tech-inspired fonts",
+      "acceptanceCriteria": [
+        "tailwind.config.js configured with tech-inspired font for headings",
+        "Monospace font applied to all numerical data, prices, and technical indicators",
+        "Fonts loaded from Google Fonts or similar CDN",
+        "Typography hierarchy maintained with appropriate font weights",
+        "Headings use geometric/tech-inspired sans-serif font",
+        "Data displays (prices, percentages, volumes) use monospace font"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Add Google Fonts link tags in the <head> section to load tech-inspired fonts: a geometric sans-serif like Rajdhani or Orbitron for headings, and a monospace font like JetBrains Mono for numerical data. Include multiple font weights (400, 500, 600, 700) for proper hierarchy."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Configure font families in the theme extension: set 'sans' to use the tech-inspired geometric font (e.g., Rajdhani, Orbitron) with fallbacks, and set 'mono' to use the loaded monospace font (e.g., JetBrains Mono, Fira Code) with fallbacks. Ensure font families are properly quoted and include system fallbacks."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Apply font families globally: set body text to use the tech sans-serif font, and add utility classes for monospace text (.font-mono) to be used on numerical displays. Define font weight utilities for headings (font-bold) and data (font-normal or font-medium)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-37",
+      "summary": "Add smooth CSS transitions and animations to enhance interactivity",
+      "acceptanceCriteria": [
+        "All interactive elements have smooth hover transitions (0.2-0.3s)",
+        "Cards and list items have entrance animations (fade-in or slide-in)",
+        "Data updates animate smoothly without jarring changes",
+        "Reduced-motion media queries implemented for accessibility",
+        "Animations perform smoothly without frame drops",
+        "Cyberpunk-style effects (scanlines, glitches, data-streams) applied tastefully to enhance theme"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add global transition properties to interactive elements (buttons, links, cards) with 0.2-0.3s duration and ease-out timing. Define @keyframes for entrance animations (fadeIn, slideInUp) and cyberpunk effects (scanline, glitch, dataStream). Add @media (prefers-reduced-motion: reduce) query to disable animations for users who prefer reduced motion. Create utility classes for common animations (.animate-fade-in, .animate-slide-in, .animate-pulse-glow)."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Extend the animation configuration to include custom animations: fadeIn, slideInUp, pulseGlow, and any cyberpunk-specific effects. Define keyframes for these animations with appropriate timing functions and durations. Ensure animations are performant by using transform and opacity properties."
+        }
+      ]
+    },
+    {
+      "id": "REQ-38",
+      "summary": "Redesign CryptoTable component with cyberpunk styling",
+      "acceptanceCriteria": [
+        "CryptoTable rows have dark backgrounds with subtle hover glow",
+        "Price values display in neon green (gains) or neon red (losses) with glow effect",
+        "Signal badges have strong neon glow in accent colors",
+        "Table headers use tech-inspired font with neon accent underline/border",
+        "24h change percentages color-coded with neon colors",
+        "Table maintains readability with high contrast text"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/CryptoTable.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to the CryptoTable: set dark row backgrounds with hover glow effects using the glow utility classes. Color-code price change values with neon green for positive (with glow) and neon red for negative (with glow). Style table headers with tech font and add neon border-bottom or underline accent. Enhance SignalBadge rendering to use strong neon glow. Ensure all text has high contrast against dark backgrounds. Apply monospace font to numerical columns (price, volume, market cap)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-39",
+      "summary": "Redesign AITradeAnalysisCard component with cyberpunk aesthetic",
+      "acceptanceCriteria": [
+        "Card has dark background with neon-colored border glow",
+        "Entry point prominently displayed with strong neon glow effect",
+        "Take-profit targets use gradient badges with electric blue/purple/green",
+        "Confidence score bar glows with color-coded intensity (green/yellow/red)",
+        "High-confidence recommendations have pulsing glow animation",
+        "Risk level badges use neon warning colors (green=low, yellow=medium, red=high)",
+        "Overall layout uses geometric shapes and tech-inspired design elements"
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/AITradeAnalysisCard.tsx",
           "operation": "modify",
-          "description": "Add a new entry point section at the top of the card component, positioned above the existing take-profit targets section. Display the entry point price from the recommendation object with appropriate currency formatting. Apply color coding: green (text-green-600 dark:text-green-400) for 'buy' direction, red (text-red-600 dark:text-red-400) for 'sell' or 'short' direction. Include a clear 'Entry Point' label using appropriate typography (font-semibold). If recommendation.entryReasoning exists, display it below the price. Use consistent spacing, icons (TrendingUp for buy, TrendingDown for sell), and font sizes to establish clear visual hierarchy that matches existing card patterns for take-profit and stop-loss displays. Ensure the entry point section is immediately visible and distinct from other card sections."
+          "description": "Apply cyberpunk styling to AITradeAnalysisCard: set dark card background with neon-colored border glow (electric blue or purple). Style the entry point display with strong neon glow and large monospace font. Create gradient badges for take-profit targets using multiple neon colors (blue/purple/green gradients). Add glowing progress bar for confidence score with color-coding (green for high, yellow for medium, red for low). Apply pulsing glow animation to cards with confidence >70%. Style risk level badges with neon warning colors. Use geometric shapes (rectangles with angled corners, dividers) for visual interest. Ensure all numerical values use monospace font."
+        }
+      ]
+    },
+    {
+      "id": "REQ-40",
+      "summary": "Redesign Market Heatmap page with cyberpunk visualization",
+      "acceptanceCriteria": [
+        "Heatmap blocks use neon color gradients (green shades for gains, red shades for losses)",
+        "Each block has glowing border effect that intensifies on hover",
+        "High volatility coins display pulsing glow animation",
+        "Grid background is dark with subtle neon gridlines",
+        "Blocks styled with geometric shapes and tech-inspired design",
+        "Click animation triggers neon flash before navigation to detail page"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "modify",
+          "description": "If Dashboard contains a heatmap visualization, apply cyberpunk styling: use neon color gradients for blocks (green shades for positive changes, red for negative), add glowing borders that intensify on hover, implement pulsing glow animation for high volatility items (>10% change), set dark grid background with subtle neon gridlines, style blocks with geometric shapes, and add neon flash click animation using CSS transitions. If heatmap is in a separate component, note that component path for styling. Apply monospace font to percentage values displayed on blocks."
+        }
+      ]
+    },
+    {
+      "id": "REQ-41",
+      "summary": "Update Alert History page with cyberpunk styling",
+      "acceptanceCriteria": [
+        "Alert cards have dark backgrounds with neon-colored borders",
+        "Signal badges glow with type-specific neon colors (green/red/blue)",
+        "Timestamps use monospace font with subtle neon color",
+        "Confidence levels display with electric accent color coding",
+        "Subtle scanline or data-stream effects applied to cards",
+        "Filter dropdowns have neon borders and glowing focus states"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Alerts.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to the Alerts page: ensure page background is near-black, add any layout-level cyberpunk enhancements (e.g., scanline overlay effect, neon page title with glow). Apply monospace font to timestamps and confidence values."
+        },
+        {
+          "path": "frontend/src/components/AlertCard.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to AlertCard: set dark card background with neon-colored border (use signal-type color for border), enhance signal badge with strong type-specific glow (green for buy, red for sell, blue for hold), style timestamps with monospace font and subtle neon color, color-code confidence levels with electric accents (blue/purple gradient based on value), add subtle scanline or data-stream background effect to card. Ensure all text maintains high contrast."
+        },
+        {
+          "path": "frontend/src/components/AlertFilters.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to AlertFilters: style dropdown selects with dark backgrounds, neon borders, and glowing focus states. Add electric accent to the reset button with hover glow effect. Ensure filter controls use tech-inspired typography."
+        }
+      ]
+    },
+    {
+      "id": "REQ-42",
+      "summary": "Redesign chart visualizations with cyberpunk aesthetics",
+      "acceptanceCriteria": [
+        "Candlesticks colored with neon green (bullish) and neon red (bearish)",
+        "Support/resistance lines use electric accent colors with glow",
+        "Chart gridlines glow subtly with neon color",
+        "Chart background is dark with optional subtle neon gradient",
+        "Axes use monospace font with neon accent color",
+        "Hover states trigger neon glow effects on data points",
+        "Technical indicator overlays use vibrant cyberpunk colors"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/CandlestickChart.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to CandlestickChart using Recharts theming: set dark chart background (potentially with subtle neon gradient overlay), color candlesticks with neon green (bullish) and neon red (bearish), style support/resistance reference lines with electric blue or purple with increased stroke width and optional glow effect (using stroke-shadow or filter), configure grid lines to use subtle neon color with low opacity, style axes labels with monospace font and neon accent color, customize tooltip with dark background and neon borders. If Recharts supports it, add glow filters to active data points on hover. Ensure chart remains readable and performant."
+        }
+      ]
+    },
+    {
+      "id": "REQ-43",
+      "summary": "Update Layout component navigation with cyberpunk styling",
+      "acceptanceCriteria": [
+        "Navigation bar has dark background with subtle neon bottom border",
+        "Nav links glow with neon accent color on hover",
+        "Active route indicator uses electric accent color with glow",
+        "Logo/branding styled with tech font and neon glow effect",
+        "Mobile menu slides in with neon backdrop overlay",
+        "Theme toggle displays cyberpunk icon with glow on interaction",
+        "Auth button prominently styled with neon accent and glow"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to Layout navigation: set dark nav background with subtle neon bottom border (electric blue or purple), style nav links to glow with neon accent on hover and use electric accent color for active route indicator with glow effect, apply tech-inspired font to logo/branding with neon glow (text-shadow), configure mobile Sheet menu to have dark background with neon backdrop overlay, enhance theme toggle and auth buttons with cyberpunk styling (neon borders, glow on hover/interaction). Update footer attribution link with cyberpunk styling as well."
+        }
+      ]
+    },
+    {
+      "id": "REQ-44",
+      "summary": "Redesign WatchlistPanel component with cyberpunk styling",
+      "acceptanceCriteria": [
+        "Panel has dark background with neon accent border",
+        "Crypto icons have subtle glow effect",
+        "Prices display in neon colors with pulsing animation on rapid changes",
+        "Price change percentages color-coded with electric green/red",
+        "Remove buttons styled with tech aesthetic and glow on hover",
+        "List items separated with geometric dividers in neon accent color",
+        "Empty state message uses cyberpunk styling"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/WatchlistPanel.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to WatchlistPanel: set dark panel background with neon accent border (electric blue or purple), add subtle glow effect to crypto icons (using box-shadow or filter), display prices in monospace font with neon colors and add pulsing glow animation for rapid price changes (detect change via useEffect and apply temporary animation class), color-code price change percentages with electric green (positive) and neon red (negative) with glow, style remove buttons with tech aesthetic (neon border) and glow on hover, add geometric dividers between list items using neon accent color, style empty state message with tech font and neon accents."
+        }
+      ]
+    },
+    {
+      "id": "REQ-45",
+      "summary": "Update MarketSentimentPanel with cyberpunk visualization",
+      "acceptanceCriteria": [
+        "Sentiment cards have dark backgrounds with neon borders",
+        "Fear/greed index displays with animated neon arc or progress bar",
+        "Overall sentiment badge glows strongly with color-coded neon (green=bullish, red=bearish, blue=neutral)",
+        "Top gainers list uses neon green accents with glow",
+        "Top losers list uses neon red accents with glow",
+        "Card layouts use geometric shapes and tech-inspired design",
+        "Extreme sentiment values trigger pulsing glow animation"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/MarketSentimentPanel.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to MarketSentimentPanel: set dark card backgrounds with neon accent borders, create animated neon arc or progress bar for fear/greed index (use SVG with neon stroke and glow filter, or CSS progress with neon gradient and box-shadow), style overall sentiment badge with strong glow and color-coding (neon green for bullish, neon red for bearish, electric blue for neutral), apply neon green accents with glow to top gainers list items, apply neon red accents with glow to top losers list items, use geometric card shapes with angled corners or dividers, add pulsing glow animation to extreme sentiment values (fear/greed <20 or >80). Ensure monospace font for numerical values."
+        }
+      ]
+    },
+    {
+      "id": "REQ-46",
+      "summary": "Redesign IndicatorsPanel component with cyberpunk styling",
+      "acceptanceCriteria": [
+        "Indicator cards have dark backgrounds with neon accent borders",
+        "Indicator values display with neon glow effect",
+        "RSI values color-coded with neon red (>70) and neon green (<30)",
+        "Labels use tech-inspired monospace font",
+        "Extreme values trigger pulsing glow animation",
+        "MACD displays use electric blue/purple for line visualization",
+        "Bollinger Bands use neon accent colors for upper/lower bands"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/IndicatorsPanel.tsx",
+          "operation": "modify",
+          "description": "Apply cyberpunk styling to IndicatorsPanel: set dark card backgrounds with neon accent borders for each indicator card, display indicator values with neon glow effect using text-shadow or box-shadow, color-code RSI values with neon red glow for overbought (>70) and neon green glow for oversold (<30), apply tech-inspired monospace font to all labels and values, add pulsing glow animation to extreme indicator values (RSI <30 or >70, MACD with strong divergence), style MACD display with electric blue/purple colors for histogram or line visualization, style Bollinger Bands display with neon accent colors for upper/lower band values. Ensure grid layout maintains readability with proper spacing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-47",
+      "summary": "Update toast notifications with cyberpunk styling",
+      "acceptanceCriteria": [
+        "Toasts have dark background with type-specific neon border glow",
+        "Notification types color-coded with electric neon accents",
+        "Typography uses tech-inspired font with high contrast",
+        "Slide-in animation includes subtle neon trail effect",
+        "Icons glow with neon color matching notification type",
+        "Text remains highly readable on dark toast background"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add custom CSS targeting toast notification classes (likely from Sonner or shadcn/ui): style toasts with dark backgrounds and type-specific neon border glow (info=electric blue, success=neon green, warning=yellow, error=neon red), apply tech-inspired font with high contrast white text, enhance slide-in animation with subtle neon trail effect (using pseudo-elements and gradient), add neon glow to icons using filter or box-shadow. Ensure all toast text is highly readable with appropriate font size and contrast."
+        }
+      ]
+    },
+    {
+      "id": "REQ-48",
+      "summary": "Enhance mobile responsiveness for cyberpunk redesign",
+      "acceptanceCriteria": [
+        "All neon glow effects display correctly on mobile devices",
+        "Touch targets meet 44x44px minimum size requirement",
+        "Glow effects optimized for mobile performance (no excessive battery drain)",
+        "Heatmap grid adapts to mobile with readable, tappable blocks",
+        "Charts scale appropriately on mobile screens",
+        "Animations maintain 60fps performance on mobile browsers",
+        "Mobile layout preserves cyberpunk aesthetic without clutter"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add mobile-specific media queries (@media (max-width: 768px)) to optimize cyberpunk effects for mobile: reduce glow spread and blur radius for better performance, ensure touch targets for interactive elements (buttons, tabs, controls) meet 44x44px minimum, use will-change property sparingly to hint browsers for animation optimization, reduce or simplify complex animations that may cause frame drops. Consider reducing scanline/glitch effects on mobile for performance."
+        },
+        {
+          "path": "frontend/src/components/CryptoTable.tsx",
+          "operation": "modify",
+          "description": "Ensure CryptoTable is responsive on mobile: hide less critical columns on small screens (e.g., volume, market cap), ensure remaining columns are readable with adequate spacing, maintain touch targets for watchlist toggle and row interactions. Preserve cyberpunk styling (neon colors, glow) while ensuring readability."
+        },
+        {
+          "path": "frontend/src/components/CandlestickChart.tsx",
+          "operation": "modify",
+          "description": "Ensure CandlestickChart scales appropriately on mobile screens: use ResponsiveContainer with appropriate aspect ratio, ensure touch interactions work smoothly, maintain readability of axes and labels on small screens, preserve cyberpunk styling (dark background, neon colors) without performance issues."
+        },
+        {
+          "path": "frontend/src/pages/Dashboard.tsx",
+          "operation": "modify",
+          "description": "If Dashboard contains heatmap blocks, ensure they adapt to mobile: reduce block size or use single-column layout on small screens, ensure blocks remain tappable with adequate touch targets, maintain readability of labels and percentages, preserve neon glow effects without performance degradation."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Verify mobile menu (Sheet) preserves cyberpunk styling and performs smoothly on mobile devices: ensure slide-in animation is performant (60fps), neon backdrop overlay displays correctly, navigation links have adequate touch targets, mobile layout doesn't feel cluttered."
         }
       ]
     }

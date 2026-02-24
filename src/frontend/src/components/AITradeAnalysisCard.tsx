@@ -57,7 +57,7 @@ export default function AITradeAnalysisCard({
   useEffect(() => {
     const interval = setInterval(() => {
       setRelativeTime(formatRelativeTime(lastUpdated));
-    }, 30000); // Update every 30 seconds
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [lastUpdated]);
@@ -69,21 +69,21 @@ export default function AITradeAnalysisCard({
   };
 
   const getDirectionColor = () => {
-    if (recommendation.direction === 'buy') return 'text-green-600 dark:text-green-400';
-    if (recommendation.direction === 'sell') return 'text-red-600 dark:text-red-400';
+    if (recommendation.direction === 'buy') return 'text-neon-green';
+    if (recommendation.direction === 'sell') return 'text-neon-red';
     return 'text-muted-foreground';
   };
 
   const getRiskColor = () => {
-    if (recommendation.riskLevel === 'low') return 'bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20';
-    if (recommendation.riskLevel === 'medium') return 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20';
-    return 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20';
+    if (recommendation.riskLevel === 'low') return 'bg-neon-green/10 text-neon-green border-neon-green/30';
+    if (recommendation.riskLevel === 'medium') return 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30';
+    return 'bg-neon-red/10 text-neon-red border-neon-red/30';
   };
 
   const getConfidenceColor = () => {
-    if (recommendation.confidence >= 70) return 'text-green-600 dark:text-green-400';
-    if (recommendation.confidence >= 50) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-red-600 dark:text-red-400';
+    if (recommendation.confidence >= 70) return 'text-neon-green';
+    if (recommendation.confidence >= 50) return 'text-yellow-400';
+    return 'text-neon-red';
   };
 
   const formatPrice = (price: number) => {
@@ -93,33 +93,36 @@ export default function AITradeAnalysisCard({
     return price.toFixed(8);
   };
 
+  const isHighConfidence = recommendation.confidence >= 70;
+
   return (
-    <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
+    <Card className={`border-2 border-neon-cyan/40 bg-gradient-to-br from-neon-cyan/5 via-background to-background relative overflow-hidden animate-fade-in ${isHighConfidence ? 'glow-pulse' : 'glow-ambient'}`}>
+      <div className="absolute inset-0 scanline-effect opacity-30 pointer-events-none"></div>
+      <CardHeader className="relative z-10">
+        <CardTitle className="flex items-center gap-2 font-heading text-neon-cyan">
+          <Sparkles className="h-5 w-5 text-neon-purple glow-icon" />
           AI Trade Analysis
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 relative z-10">
         {/* Recommended Action Badge */}
-        <div className="flex items-center justify-between pb-2 border-b">
-          <span className="text-sm font-medium text-muted-foreground">Recommended Action</span>
-          <Badge variant="outline" className={`${getDirectionColor()} border-current`}>
-            <span className="flex items-center gap-1">
+        <div className="flex items-center justify-between pb-2 border-b border-neon-cyan/20">
+          <span className="text-sm font-medium text-muted-foreground font-heading">Recommended Action</span>
+          <Badge variant="outline" className={`${getDirectionColor()} border-current glow-hover`}>
+            <span className="flex items-center gap-1 font-heading">
               {getDirectionIcon()}
-              <span className="uppercase font-semibold">{recommendation.direction}</span>
+              <span className="uppercase font-bold">{recommendation.direction}</span>
             </span>
           </Badge>
         </div>
 
         {/* Entry Point - Prominently Displayed */}
-        <div className="p-4 rounded-lg border-2 border-primary/30 bg-primary/5 space-y-2">
-          <div className="flex items-center gap-2 text-sm font-semibold text-primary">
-            <Target className="h-4 w-4" />
+        <div className="p-4 rounded-lg border-2 border-neon-purple/50 bg-neon-purple/10 space-y-2 glow-purple relative overflow-hidden">
+          <div className="flex items-center gap-2 text-sm font-semibold text-neon-purple font-heading">
+            <Target className="h-4 w-4 glow-icon" />
             Entry Point
           </div>
-          <div className={`text-4xl font-bold ${getDirectionColor()}`}>
+          <div className={`text-4xl font-bold font-mono ${getDirectionColor()} glow-text`}>
             ${formatPrice(recommendation.entryPoint)}
           </div>
           {recommendation.entryReasoning && (
@@ -133,16 +136,16 @@ export default function AITradeAnalysisCard({
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Confidence</span>
-              <span className={`text-sm font-bold ${getConfidenceColor()}`}>
+              <span className="text-sm font-medium font-heading">Confidence</span>
+              <span className={`text-sm font-bold font-mono ${getConfidenceColor()} glow-text`}>
                 {recommendation.confidence}%
               </span>
             </div>
             <Progress value={recommendation.confidence} className="h-2" />
           </div>
           <div className="space-y-2">
-            <span className="text-sm font-medium">Risk Level</span>
-            <Badge variant="outline" className={`w-full justify-center ${getRiskColor()}`}>
+            <span className="text-sm font-medium font-heading">Risk Level</span>
+            <Badge variant="outline" className={`w-full justify-center font-heading ${getRiskColor()} glow-hover`}>
               {recommendation.riskLevel.toUpperCase()}
             </Badge>
           </div>
@@ -150,17 +153,17 @@ export default function AITradeAnalysisCard({
 
         {/* Take Profit Targets */}
         <div className="space-y-3">
-          <h4 className="text-sm font-semibold">Take Profit Targets</h4>
+          <h4 className="text-sm font-semibold font-heading text-neon-cyan">Take Profit Targets</h4>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {recommendation.takeProfitTargets.map((target, i) => (
-              <div key={i} className="p-3 rounded-lg border bg-card space-y-1">
-                <Badge variant="secondary" className="text-xs">
+              <div key={i} className="p-3 rounded-lg border border-neon-cyan/30 bg-card/50 space-y-1 glow-hover transition-all duration-300">
+                <Badge variant="secondary" className="text-xs font-heading bg-gradient-to-r from-neon-cyan/20 to-neon-purple/20 border-neon-cyan/30">
                   {target.label}
                 </Badge>
-                <div className="font-mono font-bold text-lg">
+                <div className="font-mono font-bold text-lg text-foreground">
                   ${formatPrice(target.price)}
                 </div>
-                <div className={`text-xs font-semibold ${recommendation.direction === 'buy' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                <div className={`text-xs font-semibold font-mono ${recommendation.direction === 'buy' ? 'text-neon-green glow-text' : 'text-neon-red glow-text'}`}>
                   {recommendation.direction === 'buy' ? '+' : '-'}{target.percentage.toFixed(1)}%
                 </div>
               </div>
@@ -169,29 +172,29 @@ export default function AITradeAnalysisCard({
         </div>
 
         {/* Stop Loss */}
-        <div className="p-3 rounded-lg border border-destructive/20 bg-destructive/5 space-y-1">
-          <div className="flex items-center gap-2 text-sm font-medium text-destructive">
-            <AlertTriangle className="h-4 w-4" />
+        <div className="p-3 rounded-lg border-2 border-neon-red/40 bg-neon-red/10 space-y-1 glow-red">
+          <div className="flex items-center gap-2 text-sm font-medium text-neon-red font-heading">
+            <AlertTriangle className="h-4 w-4 glow-icon" />
             Stop Loss
           </div>
-          <div className="font-mono font-bold text-xl text-destructive">
+          <div className="font-mono font-bold text-xl text-neon-red glow-text">
             ${formatPrice(recommendation.stopLoss)}
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground font-mono">
             Risk: {Math.abs(((recommendation.stopLoss - recommendation.entryPoint) / recommendation.entryPoint) * 100).toFixed(2)}%
           </div>
         </div>
 
         {/* Reasoning */}
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold">Analysis</h4>
+          <h4 className="text-sm font-semibold font-heading text-neon-cyan">Analysis</h4>
           <p className="text-sm text-muted-foreground leading-relaxed">
             {recommendation.reasoning}
           </p>
         </div>
 
         {/* Timestamp */}
-        <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 border-t">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 border-t border-neon-cyan/20 font-mono">
           <Clock className="h-3 w-3" />
           <span>Updated {relativeTime}</span>
         </div>

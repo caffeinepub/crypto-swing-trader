@@ -18,25 +18,10 @@ export interface Alert {
   'confidence' : bigint,
   'signalType' : SignalType,
 }
-export type Direction = { 'long' : null } |
-  { 'short' : null };
-export interface Position { 'quantity' : number, 'symbol' : string }
 export interface Preferences { 'theme' : string, 'notifications' : boolean }
 export type SignalType = { 'buy' : null } |
   { 'hold' : null } |
   { 'sell' : null };
-export interface Trade {
-  'id' : bigint,
-  'direction' : Direction,
-  'date' : string,
-  'crypto' : string,
-  'notes' : string,
-  'rationale' : string,
-  'quantity' : number,
-  'entryPrice' : number,
-  'exitPrice' : [] | [number],
-  'outcome' : string,
-}
 export interface TransformationInput {
   'context' : Uint8Array,
   'response' : http_request_result,
@@ -61,9 +46,6 @@ export interface http_request_result {
   'headers' : Array<http_header>,
 }
 export interface _SERVICE {
-  'addPosition' : ActorMethod<[string, number], undefined>,
-  'addToWatchlist' : ActorMethod<[string], undefined>,
-  'addTrade' : ActorMethod<[Trade], undefined>,
   'clearAlerts' : ActorMethod<[], undefined>,
   'fetchTopCryptoNews' : ActorMethod<[], string>,
   'fetchTopCryptos' : ActorMethod<[], string>,
@@ -74,15 +56,9 @@ export interface _SERVICE {
   'getAlertStats' : ActorMethod<[], [bigint, bigint, bigint]>,
   'getAlertsLast24Hours' : ActorMethod<[], Array<Alert>>,
   'getCryptoAlertHistory' : ActorMethod<[string], Array<Alert>>,
-  'getJournal' : ActorMethod<[], Array<Trade>>,
-  'getPortfolio' : ActorMethod<[], Array<Position>>,
   'getTheme' : ActorMethod<[], string>,
-  'getWatchlist' : ActorMethod<[], Array<string>>,
   'initializeUser' : ActorMethod<[Preferences], undefined>,
   'purgeOldAlerts' : ActorMethod<[], undefined>,
-  'removeFromJournal' : ActorMethod<[bigint], undefined>,
-  'removeFromWatchlist' : ActorMethod<[string], undefined>,
-  'removePosition' : ActorMethod<[string], undefined>,
   'saveAlert' : ActorMethod<
     [string, SignalType, [] | [TriggerReason], bigint, number],
     undefined

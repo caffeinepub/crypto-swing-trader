@@ -2,8 +2,158 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-aitradeanalysiscard-component-frontend-src-components-aitradeanalysiscard-tsx-to-prominently-display-the-entry-point-price-at-the-top-of-the-card-above-the-take-profit-targets-the-entry-point-should-include-the-price-value-with-appropriate-formatting-color-coding-green-for-buy-entry-red-for-sell-short-entry-based-on-recommendation-direction-a-label-entry-point-and-the-entry-reasoning-text-if-available-ensure-the-entry-point-section-uses-clear-visual-hierarchy-with-appropriate-spacing-icons-and-typography-to-make-it-immediately-visible-to-users",
-      "featureTitle": "Update the AITradeAnalysisCard component (frontend/src/components/AITradeAnalysisCard.tsx) to prominently display the entry point price at the top of the card, above the take-profit targets. The entry point should include: the price value with appropriate formatting, color coding (green for buy entry, red for sell/short entry based on recommendation direction), a label 'Entry Point', and the entry reasoning text if available. Ensure the entry point section uses clear visual hierarchy with appropriate spacing, icons, and typography to make it immediately visible to users.",
+      "featureId": "feature-remove-all-portfolio-feature-code-and-ui-from-the-application-delete-the-portfolio-page-frontend-src-pages-portfolio-tsx-remove-portfolio-navigation-links-from-layout-tsx-delete-addpositiondialog-tsx-positioncard-tsx-and-portfoliosummary-tsx-components-remove-the-useportfolio-hook-frontend-src-hooks-useportfolio-ts-and-remove-all-portfolio-related-backend-functions-and-state-from-backend-main-mo-portfolio-map-addposition-removeposition-getpositions-functions-update-the-router-configuration-in-app-tsx-to-remove-the-portfolio-route",
+      "featureTitle": "Remove all Portfolio feature code and UI from the application. Delete the Portfolio page (frontend/src/pages/Portfolio.tsx), remove Portfolio navigation links from Layout.tsx, delete AddPositionDialog.tsx, PositionCard.tsx, and PortfolioSummary.tsx components, remove the usePortfolio hook (frontend/src/hooks/usePortfolio.ts), and remove all portfolio-related backend functions and state from backend/main.mo (portfolio Map, addPosition, removePosition, getPositions functions). Update the Router configuration in App.tsx to remove the Portfolio route.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AddPositionDialog.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/components/PortfolioSummary.tsx",
+        "frontend/src/components/PositionCard.tsx",
+        "frontend/src/hooks/usePortfolio.ts",
+        "frontend/src/pages/Portfolio.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-32"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-remove-all-trading-journal-feature-code-and-ui-from-the-application-delete-the-journal-page-frontend-src-pages-journal-tsx-remove-journal-navigation-links-from-layout-tsx-delete-addtradedialog-tsx-tradecard-tsx-journalfilters-tsx-and-journalstats-tsx-components-remove-the-usejournal-hook-frontend-src-hooks-usejournal-ts-and-remove-all-journal-related-backend-functions-and-state-from-backend-main-mo-journal-map-addtrade-deletetrade-gettrades-functions-update-the-router-configuration-in-app-tsx-to-remove-the-journal-route",
+      "featureTitle": "Remove all Trading Journal feature code and UI from the application. Delete the Journal page (frontend/src/pages/Journal.tsx), remove Journal navigation links from Layout.tsx, delete AddTradeDialog.tsx, TradeCard.tsx, JournalFilters.tsx, and JournalStats.tsx components, remove the useJournal hook (frontend/src/hooks/useJournal.ts), and remove all journal-related backend functions and state from backend/main.mo (journal Map, addTrade, deleteTrade, getTrades functions). Update the Router configuration in App.tsx to remove the Journal route.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AddTradeDialog.tsx",
+        "frontend/src/components/JournalFilters.tsx",
+        "frontend/src/components/JournalStats.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/components/TradeCard.tsx",
+        "frontend/src/hooks/useJournal.ts",
+        "frontend/src/pages/Journal.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-33"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-a-cyberpunk-color-scheme-with-deep-black-backgrounds-and-neon-accent-colors-throughout-the-entire-application-update-frontend-src-index-css-and-frontend-tailwind-config-js-to-define-new-css-custom-properties-for-the-cyberpunk-theme-near-black-background-0a0a0f-or-darker-electric-blue-accent-00d9ff-or-0ff-vibrant-purple-accent-b300ff-or-c0f-neon-green-accent-39ff14-or-0f0-dark-card-backgrounds-121218-or-similar-and-subtle-border-colors-with-low-opacity-replace-all-existing-color-references-in-components-to-use-the-new-cyberpunk-palette-ensure-text-remains-highly-readable-with-appropriate-contrast-ratios-white-light-gray-text-on-dark-backgrounds",
+      "featureTitle": "Implement a cyberpunk color scheme with deep black backgrounds and neon accent colors throughout the entire application. Update frontend/src/index.css and frontend/tailwind.config.js to define new CSS custom properties for the cyberpunk theme: near-black background (#0a0a0f or darker), electric blue accent (#00d9ff or #0ff), vibrant purple accent (#b300ff or #c0f), neon green accent (#39ff14 or #0f0), dark card backgrounds (#121218 or similar), and subtle border colors with low opacity. Replace all existing color references in components to use the new cyberpunk palette. Ensure text remains highly readable with appropriate contrast ratios (white/light gray text on dark backgrounds).",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-34"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-glowing-effects-to-interactive-elements-and-data-cards-throughout-the-application-to-enhance-the-cyberpunk-aesthetic-apply-css-box-shadow-with-neon-colored-glows-using-the-accent-colors-electric-blue-vibrant-purple-neon-green-to-buttons-on-hover-active-cards-important-data-points-and-interactive-chart-elements-use-subtle-glow-effects-low-spread-medium-blur-for-ambient-lighting-on-cards-and-stronger-glows-for-focus-hover-states-implement-glow-animations-using-css-keyframes-for-pulsing-effects-on-critical-alerts-or-high-confidence-trading-signals",
+      "featureTitle": "Add glowing effects to interactive elements and data cards throughout the application to enhance the cyberpunk aesthetic. Apply CSS box-shadow with neon-colored glows (using the accent colors: electric blue, vibrant purple, neon green) to buttons on hover, active cards, important data points, and interactive chart elements. Use subtle glow effects (low spread, medium blur) for ambient lighting on cards and stronger glows for focus/hover states. Implement glow animations using CSS keyframes for pulsing effects on critical alerts or high-confidence trading signals.",
+      "files": [
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-35"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-typography-across-the-application-to-use-tech-inspired-fonts-that-complement-the-cyberpunk-aesthetic-configure-tailwind-config-js-to-use-a-modern-geometric-sans-serif-font-for-headings-such-as-rajdhani-orbitron-exo-2-or-space-grotesk-and-a-clean-monospace-font-for-numerical-data-prices-and-technical-values-such-as-jetbrains-mono-fira-code-or-roboto-mono-ensure-fonts-are-loaded-via-google-fonts-or-similar-cdn-apply-appropriate-font-weights-bold-for-headings-medium-for-body-regular-for-data-and-maintain-clear-typographic-hierarchy-across-all-pages-and-components",
+      "featureTitle": "Update typography across the application to use tech-inspired fonts that complement the cyberpunk aesthetic. Configure tailwind.config.js to use a modern, geometric sans-serif font for headings (such as Rajdhani, Orbitron, Exo 2, or Space Grotesk) and a clean monospace font for numerical data, prices, and technical values (such as JetBrains Mono, Fira Code, or Roboto Mono). Ensure fonts are loaded via Google Fonts or similar CDN. Apply appropriate font weights (bold for headings, medium for body, regular for data) and maintain clear typographic hierarchy across all pages and components.",
+      "files": [
+        "frontend/index.html",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-36"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-smooth-css-transitions-and-animations-to-enhance-interactivity-throughout-the-application-implement-transitions-for-hover-states-0-2-0-3s-duration-page-transitions-card-appearances-and-data-updates-add-subtle-entrance-animations-for-cards-and-list-items-using-css-keyframes-or-tailwind-animate-utilities-fade-in-slide-in-effects-ensure-animations-feel-responsive-and-modern-without-causing-performance-issues-or-motion-sickness-use-reduced-motion-media-queries-for-accessibility-apply-cyberpunk-style-animations-like-scanline-effects-glitch-transitions-or-data-stream-aesthetics-where-appropriate",
+      "featureTitle": "Add smooth CSS transitions and animations to enhance interactivity throughout the application. Implement transitions for hover states (0.2-0.3s duration), page transitions, card appearances, and data updates. Add subtle entrance animations for cards and list items using CSS keyframes or Tailwind animate utilities (fade-in, slide-in effects). Ensure animations feel responsive and modern without causing performance issues or motion sickness (use reduced-motion media queries for accessibility). Apply cyberpunk-style animations like scanline effects, glitch transitions, or data-stream aesthetics where appropriate.",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-37"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-redesign-the-cryptotable-component-with-cyberpunk-styling-neon-price-displays-glowing-signal-badges-electric-accent-colors-for-positive-negative-changes-dark-table-rows-with-subtle-hover-glow-effects-and-tech-inspired-borders-price-values-should-glow-in-neon-green-for-gains-and-neon-red-for-losses-signal-badges-should-have-strong-neon-glow-effects-table-headers-should-use-the-tech-inspired-font-with-neon-underline-or-border-accent-maintain-readability-while-maximizing-visual-impact",
+      "featureTitle": "Redesign the CryptoTable component with cyberpunk styling: neon price displays, glowing signal badges, electric accent colors for positive/negative changes, dark table rows with subtle hover glow effects, and tech-inspired borders. Price values should glow in neon green for gains and neon red for losses. Signal badges should have strong neon glow effects. Table headers should use the tech-inspired font with neon underline or border accent. Maintain readability while maximizing visual impact.",
+      "files": [
+        "frontend/src/components/CryptoTable.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-38"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-redesign-the-aitradeanalysiscard-component-with-cyberpunk-aesthetic-glowing-recommendation-cards-neon-colored-entry-point-display-electric-accent-borders-pulsing-glow-effects-for-high-confidence-recommendations-tech-inspired-layout-with-geometric-shapes-and-vibrant-color-coding-for-buy-sell-directions-entry-point-should-have-a-strong-neon-glow-take-profit-targets-should-use-gradient-badges-with-neon-colors-confidence-score-progress-bar-should-glow-risk-level-badges-should-use-appropriate-neon-warning-colors",
+      "featureTitle": "Redesign the AITradeAnalysisCard component with cyberpunk aesthetic: glowing recommendation cards, neon-colored entry point display, electric accent borders, pulsing glow effects for high-confidence recommendations, tech-inspired layout with geometric shapes, and vibrant color coding for buy/sell directions. Entry point should have a strong neon glow. Take-profit targets should use gradient badges with neon colors. Confidence score progress bar should glow. Risk level badges should use appropriate neon warning colors.",
       "files": [
         "frontend/src/components/AITradeAnalysisCard.tsx"
       ],
@@ -16,7 +166,182 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-31"
+        "REQ-39"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-redesign-the-market-heatmap-page-with-cyberpunk-visualization-neon-colored-blocks-with-intense-glow-effects-electric-gradients-for-price-changes-neon-green-to-dark-for-gains-neon-red-to-dark-for-losses-glowing-borders-on-hover-pulsing-animations-for-high-volatility-coins-dark-grid-background-with-subtle-neon-gridlines-and-futuristic-block-styling-with-geometric-shapes-clicking-a-block-should-trigger-a-neon-flash-animation-before-navigation",
+      "featureTitle": "Redesign the Market Heatmap page with cyberpunk visualization: neon-colored blocks with intense glow effects, electric gradients for price changes (neon green to dark for gains, neon red to dark for losses), glowing borders on hover, pulsing animations for high volatility coins, dark grid background with subtle neon gridlines, and futuristic block styling with geometric shapes. Clicking a block should trigger a neon flash animation before navigation.",
+      "files": [
+        "frontend/src/pages/Dashboard.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-40"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-alert-history-page-with-cyberpunk-styling-dark-card-backgrounds-with-neon-borders-glowing-signal-type-badges-buy-neon-green-glow-sell-neon-red-glow-hold-neon-blue-glow-tech-inspired-timestamp-displays-with-monospace-font-electric-accent-colors-for-confidence-levels-and-subtle-scanline-effects-on-alert-cards-filter-controls-should-have-neon-focus-states-and-glowing-dropdown-menus",
+      "featureTitle": "Update the Alert History page with cyberpunk styling: dark card backgrounds with neon borders, glowing signal type badges (buy=neon green glow, sell=neon red glow, hold=neon blue glow), tech-inspired timestamp displays with monospace font, electric accent colors for confidence levels, and subtle scanline effects on alert cards. Filter controls should have neon focus states and glowing dropdown menus.",
+      "files": [
+        "frontend/src/components/AlertCard.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-41"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-redesign-chart-visualizations-candlestickchart-component-with-cyberpunk-aesthetics-neon-colored-candlesticks-green-for-bullish-red-for-bearish-with-glow-effects-electric-accent-lines-for-support-resistance-levels-glowing-gridlines-dark-chart-background-with-subtle-neon-gradient-overlay-and-vibrant-color-coding-for-technical-indicators-chart-axes-should-use-monospace-font-with-neon-color-hovering-over-data-points-should-trigger-neon-glow-effects",
+      "featureTitle": "Redesign chart visualizations (CandlestickChart component) with cyberpunk aesthetics: neon-colored candlesticks (green for bullish, red for bearish with glow effects), electric accent lines for support/resistance levels, glowing gridlines, dark chart background with subtle neon gradient overlay, and vibrant color coding for technical indicators. Chart axes should use monospace font with neon color. Hovering over data points should trigger neon glow effects.",
+      "files": [
+        "frontend/src/components/CandlestickChart.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-42"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-layout-component-navigation-with-cyberpunk-styling-dark-nav-background-with-neon-borders-glowing-navigation-links-on-hover-electric-accent-for-active-route-indicator-tech-inspired-logo-branding-with-neon-glow-and-futuristic-mobile-menu-with-slide-in-animation-and-neon-backdrop-theme-toggle-button-should-have-cyberpunk-icon-styling-with-glow-effect-auth-button-should-have-prominent-neon-accent",
+      "featureTitle": "Update the Layout component navigation with cyberpunk styling: dark nav background with neon borders, glowing navigation links on hover, electric accent for active route indicator, tech-inspired logo/branding with neon glow, and futuristic mobile menu with slide-in animation and neon backdrop. Theme toggle button should have cyberpunk icon styling with glow effect. Auth button should have prominent neon accent.",
+      "files": [
+        "frontend/src/components/Layout.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-43"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-redesign-the-watchlistpanel-component-with-cyberpunk-styling-dark-panel-background-with-neon-border-accent-glowing-crypto-icons-logos-neon-price-displays-with-pulsing-effects-for-rapid-changes-electric-color-coding-for-price-movements-tech-inspired-remove-buttons-with-glow-on-hover-and-futuristic-list-item-styling-with-geometric-separators-empty-state-should-display-cyberpunk-styled-message",
+      "featureTitle": "Redesign the WatchlistPanel component with cyberpunk styling: dark panel background with neon border accent, glowing crypto icons/logos, neon price displays with pulsing effects for rapid changes, electric color coding for price movements, tech-inspired remove buttons with glow on hover, and futuristic list item styling with geometric separators. Empty state should display cyberpunk-styled message.",
+      "files": [
+        "frontend/src/components/WatchlistPanel.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-44"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-marketsentimentpanel-with-cyberpunk-visualization-glowing-sentiment-indicators-neon-colored-fear-greed-index-display-with-animated-arc-or-progress-bar-electric-accent-colors-for-top-gainers-neon-green-and-losers-neon-red-tech-inspired-card-layouts-with-geometric-shapes-and-pulsing-glow-effects-for-extreme-sentiment-values-overall-sentiment-badge-should-have-strong-neon-glow",
+      "featureTitle": "Update the MarketSentimentPanel with cyberpunk visualization: glowing sentiment indicators, neon-colored fear/greed index display with animated arc or progress bar, electric accent colors for top gainers (neon green) and losers (neon red), tech-inspired card layouts with geometric shapes, and pulsing glow effects for extreme sentiment values. Overall sentiment badge should have strong neon glow.",
+      "files": [
+        "frontend/src/components/MarketSentimentPanel.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-45"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-redesign-the-indicatorspanel-component-with-cyberpunk-styling-dark-indicator-cards-with-neon-borders-glowing-technical-indicator-values-electric-color-coding-for-overbought-oversold-zones-neon-red-for-70-rsi-neon-green-for-30-rsi-tech-inspired-labels-with-monospace-font-and-pulsing-glow-effects-for-extreme-indicator-values-macd-and-bollinger-bands-displays-should-use-neon-accent-colors-for-visualization",
+      "featureTitle": "Redesign the IndicatorsPanel component with cyberpunk styling: dark indicator cards with neon borders, glowing technical indicator values, electric color coding for overbought/oversold zones (neon red for >70 RSI, neon green for <30 RSI), tech-inspired labels with monospace font, and pulsing glow effects for extreme indicator values. MACD and Bollinger Bands displays should use neon accent colors for visualization.",
+      "files": [
+        "frontend/src/components/IndicatorsPanel.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-46"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-toast-notifications-with-cyberpunk-styling-dark-toast-background-with-neon-border-glow-electric-accent-colors-for-notification-types-info-blue-success-green-warning-yellow-error-red-tech-inspired-typography-smooth-slide-in-animation-with-neon-trail-effect-and-glowing-icons-notification-content-should-be-highly-readable-with-strong-contrast",
+      "featureTitle": "Update toast notifications with cyberpunk styling: dark toast background with neon border glow, electric accent colors for notification types (info=blue, success=green, warning=yellow, error=red), tech-inspired typography, smooth slide-in animation with neon trail effect, and glowing icons. Notification content should be highly readable with strong contrast.",
+      "files": [
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-47"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-enhance-mobile-responsiveness-for-the-cyberpunk-redesign-across-all-components-and-pages-ensure-neon-glow-effects-remain-visible-and-performant-on-mobile-devices-without-excessive-battery-drain-optimize-touch-targets-for-glowing-interactive-elements-minimum-44x44px-adapt-complex-layouts-heatmap-charts-multi-column-displays-to-mobile-screens-while-preserving-cyberpunk-aesthetic-test-glow-effects-animations-and-transitions-on-mobile-browsers-to-ensure-smooth-60fps-performance",
+      "featureTitle": "Enhance mobile responsiveness for the cyberpunk redesign across all components and pages. Ensure neon glow effects remain visible and performant on mobile devices without excessive battery drain. Optimize touch targets for glowing interactive elements (minimum 44x44px). Adapt complex layouts (heatmap, charts, multi-column displays) to mobile screens while preserving cyberpunk aesthetic. Test glow effects, animations, and transitions on mobile browsers to ensure smooth 60fps performance.",
+      "files": [
+        "frontend/src/components/CandlestickChart.tsx",
+        "frontend/src/components/CryptoTable.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/index.css",
+        "frontend/src/pages/Dashboard.tsx"
+      ],
+      "components": [
+        "http-outcalls@3.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-48"
       ],
       "confidence": "high"
     }

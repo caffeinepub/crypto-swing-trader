@@ -1,65 +1,53 @@
 import Map "mo:core/Map";
-import List "mo:core/List";
-import Nat "mo:core/Nat";
 import Text "mo:core/Text";
+import List "mo:core/List";
 
 module {
-  type Direction = { #long; #short };
-  type Trade = {
-    id : Nat;
-    crypto : Text;
-    direction : Direction;
-    entryPrice : Float;
-    exitPrice : ?Float;
-    quantity : Float;
-    date : Text;
-    rationale : Text;
-    outcome : Text;
-    notes : Text;
-  };
-  type Preferences = {
+  // Old data structures
+  type OldPreferences = {
     theme : Text;
     notifications : Bool;
   };
-  type UserData = {
+
+  type OldUserData = {
     portfolio : List.List<{ symbol : Text; quantity : Float }>;
     watchlist : List.List<Text>;
-    journal : List.List<Trade>;
-    preferences : Preferences;
+    journal : List.List<{
+      id : Nat;
+      crypto : Text;
+      direction : { #long : () ; #short : () };
+      entryPrice : Float;
+      exitPrice : ?Float;
+      quantity : Float;
+      date : Text;
+      rationale : Text;
+      outcome : Text;
+      notes : Text;
+    }>;
+    preferences : OldPreferences;
   };
+
+  // Old actor state type
   type OldActor = {
-    userData : Map.Map<Text, UserData>;
+    userData : Map.Map<Text, OldUserData>;
   };
 
-  type SignalType = { #buy; #sell; #hold };
-  type TriggerReason = {
-    #rsiBelow30 : Text;
-    #rsiAbove70 : Text;
-    #macdCrossover : Text;
-    #priceBreak : Text;
-    #stopLoss : ?Float;
-    #takeProfit : ?Float;
-    #riskReward : ?Float;
-    #trendFollowing : Bool;
-  };
-  type Alert = {
-    timestamp : Int;
-    crypto : Text;
-    signalType : SignalType;
-    triggerReason : ?TriggerReason;
-    confidence : Nat;
-    priceAtTrigger : Float;
+  // New user data structure
+  type NewUserData = {
+    preferences : OldPreferences;
   };
 
+  // New actor state type
   type NewActor = {
-    userData : Map.Map<Text, UserData>;
-    alertHistories : Map.Map<Text, List.List<Alert>>;
+    userData : Map.Map<Text, NewUserData>;
   };
 
   public func run(old : OldActor) : NewActor {
-    {
-      userData = old.userData;
-      alertHistories = Map.empty<Text, List.List<Alert>>();
-    };
+    let newUserData = old.userData.map<Text, OldUserData, NewUserData>(
+      func(_key, oldUser) {
+        { preferences = oldUser.preferences };
+      }
+    );
+    { old with userData = newUserData };
   };
 };
