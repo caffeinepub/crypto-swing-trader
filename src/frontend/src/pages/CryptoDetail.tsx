@@ -3,7 +3,7 @@ import { useCryptoPrices } from '@/hooks/useCryptoPrices';
 import { useChartData } from '@/hooks/useChartData';
 import { useTechnicalIndicators } from '@/hooks/useTechnicalIndicators';
 import { useTradingSignals } from '@/hooks/useTradingSignals';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2 } from 'lucide-react';
@@ -13,6 +13,7 @@ import IndicatorsPanel from '@/components/IndicatorsPanel';
 import TradingSignalsPanel from '@/components/TradingSignalsPanel';
 import PatternLegend from '@/components/PatternLegend';
 import AITradeAnalysisCard from '@/components/AITradeAnalysisCard';
+import { generateTradeRecommendation } from '@/utils/aiTradeRecommendations';
 
 export default function CryptoDetail() {
   const { cryptoId } = useParams({ from: '/crypto/$cryptoId' });
@@ -22,6 +23,23 @@ export default function CryptoDetail() {
   const { data: chartData, isLoading: chartLoading } = useChartData(cryptoId, timeframe);
   const { data: indicators } = useTechnicalIndicators(cryptoId, timeframe);
   const { data: signals } = useTradingSignals(cryptoId, timeframe);
+
+  // Generate trade recommendation for chart markers
+  const tradeRecommendation = useMemo(() => {
+    if (!crypto || !signals || !indicators || !chartData) return undefined;
+
+    const supportLevels = chartData.supportResistance.filter((l) => l.type === 'support').map((l) => l.price);
+    const resistanceLevels = chartData.supportResistance.filter((l) => l.type === 'resistance').map((l) => l.price);
+
+    return generateTradeRecommendation(
+      crypto.current_price,
+      signals,
+      indicators,
+      chartData.patterns,
+      supportLevels,
+      resistanceLevels
+    );
+  }, [crypto, signals, indicators, chartData]);
 
   if (!crypto) {
     return (
@@ -91,6 +109,9 @@ export default function CryptoDetail() {
               indicators={indicators}
               patterns={chartData.patterns}
               supportResistance={chartData.supportResistance}
+              tradeRecommendation={tradeRecommendation}
+              coinId={cryptoId}
+              timeframe={timeframe}
             />
           ) : (
             <div className="flex items-center justify-center h-[400px] text-muted-foreground">No chart data available</div>

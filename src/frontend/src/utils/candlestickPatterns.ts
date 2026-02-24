@@ -5,6 +5,7 @@ export interface CandlestickPattern {
   type: 'bullish' | 'bearish' | 'neutral';
   name: string;
   description: string;
+  tradingAction?: string;
 }
 
 export function detectCandlestickPatterns(ohlc: OHLCData[]): CandlestickPattern[] {
@@ -20,7 +21,8 @@ export function detectCandlestickPatterns(ohlc: OHLCData[]): CandlestickPattern[
         index: i,
         type: 'neutral',
         name: 'Doji',
-        description: 'Indecision in the market',
+        description: 'Indecision in the market - price opened and closed at nearly the same level',
+        tradingAction: 'Wait for confirmation from next candle before entering position',
       });
     }
 
@@ -34,7 +36,8 @@ export function detectCandlestickPatterns(ohlc: OHLCData[]): CandlestickPattern[
         index: i,
         type: 'bullish',
         name: 'Hammer',
-        description: 'Potential bullish reversal',
+        description: 'Potential bullish reversal - buyers rejected lower prices',
+        tradingAction: 'Consider entering long position if confirmed by next candle closing higher',
       });
     }
 
@@ -44,7 +47,8 @@ export function detectCandlestickPatterns(ohlc: OHLCData[]): CandlestickPattern[
         index: i,
         type: 'bearish',
         name: 'Shooting Star',
-        description: 'Potential bearish reversal',
+        description: 'Potential bearish reversal - sellers rejected higher prices',
+        tradingAction: 'Consider entering short position or taking profits on long positions',
       });
     }
 
@@ -59,7 +63,8 @@ export function detectCandlestickPatterns(ohlc: OHLCData[]): CandlestickPattern[
         index: i,
         type: 'bullish',
         name: 'Bullish Engulfing',
-        description: 'Strong bullish reversal signal',
+        description: 'Strong bullish reversal signal - buyers overwhelmed sellers',
+        tradingAction: 'Strong buy signal - consider entering long position with stop below pattern low',
       });
     }
 
@@ -74,7 +79,8 @@ export function detectCandlestickPatterns(ohlc: OHLCData[]): CandlestickPattern[
         index: i,
         type: 'bearish',
         name: 'Bearish Engulfing',
-        description: 'Strong bearish reversal signal',
+        description: 'Strong bearish reversal signal - sellers overwhelmed buyers',
+        tradingAction: 'Strong sell signal - consider entering short position or exiting long positions',
       });
     }
   }

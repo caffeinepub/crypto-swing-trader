@@ -7,9 +7,9 @@ import Principal "mo:core/Principal";
 import Time "mo:core/Time";
 import Nat32 "mo:core/Nat32";
 import OutCall "http-outcalls/outcall";
-import Migration "migration";
 
-(with migration = Migration.run)
+
+
 actor {
   public query func transform(input : OutCall.TransformationInput) : async OutCall.TransformationOutput {
     OutCall.transform(input);

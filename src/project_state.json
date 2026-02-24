@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
+  "projectStateVersion": 13,
   "summary": "Professional crypto swing trading dashboard with cyberpunk/futuristic visual design featuring neon accents on dark backgrounds, real-time price tracking for 20-30 top cryptocurrencies, technical indicators (RSI, MACD, Moving Averages, Bollinger Bands), swing trading signals, multi-timeframe chart analysis, candlestick pattern recognition, support/resistance detection, market sentiment dashboard, dark mode with neon cyberpunk styling, mobile-responsive design, Internet Identity authentication, CoinGecko API integration, Motoko backend, React + TypeScript frontend. Portfolio tracker and trading journal features removed.",
   "architectural_notes": [
     "React + TypeScript frontend with Tailwind CSS for styling",
@@ -15,8 +15,7 @@
     "Cyberpunk UI theme with neon accents (electric blue, vibrant purple, neon green) on deep black backgrounds"
   ],
   "known_issues": [
-    "CoinGecko API rate limiting causing dashboard data load failures",
-    "AI Trade Analysis card on crypto detail page not displaying entry point price in UI (generateTradeRecommendation calculates it but component doesn't render it)"
+    "CoinGecko API rate limiting causing dashboard data load failures"
   ],
   "isFixRequest": false,
   "existing_features": [
@@ -371,6 +370,54 @@
         "REQ-48"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-visual-entry-point-markers-directly-on-the-candlestickchart-component-display-green-upward-arrows-or-vertical-lines-for-long-buy-entry-positions-and-red-downward-arrows-or-vertical-lines-for-short-sell-entry-positions-position-the-markers-at-the-exact-entry-price-level-recommended-by-the-ai-trade-analysis-use-neon-glow-effects-matching-the-cyberpunk-aesthetic-neon-green-for-long-entries-with-glow-shadow-neon-red-for-short-entries-with-glow-shadow",
+      "title": "Add visual entry point markers directly on the CandlestickChart component. Display green upward arrows or vertical lines for long (buy) entry positions and red downward arrows or vertical lines for short (sell) entry positions. Position the markers at the exact entry price level recommended by the AI trade analysis. Use neon glow effects matching the cyberpunk aesthetic (neon green for long entries with glow shadow, neon red for short entries with glow shadow).",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-three-horizontal-take-profit-level-lines-on-the-candlestickchart-component-corresponding-to-the-conservative-moderate-and-aggressive-take-profit-targets-from-the-ai-trade-analysis-display-each-level-as-a-horizontal-line-with-a-label-showing-the-target-type-and-price-use-gradient-neon-colors-to-differentiate-the-three-levels-e-g-dim-neon-green-for-conservative-medium-intensity-neon-green-for-moderate-bright-neon-green-for-aggressive-include-subtle-glow-effects-on-the-lines",
+      "title": "Add three horizontal take-profit level lines on the CandlestickChart component corresponding to the conservative, moderate, and aggressive take-profit targets from the AI trade analysis. Display each level as a horizontal line with a label showing the target type and price. Use gradient neon colors to differentiate the three levels (e.g., dim neon green for conservative, medium intensity neon green for moderate, bright neon green for aggressive). Include subtle glow effects on the lines.",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-stop-loss-level-marker-on-the-candlestickchart-component-as-a-horizontal-line-positioned-at-the-stop-loss-price-from-the-ai-trade-analysis-use-neon-red-or-neon-orange-color-with-a-warning-icon-or-label-include-a-glow-effect-to-make-it-clearly-visible-position-the-line-below-the-entry-point-for-long-positions-or-above-the-entry-point-for-short-positions",
+      "title": "Add a stop-loss level marker on the CandlestickChart component as a horizontal line positioned at the stop-loss price from the AI trade analysis. Use neon red or neon orange color with a warning icon or label. Include a glow effect to make it clearly visible. Position the line below the entry point for long positions or above the entry point for short positions.",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-pattern-explanation-tooltips-on-the-candlestickchart-component-that-appear-when-hovering-over-detected-candlestick-patterns-the-tooltip-should-display-the-pattern-name-e-g-bullish-engulfing-doji-hammer-a-brief-description-of-what-the-pattern-means-and-the-recommended-trading-action-e-g-typically-signals-upward-price-movement-consider-entering-long-position-style-tooltips-with-cyberpunk-dark-background-neon-borders-and-clear-typography-position-tooltips-near-the-pattern-location-on-the-chart-without-obscuring-price-data",
+      "title": "Implement pattern explanation tooltips on the CandlestickChart component that appear when hovering over detected candlestick patterns. The tooltip should display the pattern name (e.g., 'Bullish Engulfing', 'Doji', 'Hammer'), a brief description of what the pattern means, and the recommended trading action (e.g., 'Typically signals upward price movement - consider entering long position'). Style tooltips with cyberpunk dark background, neon borders, and clear typography. Position tooltips near the pattern location on the chart without obscuring price data.",
+      "reqIds": [
+        "REQ-52"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-candlestickchart-component-to-integrate-with-the-ai-trade-recommendation-data-from-the-aitradeanalysiscard-component-ensure-the-chart-receives-the-entry-point-price-take-profit-targets-conservative-moderate-aggressive-stop-loss-price-and-trading-direction-long-short-as-props-or-through-shared-state-synchronize-the-visual-markers-with-the-ai-recommendation-data-so-that-markers-appear-update-whenever-recommendations-are-generated-or-recalculated",
+      "title": "Update the CandlestickChart component to integrate with the AI trade recommendation data from the AITradeAnalysisCard component. Ensure the chart receives the entry point price, take-profit targets (conservative/moderate/aggressive), stop-loss price, and trading direction (long/short) as props or through shared state. Synchronize the visual markers with the AI recommendation data so that markers appear/update whenever recommendations are generated or recalculated.",
+      "reqIds": [
+        "REQ-53"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-chart-markers-entry-points-take-profit-levels-stop-loss-remain-visible-and-readable-on-mobile-devices-optimize-touch-interactions-for-pattern-tooltips-on-mobile-tap-to-show-instead-of-hover-scale-marker-sizes-and-label-fonts-appropriately-for-smaller-screens-test-on-various-mobile-screen-sizes-to-ensure-markers-do-not-overlap-or-obscure-critical-chart-data",
+      "title": "Ensure all chart markers (entry points, take-profit levels, stop-loss) remain visible and readable on mobile devices. Optimize touch interactions for pattern tooltips on mobile (tap to show instead of hover). Scale marker sizes and label fonts appropriately for smaller screens. Test on various mobile screen sizes to ensure markers do not overlap or obscure critical chart data.",
+      "reqIds": [
+        "REQ-54"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -523,6 +570,12 @@
     {
       "id": "AR-29",
       "summary": "Redesign UI with cyberpunk aesthetic: deep black backgrounds, neon accent colors (electric blue, vibrant purple, neon green), glowing effects on cards and interactive elements, tech-inspired typography, smooth animations, and cyberpunk-style data visualization across all pages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Add visual trading markers directly on candlestick charts: entry point markers (green arrows/lines for long, red for short), take-profit level lines (3 targets: conservative/moderate/aggressive), stop-loss level markers, and pattern explanation tooltips on hover",
       "reqIds": [],
       "status": "pending"
     }
