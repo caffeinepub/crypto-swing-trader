@@ -29,8 +29,10 @@ export function calculateRSI(prices: number[], period = 14): number[] {
     const gains = slice.filter((c) => c > 0);
     const losses = slice.filter((c) => c < 0).map((c) => Math.abs(c));
 
-    const avgGain = gains.length > 0 ? gains.reduce((a, b) => a + b, 0) / period : 0;
-    const avgLoss = losses.length > 0 ? losses.reduce((a, b) => a + b, 0) / period : 0;
+    const avgGain =
+      gains.length > 0 ? gains.reduce((a, b) => a + b, 0) / period : 0;
+    const avgLoss =
+      losses.length > 0 ? losses.reduce((a, b) => a + b, 0) / period : 0;
 
     if (avgLoss === 0) {
       rsi.push(100);
@@ -47,7 +49,7 @@ export function calculateMACD(
   prices: number[],
   fastPeriod = 12,
   slowPeriod = 26,
-  signalPeriod = 9
+  signalPeriod = 9,
 ): { macd: number[]; signal: number[]; histogram: number[] } {
   const emaFast = calculateEMA(prices, fastPeriod);
   const emaSlow = calculateEMA(prices, slowPeriod);
@@ -61,7 +63,9 @@ export function calculateMACD(
   const signalLine = calculateEMA(macdLine, signalPeriod);
   const histogram: number[] = [];
   for (let i = 0; i < signalLine.length; i++) {
-    histogram.push(macdLine[macdLine.length - signalLine.length + i] - signalLine[i]);
+    histogram.push(
+      macdLine[macdLine.length - signalLine.length + i] - signalLine[i],
+    );
   }
 
   return { macd: macdLine, signal: signalLine, histogram };
@@ -97,7 +101,7 @@ export function calculateEMA(prices: number[], period: number): number[] {
 export function calculateBollingerBands(
   prices: number[],
   period = 20,
-  stdDev = 2
+  stdDev = 2,
 ): { upper: number[]; middle: number[]; lower: number[] } {
   const sma = calculateSMA(prices, period);
   const upper: number[] = [];
@@ -106,7 +110,8 @@ export function calculateBollingerBands(
   for (let i = 0; i < sma.length; i++) {
     const slice = prices.slice(i, i + period);
     const mean = sma[i];
-    const variance = slice.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / period;
+    const variance =
+      slice.reduce((sum, val) => sum + (val - mean) ** 2, 0) / period;
     const std = Math.sqrt(variance);
 
     upper.push(mean + stdDev * std);

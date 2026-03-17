@@ -1,24 +1,30 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useActor } from './useActor';
-import { useInternetIdentity } from './useInternetIdentity';
-import type { Alert, SignalType } from '@/backend';
+import type { Alert, SignalType } from "@/backend";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useActor } from "./useActor";
+import { useInternetIdentity } from "./useInternetIdentity";
 
-export function useAlertHistory(filterCrypto?: string | null, filterSignal?: SignalType | null) {
+export function useAlertHistory(
+  filterCrypto?: string | null,
+  filterSignal?: SignalType | null,
+) {
   const { actor, isFetching } = useActor();
   const { identity } = useInternetIdentity();
   const queryClient = useQueryClient();
 
   const alertHistoryQuery = useQuery<Alert[]>({
-    queryKey: ['alertHistory', filterCrypto, filterSignal],
+    queryKey: ["alertHistory", filterCrypto, filterSignal],
     queryFn: async () => {
       if (!actor) return [];
-      return await actor.getAlertHistory(filterCrypto || null, filterSignal || null);
+      return await actor.getAlertHistory(
+        filterCrypto || null,
+        filterSignal || null,
+      );
     },
     enabled: !!actor && !!identity && !isFetching,
   });
 
   const last24HoursQuery = useQuery<Alert[]>({
-    queryKey: ['alertsLast24Hours'],
+    queryKey: ["alertsLast24Hours"],
     queryFn: async () => {
       if (!actor) return [];
       return await actor.getAlertsLast24Hours();
@@ -27,7 +33,7 @@ export function useAlertHistory(filterCrypto?: string | null, filterSignal?: Sig
   });
 
   const alertStatsQuery = useQuery<[bigint, bigint, bigint]>({
-    queryKey: ['alertStats'],
+    queryKey: ["alertStats"],
     queryFn: async () => {
       if (!actor) return [BigInt(0), BigInt(0), BigInt(0)];
       return await actor.getAlertStats();
@@ -49,25 +55,31 @@ export function useAlertHistory(filterCrypto?: string | null, filterSignal?: Sig
       confidence: bigint;
       priceAtTrigger: number;
     }) => {
-      if (!actor) throw new Error('Actor not initialized');
-      await actor.saveAlert(crypto, signalType, triggerReason, confidence, priceAtTrigger);
+      if (!actor) throw new Error("Actor not initialized");
+      await actor.saveAlert(
+        crypto,
+        signalType,
+        triggerReason,
+        confidence,
+        priceAtTrigger,
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['alertHistory'] });
-      queryClient.invalidateQueries({ queryKey: ['alertsLast24Hours'] });
-      queryClient.invalidateQueries({ queryKey: ['alertStats'] });
+      queryClient.invalidateQueries({ queryKey: ["alertHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["alertsLast24Hours"] });
+      queryClient.invalidateQueries({ queryKey: ["alertStats"] });
     },
   });
 
   const clearAlertsMutation = useMutation({
     mutationFn: async () => {
-      if (!actor) throw new Error('Actor not initialized');
+      if (!actor) throw new Error("Actor not initialized");
       await actor.clearAlerts();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['alertHistory'] });
-      queryClient.invalidateQueries({ queryKey: ['alertsLast24Hours'] });
-      queryClient.invalidateQueries({ queryKey: ['alertStats'] });
+      queryClient.invalidateQueries({ queryKey: ["alertHistory"] });
+      queryClient.invalidateQueries({ queryKey: ["alertsLast24Hours"] });
+      queryClient.invalidateQueries({ queryKey: ["alertStats"] });
     },
   });
 
@@ -87,7 +99,7 @@ export function useCryptoAlerts(crypto: string) {
   const { identity } = useInternetIdentity();
 
   return useQuery<Alert[]>({
-    queryKey: ['cryptoAlerts', crypto],
+    queryKey: ["cryptoAlerts", crypto],
     queryFn: async () => {
       if (!actor) return [];
       return await actor.getCryptoAlertHistory(crypto);

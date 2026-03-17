@@ -1,7 +1,13 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
-import { SignalType } from '@/backend';
+import { SignalType } from "@/backend";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { X } from "lucide-react";
 
 interface AlertFiltersProps {
   cryptos: Array<{ id: string; name: string; symbol: string }>;
@@ -29,7 +35,10 @@ export default function AlertFilters({
     <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
       <div className="flex flex-col sm:flex-row gap-3 flex-1 w-full sm:w-auto">
         {/* Crypto Filter */}
-        <Select value={filterCrypto || 'all'} onValueChange={(v) => onCryptoChange(v === 'all' ? null : v)}>
+        <Select
+          value={filterCrypto || "all"}
+          onValueChange={(v) => onCryptoChange(v === "all" ? null : v)}
+        >
           <SelectTrigger className="w-full sm:w-[200px]">
             <SelectValue placeholder="All Cryptocurrencies" />
           </SelectTrigger>
@@ -45,15 +54,15 @@ export default function AlertFilters({
 
         {/* Signal Type Filter */}
         <Select
-          value={filterSignal || 'all'}
+          value={filterSignal || "all"}
           onValueChange={(v) => {
-            if (v === 'all') {
+            if (v === "all") {
               onSignalChange(null);
-            } else if (v === 'buy') {
+            } else if (v === "buy") {
               onSignalChange(SignalType.buy);
-            } else if (v === 'sell') {
+            } else if (v === "sell") {
               onSignalChange(SignalType.sell);
-            } else if (v === 'hold') {
+            } else if (v === "hold") {
               onSignalChange(SignalType.hold);
             }
           }}
@@ -72,7 +81,12 @@ export default function AlertFilters({
 
       {/* Reset Button */}
       {hasFilters && (
-        <Button variant="outline" size="sm" onClick={handleReset} className="w-full sm:w-auto">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleReset}
+          className="w-full sm:w-auto"
+        >
           <X className="h-4 w-4 mr-2" />
           Reset
         </Button>

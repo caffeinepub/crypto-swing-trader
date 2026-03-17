@@ -1,23 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchOHLCData } from '@/services/coingecko';
+import { fetchOHLCData } from "@/services/coingecko";
 import {
-  calculateRSI,
-  calculateMACD,
-  calculateSMA,
-  calculateEMA,
-  calculateBollingerBands,
   type TechnicalIndicators,
-} from '@/utils/technicalIndicators';
+  calculateBollingerBands,
+  calculateEMA,
+  calculateMACD,
+  calculateRSI,
+  calculateSMA,
+} from "@/utils/technicalIndicators";
+import { useQuery } from "@tanstack/react-query";
 
-export function useTechnicalIndicators(coinId: string, timeframe: '1H' | '4H' | 'Daily') {
+export function useTechnicalIndicators(
+  coinId: string,
+  timeframe: "1H" | "4H" | "Daily",
+) {
   const daysMap = {
-    '1H': 1,
-    '4H': 7,
+    "1H": 1,
+    "4H": 7,
     Daily: 90,
   };
 
   return useQuery<TechnicalIndicators>({
-    queryKey: ['indicators', coinId, timeframe],
+    queryKey: ["indicators", coinId, timeframe],
     queryFn: async () => {
       const ohlc = await fetchOHLCData(coinId, daysMap[timeframe]);
       const closes = ohlc.map((d) => d.close);

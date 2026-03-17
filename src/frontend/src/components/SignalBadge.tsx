@@ -1,16 +1,31 @@
-import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import type { TradingSignal } from '@/utils/tradingSignals';
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { TradingSignal } from "@/utils/tradingSignals";
+import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 
 interface SignalBadgeProps {
   signal: TradingSignal;
 }
 
 export default function SignalBadge({ signal }: SignalBadgeProps) {
-  const Icon = signal.type === 'buy' ? TrendingUp : signal.type === 'sell' ? TrendingDown : Minus;
+  const Icon =
+    signal.type === "buy"
+      ? TrendingUp
+      : signal.type === "sell"
+        ? TrendingDown
+        : Minus;
 
-  const variant = signal.type === 'buy' ? 'default' : signal.type === 'sell' ? 'destructive' : 'secondary';
+  const variant =
+    signal.type === "buy"
+      ? "default"
+      : signal.type === "sell"
+        ? "destructive"
+        : "secondary";
 
   return (
     <TooltipProvider>

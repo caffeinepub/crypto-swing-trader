@@ -1,12 +1,15 @@
-import type { OHLCData } from '@/services/coingecko';
+import type { OHLCData } from "@/services/coingecko";
 
 export interface SupportResistanceLevel {
   price: number;
-  type: 'support' | 'resistance';
+  type: "support" | "resistance";
   strength: number;
 }
 
-export function calculateSupportResistance(ohlc: OHLCData[], lookback = 20): SupportResistanceLevel[] {
+export function calculateSupportResistance(
+  ohlc: OHLCData[],
+  lookback = 20,
+): SupportResistanceLevel[] {
   if (ohlc.length < lookback) return [];
 
   const levels: SupportResistanceLevel[] = [];
@@ -23,7 +26,7 @@ export function calculateSupportResistance(ohlc: OHLCData[], lookback = 20): Sup
     ) {
       levels.push({
         price: current,
-        type: 'support',
+        type: "support",
         strength: 1,
       });
     }
@@ -40,7 +43,7 @@ export function calculateSupportResistance(ohlc: OHLCData[], lookback = 20): Sup
     ) {
       levels.push({
         price: current,
-        type: 'resistance',
+        type: "resistance",
         strength: 1,
       });
     }
@@ -52,7 +55,9 @@ export function calculateSupportResistance(ohlc: OHLCData[], lookback = 20): Sup
 
   for (const level of levels) {
     const existing = merged.find(
-      (l) => l.type === level.type && Math.abs(l.price - level.price) / level.price < threshold
+      (l) =>
+        l.type === level.type &&
+        Math.abs(l.price - level.price) / level.price < threshold,
     );
 
     if (existing) {

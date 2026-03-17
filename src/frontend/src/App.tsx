@@ -1,10 +1,16 @@
-import { createRouter, RouterProvider, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
-import { ThemeProvider } from 'next-themes';
-import { Toaster } from '@/components/ui/sonner';
-import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
-import CryptoDetail from './pages/CryptoDetail';
-import Alerts from './pages/Alerts';
+import { Toaster } from "@/components/ui/sonner";
+import {
+  Outlet,
+  RouterProvider,
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from "@tanstack/react-router";
+import { ThemeProvider } from "next-themes";
+import Layout from "./components/Layout";
+import Alerts from "./pages/Alerts";
+import CryptoDetail from "./pages/CryptoDetail";
+import Dashboard from "./pages/Dashboard";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -16,19 +22,19 @@ const rootRoute = createRootRoute({
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: "/",
   component: Dashboard,
 });
 
 const cryptoDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/crypto/$cryptoId',
+  path: "/crypto/$cryptoId",
   component: CryptoDetail,
 });
 
 const alertsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/alerts',
+  path: "/alerts",
   component: Alerts,
 });
 
@@ -40,7 +46,7 @@ const routeTree = rootRoute.addChildren([
 
 const router = createRouter({ routeTree });
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }

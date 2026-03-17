@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { fetchTopCryptos, type CryptoMarketData } from '@/services/coingecko';
-import { useRef, useEffect } from 'react';
+import { type CryptoMarketData, fetchTopCryptos } from "@/services/coingecko";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
 
 interface CryptoPriceResult {
   data: CryptoMarketData[] | undefined;
@@ -10,68 +10,183 @@ interface CryptoPriceResult {
   isFetching: boolean;
   isInitialLoading: boolean;
   retryAttempt: number;
+  lastUpdated: number | null;
+  batchProgress: { loaded: number; total: number };
+  errorType: "rate-limit" | "network" | "api-unavailable" | null;
+  countdownSeconds: number;
 }
 
 export function useCryptoPrices(): CryptoPriceResult {
   const isFirstLoad = useRef(true);
   const retryAttemptRef = useRef(0);
+  const [lastUpdated, setLastUpdated] = useState<number | null>(null);
+  const [batchProgress, setBatchProgress] = useState({ loaded: 0, total: 30 });
+  const [errorType, setErrorType] = useState<
+    "rate-limit" | "network" | "api-unavailable" | null
+  >(null);
+  const [countdownSeconds, setCountdownSeconds] = useState(0);
+
+  // Get watchlist from localStorage or use default
+  const getWatchlistIds = (): string[] => {
+    try {
+      const stored = localStorage.getItem("watchlist");
+      if (stored) {
+        const watchlist = JSON.parse(stored);
+        return watchlist.slice(0, 10); // Max 10 watchlist coins
+      }
+    } catch (e) {
+      console.error("Failed to load watchlist:", e);
+    }
+    // Default watchlist
+    return ["bitcoin", "ethereum", "solana", "cardano", "ripple"];
+  };
 
   const query = useQuery<CryptoMarketData[]>({
-    queryKey: ['cryptoPrices'],
+    queryKey: ["cryptoPrices"],
     queryFn: async () => {
-      // Staggered batch loading on initial load
+      // Progressive loading on initial load
       if (isFirstLoad.current) {
-        const batch1 = [
-          'bitcoin', 'ethereum', 'tether', 'binancecoin', 'solana', 'usd-coin',
-          'ripple', 'cardano', 'dogecoin', 'tron'
-        ];
-        const batch2 = [
-          'avalanche-2', 'polkadot', 'chainlink', 'polygon', 'shiba-inu',
-          'litecoin', 'bitcoin-cash', 'uniswap', 'stellar', 'monero'
-        ];
-        const batch3 = [
-          'ethereum-classic', 'okb', 'cosmos', 'filecoin', 'hedera-hashgraph',
-          'aptos', 'near', 'vechain', 'algorand', 'internet-computer'
+        const allCoinIds = [
+          "bitcoin",
+          "ethereum",
+          "tether",
+          "binancecoin",
+          "solana",
+          "usd-coin",
+          "ripple",
+          "cardano",
+          "dogecoin",
+          "tron",
+          "avalanche-2",
+          "polkadot",
+          "chainlink",
+          "polygon",
+          "shiba-inu",
+          "litecoin",
+          "bitcoin-cash",
+          "uniswap",
+          "stellar",
+          "monero",
+          "ethereum-classic",
+          "okb",
+          "cosmos",
+          "filecoin",
+          "hedera-hashgraph",
+          "aptos",
+          "near",
+          "vechain",
+          "algorand",
+          "internet-computer",
         ];
 
-        // Fetch first batch
-        const result1 = await fetchTopCryptos(10);
-        
-        // Wait 150ms before second batch
-        await new Promise(resolve => setTimeout(resolve, 150));
-        const result2 = await fetchTopCryptos(20);
-        
-        // Wait 150ms before third batch
-        await new Promise(resolve => setTimeout(resolve, 150));
-        const result3 = await fetchTopCryptos(30);
-        
+        const watchlistIds = getWatchlistIds();
+
+        // Batch 1: Watchlist coins (priority)
+        const batch1Ids = watchlistIds.filter((id) => allCoinIds.includes(id));
+        const remainingIds = allCoinIds.filter((id) => !batch1Ids.includes(id));
+
+        // Batch 2 & 3: Split remaining coins
+        const midPoint = Math.ceil(remainingIds.length / 2);
+        const batch2Ids = remainingIds.slice(0, midPoint);
+        const _batch3Ids = remainingIds.slice(midPoint);
+
+        setBatchProgress({ loaded: 0, total: 30 });
+
+        // Fetch batch 1 (watchlist)
+        const _result1 = await fetchTopCryptos(
+          batch1Ids.length,
+          batch1Ids.join(","),
+        );
+        setBatchProgress({ loaded: batch1Ids.length, total: 30 });
+
+        // Wait 150ms before batch 2
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        const _result2 = await fetchTopCryptos(
+          batch1Ids.length + batch2Ids.length,
+          [...batch1Ids, ...batch2Ids].join(","),
+        );
+        setBatchProgress({
+          loaded: batch1Ids.length + batch2Ids.length,
+          total: 30,
+        });
+
+        // Wait 150ms before batch 3
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        const result3 = await fetchTopCryptos(30, allCoinIds.join(","));
+        setBatchProgress({ loaded: 30, total: 30 });
+
         isFirstLoad.current = false;
-        return result3; // Return full result
+        setLastUpdated(Date.now());
+        setErrorType(null);
+        return result3;
       }
-      
+
       // Normal fetch for subsequent loads
-      return fetchTopCryptos(30);
+      const result = await fetchTopCryptos(30);
+      setLastUpdated(Date.now());
+      setErrorType(null);
+      return result;
     },
     staleTime: 30000,
     refetchInterval: 45000,
     retry: (failureCount, error) => {
-      // Enhanced retry for initial load
+      // Enhanced retry for initial load: 5 attempts
+      // Regular retry for subsequent loads: 3 attempts
       const maxRetries = isFirstLoad.current ? 5 : 3;
       retryAttemptRef.current = failureCount;
+
+      // Parse error type
+      if (error instanceof Error) {
+        if (
+          error.message.includes("429") ||
+          error.message.includes("rate limit")
+        ) {
+          setErrorType("rate-limit");
+        } else if (
+          error.message.includes("fetch") ||
+          error.message.includes("network")
+        ) {
+          setErrorType("network");
+        } else {
+          setErrorType("api-unavailable");
+        }
+      }
+
       return failureCount < maxRetries;
     },
     retryDelay: (attemptIndex) => {
-      // Longer delays for initial load
+      // Exponential backoff with longer delays for initial load
+      let delay: number;
       if (isFirstLoad.current) {
-        return Math.min(2000 * 2 ** attemptIndex, 10000); // 2s, 4s, 8s, 10s, 10s
+        // Initial load: 2s, 4s, 8s, 16s, 32s (capped at 60s)
+        delay = Math.min(2000 * 2 ** attemptIndex, 60000);
+      } else {
+        // Subsequent loads: 1s, 2s, 4s
+        delay = Math.min(1000 * 2 ** attemptIndex, 30000);
       }
-      return Math.min(1000 * 2 ** attemptIndex, 30000); // 1s, 2s, 4s
+
+      // Set countdown for UI
+      setCountdownSeconds(Math.floor(delay / 1000));
+
+      return delay;
     },
   });
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdownSeconds > 0 && query.isError) {
+      const timer = setInterval(() => {
+        setCountdownSeconds((prev) => Math.max(0, prev - 1));
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [countdownSeconds, query.isError]);
 
   useEffect(() => {
     if (query.isSuccess) {
       retryAttemptRef.current = 0;
+      setErrorType(null);
+      setCountdownSeconds(0);
     }
   }, [query.isSuccess]);
 
@@ -83,5 +198,9 @@ export function useCryptoPrices(): CryptoPriceResult {
     isFetching: query.isFetching,
     isInitialLoading: query.isLoading && isFirstLoad.current,
     retryAttempt: retryAttemptRef.current,
+    lastUpdated,
+    batchProgress,
+    errorType,
+    countdownSeconds,
   };
 }

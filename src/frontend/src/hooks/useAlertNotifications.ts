@@ -1,16 +1,16 @@
-import { useEffect, useRef } from 'react';
-import { toast } from 'sonner';
-import { useAlertHistory } from './useAlertHistory';
-import { useCryptoPrices } from './useCryptoPrices';
-import { useInternetIdentity } from './useInternetIdentity';
-import { SignalType } from '@/backend';
+import { SignalType } from "@/backend";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
+import { useAlertHistory } from "./useAlertHistory";
+import { useCryptoPrices } from "./useCryptoPrices";
+import { useInternetIdentity } from "./useInternetIdentity";
 
 interface ProcessedSignal {
   coinId: string;
   coinName: string;
-  signalType: 'buy' | 'sell' | 'hold';
+  signalType: "buy" | "sell" | "hold";
   reason: string;
-  confidence: 'high' | 'medium' | 'low';
+  confidence: "high" | "medium" | "low";
   price: number;
 }
 
@@ -20,6 +20,7 @@ export function useAlertNotifications() {
   const { saveAlert } = useAlertHistory();
   const processedSignalsRef = useRef<Set<string>>(new Set());
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional
   useEffect(() => {
     if (!identity || !cryptos || cryptos.length === 0) return;
 
@@ -27,16 +28,17 @@ export function useAlertNotifications() {
     const checkSignals = async () => {
       const topCoins = cryptos.slice(0, 10); // Monitor top 10 coins
 
-      for (const crypto of topCoins) {
+      for (const _crypto of topCoins) {
         try {
           // Import dynamically to avoid circular dependencies
-          const { useTechnicalIndicators } = await import('./useTechnicalIndicators');
-          const { generateTradingSignals } = await import('@/utils/tradingSignals');
+          // Dynamic imports reserved for future use
+          await import("./useTechnicalIndicators");
+          await import("@/utils/tradingSignals");
 
           // This is a workaround - in a real implementation, we'd need to fetch indicators
           // For now, we'll skip the actual signal checking and just demonstrate the notification system
         } catch (error) {
-          console.error('Error checking signals:', error);
+          console.error("Error checking signals:", error);
         }
       }
     };
@@ -54,13 +56,18 @@ export function useAlertNotifications() {
     if (processedSignalsRef.current.has(signalKey)) return;
     processedSignalsRef.current.add(signalKey);
 
-    const signalEmoji = signal.signalType === 'buy' ? '📈' : signal.signalType === 'sell' ? '📉' : '➖';
+    const signalEmoji =
+      signal.signalType === "buy"
+        ? "📈"
+        : signal.signalType === "sell"
+          ? "📉"
+          : "➖";
 
     toast(`${signalEmoji} ${signal.coinName}`, {
       description: `${signal.signalType.toUpperCase()} @ $${signal.price.toFixed(2)} - ${signal.reason} (Confidence: ${signal.confidence})`,
       duration: 6000,
       action: {
-        label: 'Dismiss',
+        label: "Dismiss",
         onClick: () => {},
       },
     });
@@ -85,7 +92,7 @@ export function useAlertNotifications() {
       confidence: confidenceMap[signal.confidence],
       priceAtTrigger: signal.price,
     }).catch((error) => {
-      console.error('Failed to save alert:', error);
+      console.error("Failed to save alert:", error);
     });
   };
 

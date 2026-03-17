@@ -1,9 +1,9 @@
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useActor } from '@/hooks/useActor';
+import { Button } from "@/components/ui/button";
+import { useActor } from "@/hooks/useActor";
+import { useInternetIdentity } from "@/hooks/useInternetIdentity";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -20,7 +20,7 @@ export default function ThemeToggle() {
       actor
         .getTheme()
         .then((savedTheme) => {
-          if (savedTheme === 'dark' || savedTheme === 'light') {
+          if (savedTheme === "dark" || savedTheme === "light") {
             setTheme(savedTheme);
           }
         })
@@ -31,14 +31,14 @@ export default function ThemeToggle() {
   }, [identity, actor, mounted, setTheme]);
 
   const toggleTheme = async () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
 
     if (identity && actor) {
       try {
         await actor.updateTheme(newTheme);
       } catch (error) {
-        console.error('Failed to save theme preference:', error);
+        console.error("Failed to save theme preference:", error);
       }
     }
   };
@@ -53,7 +53,11 @@ export default function ThemeToggle() {
 
   return (
     <Button variant="ghost" size="icon" onClick={toggleTheme}>
-      {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      {theme === "dark" ? (
+        <Sun className="h-5 w-5" />
+      ) : (
+        <Moon className="h-5 w-5" />
+      )}
     </Button>
   );
 }

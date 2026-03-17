@@ -1,13 +1,15 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import type { CandlestickPattern } from '@/utils/candlestickPatterns';
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { CandlestickPattern } from "@/utils/candlestickPatterns";
 
 interface PatternLegendProps {
   patterns: CandlestickPattern[];
 }
 
 export default function PatternLegend({ patterns }: PatternLegendProps) {
-  const uniquePatterns = Array.from(new Map(patterns.map((p) => [p.name, p])).values());
+  const uniquePatterns = Array.from(
+    new Map(patterns.map((p) => [p.name, p])).values(),
+  );
 
   return (
     <Card>
@@ -16,10 +18,16 @@ export default function PatternLegend({ patterns }: PatternLegendProps) {
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2">
-          {uniquePatterns.map((pattern, i) => (
+          {uniquePatterns.map((pattern) => (
             <Badge
-              key={i}
-              variant={pattern.type === 'bullish' ? 'default' : pattern.type === 'bearish' ? 'destructive' : 'secondary'}
+              key={pattern.name}
+              variant={
+                pattern.type === "bullish"
+                  ? "default"
+                  : pattern.type === "bearish"
+                    ? "destructive"
+                    : "secondary"
+              }
             >
               {pattern.name}
             </Badge>

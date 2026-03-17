@@ -1,248 +1,192 @@
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-    :root {
-        --radius: 0.5rem;
-        /* Cyberpunk Dark Theme - Near Black Backgrounds with Neon Accents */
-        --background: 0.05 0 0;
-        --background-elevated: 0.08 0 0;
-        --foreground: 0.98 0.02 240;
-        --card: 0.08 0.01 240;
-        --card-foreground: 0.98 0.02 240;
-        --popover: 0.10 0.01 240;
-        --popover-foreground: 0.98 0.02 240;
-        --primary: 0.70 0.20 200;
-        --primary-foreground: 0.05 0 0;
-        --secondary: 0.50 0.25 280;
-        --secondary-foreground: 0.98 0.02 240;
-        --muted: 0.20 0.02 240;
-        --muted-foreground: 0.65 0.05 240;
-        --accent: 0.65 0.28 150;
-        --accent-foreground: 0.05 0 0;
-        --destructive: 0.60 0.28 15;
-        --destructive-foreground: 0.98 0.02 240;
-        --border: 0.18 0.05 240;
-        --input: 0.18 0.05 240;
-        --ring: 0.70 0.20 200;
-        --neon-cyan: 0.75 0.22 200;
-        --neon-purple: 0.60 0.30 280;
-        --neon-green: 0.75 0.35 145;
-        --neon-red: 0.60 0.28 15;
-        --chart-1: 0.75 0.35 145;
-        --chart-2: 0.75 0.22 200;
-        --chart-3: 0.60 0.30 280;
-        --chart-4: 0.60 0.28 15;
-        --chart-5: 0.70 0.25 50;
-    }
+  :root {
+    /* Cyberpunk OKLCH Color System */
+    --background: 220 15% 8%;
+    --foreground: 180 5% 95%;
 
-    * {
-        @apply border-border;
-    }
-    
-    body {
-        @apply bg-background text-foreground;
-        font-family: 'Rajdhani', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    }
+    --card: 220 15% 10%;
+    --card-foreground: 180 5% 95%;
 
-    h1, h2, h3, h4, h5, h6 {
-        @apply font-bold tracking-tight;
-        font-family: 'Rajdhani', sans-serif;
-    }
+    --popover: 220 15% 10%;
+    --popover-foreground: 180 5% 95%;
+
+    --primary: 180 100% 50%;
+    --primary-foreground: 220 15% 8%;
+
+    --secondary: 270 100% 60%;
+    --secondary-foreground: 220 15% 8%;
+
+    --muted: 220 10% 20%;
+    --muted-foreground: 180 5% 60%;
+
+    --accent: 150 100% 50%;
+    --accent-foreground: 220 15% 8%;
+
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 180 5% 95%;
+
+    --border: 180 30% 20%;
+    --input: 180 30% 20%;
+    --ring: 180 100% 50%;
+
+    --radius: 0.5rem;
+
+    /* Neon Colors */
+    --neon-cyan: 0.75 0.15 195;
+    --neon-purple: 0.65 0.25 290;
+    --neon-green: 0.75 0.2 145;
+    --neon-red: 0.65 0.25 25;
+    --neon-yellow: 0.8 0.18 85;
+
+    /* Background Variants */
+    --background-elevated: 0.12 0.02 220;
+  }
+
+  .dark {
+    /* Dark mode uses same cyberpunk palette */
+    --background: 220 15% 8%;
+    --foreground: 180 5% 95%;
+  }
 }
 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Rajdhani", system-ui, -apple-system, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Rajdhani", system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Cyberpunk Glow Effects */
 @layer utilities {
-    /* Glow Effects */
-    .glow-ambient {
-        box-shadow: 0 0 10px rgba(0, 217, 255, 0.3), 0 0 20px rgba(0, 217, 255, 0.1);
-    }
+  .glow-text {
+    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+  }
 
-    .glow-hover {
-        transition: box-shadow 0.3s ease, transform 0.2s ease;
-    }
+  .glow-icon {
+    filter: drop-shadow(0 0 8px currentColor);
+  }
 
-    .glow-hover:hover {
-        box-shadow: 0 0 15px rgba(0, 217, 255, 0.5), 0 0 30px rgba(0, 217, 255, 0.2);
-        transform: translateY(-1px);
-    }
+  .glow-ambient {
+    box-shadow: 0 0 20px -5px oklch(0.75 0.15 195 / 0.3);
+  }
 
-    .glow-strong {
-        box-shadow: 0 0 20px rgba(0, 217, 255, 0.6), 0 0 40px rgba(0, 217, 255, 0.3), 0 0 60px rgba(0, 217, 255, 0.1);
-    }
+  .glow-hover {
+    transition: all 0.3s ease;
+  }
 
-    .glow-button {
-        box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
-    }
+  .glow-hover:hover {
+    box-shadow: 0 0 25px -5px oklch(0.75 0.15 195 / 0.5);
+    transform: translateY(-2px);
+  }
 
-    .glow-button-active {
-        box-shadow: 0 0 15px rgba(0, 217, 255, 0.6), 0 0 30px rgba(0, 217, 255, 0.3);
-    }
+  .glow-strong {
+    box-shadow: 0 0 30px -5px currentColor, 0 0 60px -10px currentColor;
+  }
 
-    .glow-icon {
-        filter: drop-shadow(0 0 4px rgba(0, 217, 255, 0.6));
-    }
+  .glow-pulse {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
 
-    .glow-text {
-        text-shadow: 0 0 10px rgba(0, 217, 255, 0.6), 0 0 20px rgba(0, 217, 255, 0.3);
-    }
+  .glow-red {
+    box-shadow: 0 0 20px -5px oklch(0.65 0.25 25 / 0.4);
+  }
 
-    .glow-text-hover {
-        transition: text-shadow 0.3s ease;
-    }
+  .glow-green {
+    box-shadow: 0 0 20px -5px oklch(0.75 0.2 145 / 0.4);
+  }
+}
 
-    .glow-text-hover:hover {
-        text-shadow: 0 0 10px rgba(0, 217, 255, 0.8), 0 0 20px rgba(0, 217, 255, 0.4);
-    }
+/* Animations */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px -5px currentColor;
+  }
+  50% {
+    box-shadow: 0 0 40px -5px currentColor, 0 0 80px -10px currentColor;
+  }
+}
 
-    .glow-green {
-        box-shadow: 0 0 15px rgba(57, 255, 20, 0.5), 0 0 30px rgba(57, 255, 20, 0.2);
-    }
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-    .glow-purple {
-        box-shadow: 0 0 15px rgba(179, 0, 255, 0.5), 0 0 30px rgba(179, 0, 255, 0.2);
-    }
+@keyframes slide-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
 
-    .glow-red {
-        box-shadow: 0 0 15px rgba(255, 50, 50, 0.5), 0 0 30px rgba(255, 50, 50, 0.2);
-    }
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
 
-    /* Pulsing Glow Animation */
-    @keyframes pulse-glow {
-        0%, 100% {
-            box-shadow: 0 0 15px rgba(0, 217, 255, 0.4), 0 0 30px rgba(0, 217, 255, 0.2);
-        }
-        50% {
-            box-shadow: 0 0 25px rgba(0, 217, 255, 0.7), 0 0 50px rgba(0, 217, 255, 0.4);
-        }
-    }
+@keyframes neon-flash {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
 
-    .glow-pulse {
-        animation: pulse-glow 2s ease-in-out infinite;
-    }
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
 
-    /* Fade In Animation */
-    @keyframes fade-in {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+.animate-slide-in {
+  animation: slide-in 0.3s ease-out;
+}
 
-    .animate-fade-in {
-        animation: fade-in 0.4s ease-out;
-    }
+.animate-scanline {
+  animation: scanline 8s linear infinite;
+}
 
-    /* Slide In Up Animation */
-    @keyframes slide-in-up {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
+.animate-neon-flash {
+  animation: neon-flash 1.5s ease-in-out infinite;
+}
 
-    .animate-slide-in {
-        animation: slide-in-up 0.5s ease-out;
-    }
-
-    /* Scanline Effect */
-    @keyframes scanline {
-        0% {
-            transform: translateY(-100%);
-        }
-        100% {
-            transform: translateY(100%);
-        }
-    }
-
-    .scanline-effect::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(to bottom, transparent, rgba(0, 217, 255, 0.3), transparent);
-        animation: scanline 3s linear infinite;
-        pointer-events: none;
-    }
-
-    /* Neon Flash Animation */
-    @keyframes neon-flash {
-        0%, 100% {
-            box-shadow: 0 0 10px rgba(0, 217, 255, 0.3);
-        }
-        50% {
-            box-shadow: 0 0 30px rgba(0, 217, 255, 0.8), 0 0 60px rgba(0, 217, 255, 0.5);
-        }
-    }
-
-    .neon-flash {
-        animation: neon-flash 0.3s ease-in-out;
-    }
-
-    /* Smooth Transitions */
-    .transition-glow {
-        transition: box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-
-    /* Mobile Optimizations */
-    @media (max-width: 768px) {
-        .glow-ambient {
-            box-shadow: 0 0 8px rgba(0, 217, 255, 0.25), 0 0 15px rgba(0, 217, 255, 0.08);
-        }
-
-        .glow-strong {
-            box-shadow: 0 0 15px rgba(0, 217, 255, 0.5), 0 0 30px rgba(0, 217, 255, 0.2);
-        }
-
-        .glow-pulse {
-            animation: pulse-glow 2.5s ease-in-out infinite;
-        }
-    }
-
-    /* Reduced Motion */
-    @media (prefers-reduced-motion: reduce) {
-        .glow-pulse,
-        .scanline-effect::before,
-        .neon-flash,
-        .animate-fade-in,
-        .animate-slide-in {
-            animation: none;
-        }
-
-        .glow-hover:hover {
-            transform: none;
-        }
-    }
-
-    /* Toast Notifications Styling */
-    [data-sonner-toast] {
-        background: oklch(var(--card)) !important;
-        border: 1px solid oklch(var(--neon-cyan) / 0.3) !important;
-        box-shadow: 0 0 15px rgba(0, 217, 255, 0.3) !important;
-    }
-
-    [data-sonner-toast][data-type="success"] {
-        border-color: oklch(var(--neon-green) / 0.5) !important;
-        box-shadow: 0 0 15px rgba(57, 255, 20, 0.4) !important;
-    }
-
-    [data-sonner-toast][data-type="error"] {
-        border-color: oklch(var(--neon-red) / 0.5) !important;
-        box-shadow: 0 0 15px rgba(255, 50, 50, 0.4) !important;
-    }
-
-    [data-sonner-toast][data-type="info"] {
-        border-color: oklch(var(--neon-cyan) / 0.5) !important;
-        box-shadow: 0 0 15px rgba(0, 217, 255, 0.4) !important;
-    }
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

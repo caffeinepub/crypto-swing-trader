@@ -27,10 +27,11 @@ export default {
                 background: 'oklch(var(--background))',
                 'background-elevated': 'oklch(var(--background-elevated))',
                 foreground: 'oklch(var(--foreground))',
-                'neon-cyan': 'oklch(var(--neon-cyan))',
-                'neon-purple': 'oklch(var(--neon-purple))',
-                'neon-green': 'oklch(var(--neon-green))',
-                'neon-red': 'oklch(var(--neon-red))',
+                'neon-cyan': 'oklch(var(--neon-cyan) / <alpha-value>)',
+                'neon-purple': 'oklch(var(--neon-purple) / <alpha-value>)',
+                'neon-green': 'oklch(var(--neon-green) / <alpha-value>)',
+                'neon-red': 'oklch(var(--neon-red) / <alpha-value>)',
+                'neon-yellow': 'oklch(var(--neon-yellow) / <alpha-value>)',
                 primary: {
                     DEFAULT: 'oklch(var(--primary) / <alpha-value>)',
                     foreground: 'oklch(var(--primary-foreground))'

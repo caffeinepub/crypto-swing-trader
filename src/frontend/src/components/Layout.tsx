@@ -1,13 +1,18 @@
-import { Link, useLocation } from '@tanstack/react-router';
-import { Menu, TrendingUp } from 'lucide-react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import ThemeToggle from './ThemeToggle';
-import AuthButton from './AuthButton';
-import { useApiHealthMonitor } from '@/hooks/useApiHealthMonitor';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useApiHealthMonitor } from "@/hooks/useApiHealthMonitor";
+import { Link, useLocation } from "@tanstack/react-router";
+import { Clock, Menu, TrendingUp } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import AuthButton from "./AuthButton";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -16,19 +21,32 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const isActive = (path: string) => location.pathname === path;
 
   const navLinks = [
-    { to: '/', label: 'Market' },
-    { to: '/alerts', label: 'Alerts' },
+    { to: "/", label: "Market" },
+    { to: "/alerts", label: "Alerts" },
   ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* API Health Banner */}
-      {apiHealth.status === 'issues' && (
-        <div className="border-b border-neon-red/30 bg-neon-red/10">
-          <Alert variant="destructive" className="rounded-none border-0">
+      {/* Enhanced API Health Banner */}
+      {(apiHealth.status === "degraded" || apiHealth.status === "issues") && (
+        <div
+          className={`border-b ${apiHealth.status === "issues" ? "border-neon-red/30 bg-neon-red/10" : "border-neon-yellow/30 bg-neon-yellow/10"}`}
+        >
+          <Alert
+            variant={apiHealth.status === "issues" ? "destructive" : "default"}
+            className="rounded-none border-0"
+          >
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              {apiHealth.message}. Some data may be temporarily unavailable. We're working to restore full connectivity.
+            <AlertDescription className="flex items-center gap-2">
+              <span>
+                {apiHealth.message}. Data may be temporarily unavailable.
+              </span>
+              {apiHealth.estimatedRecoverySeconds > 0 && (
+                <span className="flex items-center gap-1 text-xs">
+                  <Clock className="h-3 w-3" />
+                  Expected recovery in {apiHealth.estimatedRecoverySeconds}s
+                </span>
+              )}
             </AlertDescription>
           </Alert>
         </div>
@@ -40,7 +58,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-6">
             <Link to="/" className="flex items-center gap-2 group">
               <TrendingUp className="h-6 w-6 text-neon-cyan glow-icon transition-all duration-300 group-hover:scale-110" />
-              <span className="font-heading text-xl font-bold text-neon-cyan glow-text">CryptoSignals</span>
+              <span className="font-heading text-xl font-bold text-neon-cyan glow-text">
+                CryptoSignals
+              </span>
             </Link>
 
             {/* Desktop Navigation */}
@@ -51,8 +71,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   to={link.to}
                   className={`px-4 py-2 rounded-md font-heading text-sm transition-all duration-300 ${
                     isActive(link.to)
-                      ? 'bg-neon-cyan/20 text-neon-cyan glow-text'
-                      : 'text-muted-foreground hover:text-neon-cyan hover:bg-neon-cyan/10'
+                      ? "bg-neon-cyan/20 text-neon-cyan glow-text"
+                      : "text-muted-foreground hover:text-neon-cyan hover:bg-neon-cyan/10"
                   }`}
                 >
                   {link.label}
@@ -67,12 +87,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-border/50 bg-background-elevated/50">
-                    <div 
-                      className="w-2 h-2 rounded-full animate-pulse" 
+                    <div
+                      className="w-2 h-2 rounded-full animate-pulse"
                       style={{ backgroundColor: apiHealth.color }}
                     />
                     <span className="text-xs font-mono hidden sm:inline">
-                      {apiHealth.status === 'healthy' ? 'API' : apiHealth.status === 'degraded' ? 'Slow' : 'Issues'}
+                      {apiHealth.status === "healthy"
+                        ? "API"
+                        : apiHealth.status === "degraded"
+                          ? "Slow"
+                          : "Issues"}
                     </span>
                   </div>
                 </TooltipTrigger>
@@ -81,6 +105,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <p className="text-xs text-muted-foreground mt-1">
                     Success rate: {apiHealth.successRate.toFixed(0)}%
                   </p>
+                  {apiHealth.estimatedRecoverySeconds > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Recovery in ~{apiHealth.estimatedRecoverySeconds}s
+                    </p>
+                  )}
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -95,7 +124,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-64 border-neon-cyan/30 bg-background/98 backdrop-blur-xl">
+              <SheetContent
+                side="right"
+                className="w-64 border-neon-cyan/30 bg-background/98 backdrop-blur-xl"
+              >
                 <nav className="flex flex-col gap-2 mt-8">
                   {navLinks.map((link) => (
                     <Link
@@ -103,8 +135,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                       to={link.to}
                       className={`px-4 py-3 rounded-md font-heading transition-all duration-300 ${
                         isActive(link.to)
-                          ? 'bg-neon-cyan/20 text-neon-cyan glow-text'
-                          : 'text-muted-foreground hover:text-neon-cyan hover:bg-neon-cyan/10'
+                          ? "bg-neon-cyan/20 text-neon-cyan glow-text"
+                          : "text-muted-foreground hover:text-neon-cyan hover:bg-neon-cyan/10"
                       }`}
                     >
                       {link.label}
@@ -133,7 +165,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <span>using</span>
               <a
                 href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
-                  typeof window !== 'undefined' ? window.location.hostname : 'crypto-signals'
+                  typeof window !== "undefined"
+                    ? window.location.hostname
+                    : "crypto-signals",
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
