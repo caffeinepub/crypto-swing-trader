@@ -18,6 +18,8 @@ export interface TradeRecommendation {
   riskLevel: "low" | "medium" | "high";
   reasoning: string;
   direction: "buy" | "sell" | "hold";
+  /** Risk/Reward ratio: potential reward (to best TP) divided by risk (to stop-loss). Higher is better. */
+  riskReward: number;
 }
 
 export function generateTradeRecommendation(
@@ -54,18 +56,20 @@ export function generateTradeRecommendation(
     reasoningParts.push("RSI is neutral");
   }
 
-  // MACD contribution
-  if (
-    indicators.macd.histogram > 0 &&
-    indicators.macd.macd > indicators.macd.signal
-  ) {
-    confidence += 15;
+  // MACD contribution — reward true crossovers more
+  const prevHist = indicators.macd.prevHistogram;
+  const currHist = indicators.macd.histogram;
+  if (prevHist <= 0 && currHist > 0) {
+    confidence += 20;
+    reasoningParts.push("MACD bullish crossover (strong momentum signal)");
+  } else if (prevHist >= 0 && currHist < 0) {
+    confidence += 20;
+    reasoningParts.push("MACD bearish crossover (strong momentum signal)");
+  } else if (currHist > 0 && indicators.macd.macd > indicators.macd.signal) {
+    confidence += 10;
     reasoningParts.push("MACD shows bullish momentum");
-  } else if (
-    indicators.macd.histogram < 0 &&
-    indicators.macd.macd < indicators.macd.signal
-  ) {
-    confidence += 15;
+  } else if (currHist < 0 && indicators.macd.macd < indicators.macd.signal) {
+    confidence += 10;
     reasoningParts.push("MACD shows bearish momentum");
   }
 
@@ -108,37 +112,35 @@ export function generateTradeRecommendation(
   let entryReasoning = "";
 
   if (direction === "buy") {
-    // Look for entry near nearest support below current price
     const supportsBelow = supportLevels
       .filter((s) => s < currentPrice * 1.02)
       .sort((a, b) => b - a);
     if (supportsBelow.length > 0) {
       entryPoint = Math.min(currentPrice, supportsBelow[0] * 1.005);
-      entryReasoning = `Entry near support at $${supportsBelow[0].toLocaleString(undefined, { maximumFractionDigits: 2 })} - price likely to bounce here`;
+      entryReasoning = `Entry near support at $${supportsBelow[0].toLocaleString(undefined, { maximumFractionDigits: 2 })} — price likely to bounce here`;
     } else {
       entryPoint = currentPrice;
       entryReasoning =
-        "Entry at current price - no nearby support identified, use tight stop-loss";
+        "Entry at current price — no nearby support identified, use tight stop-loss";
     }
   } else if (direction === "sell") {
-    // Look for entry near nearest resistance above current price
     const resistancesAbove = resistanceLevels
       .filter((r) => r > currentPrice * 0.98)
       .sort((a, b) => a - b);
     if (resistancesAbove.length > 0) {
       entryPoint = Math.max(currentPrice, resistancesAbove[0] * 0.995);
-      entryReasoning = `Entry near resistance at $${resistancesAbove[0].toLocaleString(undefined, { maximumFractionDigits: 2 })} - price likely to reverse here`;
+      entryReasoning = `Entry near resistance at $${resistancesAbove[0].toLocaleString(undefined, { maximumFractionDigits: 2 })} — price likely to reverse here`;
     } else {
       entryPoint = currentPrice;
       entryReasoning =
-        "Entry at current price - no nearby resistance identified, use tight stop-loss";
+        "Entry at current price — no nearby resistance identified, use tight stop-loss";
     }
   } else {
     entryReasoning =
-      "No clear entry signal - wait for RSI or MACD to give a stronger reading";
+      "No clear entry signal — wait for RSI or MACD to give a stronger reading";
   }
 
-  // Calculate take-profit targets using resistance levels for buys, support for sells
+  // Calculate take-profit targets
   const takeProfitTargets: TakeProfitTarget[] = [];
 
   if (direction === "buy") {
@@ -147,7 +149,6 @@ export function generateTradeRecommendation(
       .sort((a, b) => a - b);
 
     if (resistancesAboveEntry.length >= 3) {
-      // Use actual resistance levels
       takeProfitTargets.push({
         label: "Conservative",
         price: resistancesAboveEntry[0],
@@ -167,7 +168,6 @@ export function generateTradeRecommendation(
           ((resistancesAboveEntry[2] - entryPoint) / entryPoint) * 100,
       });
     } else if (resistancesAboveEntry.length > 0) {
-      // Use available resistance + projected targets
       takeProfitTargets.push({
         label: "Conservative",
         price: resistancesAboveEntry[0],
@@ -185,7 +185,6 @@ export function generateTradeRecommendation(
         percentage: 20,
       });
     } else {
-      // Fallback to percentage-based targets
       takeProfitTargets.push({
         label: "Conservative",
         price: entryPoint * 1.05,
@@ -257,7 +256,6 @@ export function generateTradeRecommendation(
       });
     }
   } else {
-    // Hold - show current price
     takeProfitTargets.push({
       label: "Conservative",
       price: currentPrice,
@@ -297,6 +295,15 @@ export function generateTradeRecommendation(
     stopLoss = currentPrice * 0.95;
   }
 
+  // Risk/Reward ratio — use the Moderate TP target as benchmark
+  let riskReward = 0;
+  if (direction !== "hold" && takeProfitTargets.length >= 2) {
+    const moderateTP = takeProfitTargets[1];
+    const risk = Math.abs(entryPoint - stopLoss);
+    const reward = Math.abs(moderateTP.price - entryPoint);
+    riskReward = risk > 0 ? Math.round((reward / risk) * 10) / 10 : 0;
+  }
+
   // Determine risk level
   const bbWidth =
     indicators.bollingerBands.middle > 0
@@ -305,13 +312,9 @@ export function generateTradeRecommendation(
         100
       : 5;
   let riskLevel: "low" | "medium" | "high";
-  if (bbWidth > 8) {
-    riskLevel = "high";
-  } else if (bbWidth > 4) {
-    riskLevel = "medium";
-  } else {
-    riskLevel = "low";
-  }
+  if (bbWidth > 8) riskLevel = "high";
+  else if (bbWidth > 4) riskLevel = "medium";
+  else riskLevel = "low";
 
   const reasoning =
     reasoningParts.length > 0
@@ -327,5 +330,6 @@ export function generateTradeRecommendation(
     riskLevel,
     reasoning,
     direction,
+    riskReward,
   };
 }

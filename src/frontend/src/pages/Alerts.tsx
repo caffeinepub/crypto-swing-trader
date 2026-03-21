@@ -1,14 +1,16 @@
 import type { SignalType } from "@/backend";
 import AlertCard from "@/components/AlertCard";
 import AlertFilters from "@/components/AlertFilters";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import PriceTargetList from "@/components/PriceTargetList";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAlertHistory } from "@/hooks/useAlertHistory";
 import { useCryptoPrices } from "@/hooks/useCryptoPrices";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import {
   Bell,
+  CrosshairIcon,
   Loader2,
   Minus,
   Trash2,
@@ -38,16 +40,17 @@ export default function Alerts() {
         </div>
         <div className="text-center space-y-2">
           <h2 className="text-3xl font-bold font-heading text-neon-cyan glow-text">
-            Alert History
+            Alerts
           </h2>
           <p className="text-muted-foreground">
-            Sign in to view your trading signal alerts
+            Sign in to view your alerts and price targets
           </p>
         </div>
         <Button
           onClick={login}
           disabled={loginStatus === "logging-in"}
           className="bg-neon-cyan/20 border border-neon-cyan/50 text-neon-cyan hover:bg-neon-cyan/30 glow-hover"
+          data-ocid="alerts.submit_button"
         >
           {loginStatus === "logging-in" ? (
             <>
@@ -77,123 +80,177 @@ export default function Alerts() {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight font-heading text-neon-cyan glow-text">
-            Alert History
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Review your trading signal alerts
-          </p>
-        </div>
-        {alerts.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => clearAlerts()}
-            className="border-neon-red/40 text-neon-red hover:bg-neon-red/10 glow-hover"
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight font-heading text-neon-cyan glow-text">
+          Alerts
+        </h1>
+        <p className="text-muted-foreground mt-1">
+          Signal alerts and price target notifications
+        </p>
+      </div>
+
+      <Tabs defaultValue="signals" className="space-y-4" data-ocid="alerts.tab">
+        <TabsList className="border border-neon-cyan/20 bg-card">
+          <TabsTrigger
+            value="signals"
+            className="data-[state=active]:bg-neon-cyan/10 data-[state=active]:text-neon-cyan font-heading"
+            data-ocid="alerts.tab"
           >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Clear All
-          </Button>
-        )}
-      </div>
+            <Zap className="h-4 w-4 mr-2" />
+            Signal Alerts
+          </TabsTrigger>
+          <TabsTrigger
+            value="targets"
+            className="data-[state=active]:bg-neon-cyan/10 data-[state=active]:text-neon-cyan font-heading"
+            data-ocid="alerts.tab"
+          >
+            <CrosshairIcon className="h-4 w-4 mr-2" />
+            Price Targets
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-neon-cyan/30 bg-card glow-ambient">
-          <CardHeader className="pb-3">
-            <p className="text-xs text-muted-foreground font-heading">
-              Total Alerts
+        {/* ── Signal Alerts tab ── */}
+        <TabsContent value="signals" className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+              Trading signal alerts triggered during your sessions
             </p>
-            <CardTitle className="text-3xl font-mono text-neon-cyan glow-text">
-              {totalAlerts}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-        <Card className="border-neon-green/30 bg-card glow-green">
-          <CardHeader className="pb-3">
-            <p className="text-xs text-muted-foreground font-heading flex items-center gap-1">
-              <TrendingUp className="h-3 w-3 text-neon-green" />
-              Buy Signals
-            </p>
-            <CardTitle className="text-3xl font-mono text-neon-green glow-text">
-              {buyCount}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-        <Card className="border-neon-red/30 bg-card glow-red">
-          <CardHeader className="pb-3">
-            <p className="text-xs text-muted-foreground font-heading flex items-center gap-1">
-              <TrendingDown className="h-3 w-3 text-neon-red" />
-              Sell Signals
-            </p>
-            <CardTitle className="text-3xl font-mono text-neon-red glow-text">
-              {sellCount}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-        <Card className="border-border bg-card glow-ambient">
-          <CardHeader className="pb-3">
-            <p className="text-xs text-muted-foreground font-heading flex items-center gap-1">
-              <Minus className="h-3 w-3 text-muted-foreground" />
-              Hold Signals
-            </p>
-            <CardTitle className="text-3xl font-mono text-muted-foreground">
-              {holdCount}
-            </CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
-
-      {/* Info banner about how alerts work */}
-      <div className="p-4 rounded-lg border border-neon-purple/30 bg-neon-purple/5">
-        <div className="flex items-start gap-3">
-          <Zap className="h-5 w-5 text-neon-purple mt-0.5 shrink-0 glow-icon" />
-          <div className="space-y-1">
-            <p className="text-sm font-semibold text-neon-purple font-heading">
-              How Alerts Work
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Alerts trigger when RSI goes oversold/overbought or when MACD
-              crossovers occur. They appear as pop-up notifications while the
-              dashboard is open. When you return, any missed alerts will appear
-              here.
-            </p>
+            {alerts.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => clearAlerts()}
+                className="border-neon-red/40 text-neon-red hover:bg-neon-red/10 glow-hover"
+                data-ocid="alerts.delete_button"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear All
+              </Button>
+            )}
           </div>
-        </div>
-      </div>
 
-      {/* Filters */}
-      <AlertFilters
-        cryptos={cryptos || []}
-        filterCrypto={filterCrypto}
-        filterSignal={filterSignal}
-        onCryptoChange={setFilterCrypto}
-        onSignalChange={setFilterSignal}
-      />
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-neon-cyan/30 bg-card glow-ambient">
+              <CardHeader className="pb-3">
+                <p className="text-xs text-muted-foreground font-heading">
+                  Total Alerts
+                </p>
+                <CardTitle className="text-3xl font-mono text-neon-cyan glow-text">
+                  {totalAlerts}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+            <Card className="border-neon-green/30 bg-card glow-green">
+              <CardHeader className="pb-3">
+                <p className="text-xs text-muted-foreground font-heading flex items-center gap-1">
+                  <TrendingUp className="h-3 w-3 text-neon-green" />
+                  Buy Signals
+                </p>
+                <CardTitle className="text-3xl font-mono text-neon-green glow-text">
+                  {buyCount}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+            <Card className="border-neon-red/30 bg-card glow-red">
+              <CardHeader className="pb-3">
+                <p className="text-xs text-muted-foreground font-heading flex items-center gap-1">
+                  <TrendingDown className="h-3 w-3 text-neon-red" />
+                  Sell Signals
+                </p>
+                <CardTitle className="text-3xl font-mono text-neon-red glow-text">
+                  {sellCount}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+            <Card className="border-border bg-card glow-ambient">
+              <CardHeader className="pb-3">
+                <p className="text-xs text-muted-foreground font-heading flex items-center gap-1">
+                  <Minus className="h-3 w-3 text-muted-foreground" />
+                  Hold Signals
+                </p>
+                <CardTitle className="text-3xl font-mono text-muted-foreground">
+                  {holdCount}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          </div>
 
-      {/* Alert List */}
-      {alerts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 gap-4 rounded-lg border border-neon-cyan/20 bg-card/50">
-          <Bell className="h-12 w-12 text-muted-foreground" />
-          <p className="text-muted-foreground text-center">
-            {filterCrypto || filterSignal
-              ? "No alerts found matching your filters."
-              : "No alerts yet. Keep the dashboard open to catch live trading signals."}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {alerts.map((alert, index) => (
-            <AlertCard
-              key={`${alert.crypto}-${alert.timestamp}-${index}`}
-              alert={alert}
-              cryptos={cryptos || []}
-            />
-          ))}
-        </div>
-      )}
+          {/* Info banner */}
+          <div className="p-4 rounded-lg border border-neon-purple/30 bg-neon-purple/5">
+            <div className="flex items-start gap-3">
+              <Zap className="h-5 w-5 text-neon-purple mt-0.5 shrink-0 glow-icon" />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-neon-purple font-heading">
+                  How Signal Alerts Work
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Alerts trigger when RSI goes oversold/overbought or when MACD
+                  crossovers occur. They appear as pop-up notifications while
+                  the dashboard is open. When you return, any missed alerts will
+                  appear here.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Filters */}
+          <AlertFilters
+            cryptos={cryptos || []}
+            filterCrypto={filterCrypto}
+            filterSignal={filterSignal}
+            onCryptoChange={setFilterCrypto}
+            onSignalChange={setFilterSignal}
+          />
+
+          {/* Alert List */}
+          {alerts.length === 0 ? (
+            <div
+              className="flex flex-col items-center justify-center py-16 gap-4 rounded-lg border border-neon-cyan/20 bg-card/50"
+              data-ocid="alerts.empty_state"
+            >
+              <Bell className="h-12 w-12 text-muted-foreground" />
+              <p className="text-muted-foreground text-center">
+                {filterCrypto || filterSignal
+                  ? "No alerts found matching your filters."
+                  : "No alerts yet. Keep the dashboard open to catch live trading signals."}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {alerts.map((alert, index) => (
+                <AlertCard
+                  key={`${alert.crypto}-${alert.timestamp}-${index}`}
+                  alert={alert}
+                  cryptos={cryptos || []}
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* ── Price Targets tab ── */}
+        <TabsContent value="targets" className="space-y-6">
+          <div className="p-4 rounded-lg border border-neon-cyan/30 bg-neon-cyan/5">
+            <div className="flex items-start gap-3">
+              <CrosshairIcon className="h-5 w-5 text-neon-cyan mt-0.5 shrink-0 glow-icon" />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-neon-cyan font-heading">
+                  How Price Targets Work
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Set a specific price level for any coin from the Market
+                  Overview table. When the price crosses your target during a
+                  refresh, you'll receive a toast notification instantly.
+                  Targets are stored in your account and checked every 45
+                  seconds.
+                </p>
+              </div>
+            </div>
+          </div>
+          <PriceTargetList />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

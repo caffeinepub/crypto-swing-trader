@@ -1,3 +1,4 @@
+import { PriceDirection } from "@/backend";
 import CryptoTable from "@/components/CryptoTable";
 import MarketSentimentPanel from "@/components/MarketSentimentPanel";
 import TimeframeSelector from "@/components/TimeframeSelector";
@@ -9,9 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAlertNotifications } from "@/hooks/useAlertNotifications";
 import { useCryptoPrices } from "@/hooks/useCryptoPrices";
+import { useInternetIdentity } from "@/hooks/useInternetIdentity";
+import { usePriceTargets } from "@/hooks/usePriceTargets";
+import type { TechnicalIndicators } from "@/utils/technicalIndicators";
+import { useQueryClient } from "@tanstack/react-query";
 import { Clock, Loader2, RefreshCw, Zap } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const [timeframe, setTimeframe] = useState<"1H" | "4H" | "Daily">("4H");
@@ -28,6 +34,64 @@ export default function Dashboard() {
     countdownSeconds,
   } = useCryptoPrices();
   useAlertNotifications();
+  const { identity } = useInternetIdentity();
+  const { targets, markTriggered } = usePriceTargets();
+  const queryClient = useQueryClient();
+  const triggeredRef = useRef<Set<string>>(new Set());
+
+  // Build a cache of already-fetched technical indicators for the current timeframe
+  const indicatorsCache = useMemo(() => {
+    const map = new Map<string, TechnicalIndicators>();
+    if (!cryptos) return map;
+    for (const coin of cryptos) {
+      const cached = queryClient.getQueryData<TechnicalIndicators>([
+        "indicators",
+        coin.id,
+        timeframe,
+      ]);
+      if (cached) map.set(coin.id, cached);
+    }
+    return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cryptos, timeframe, queryClient]);
+
+  // Check price targets whenever cryptos data updates
+  useEffect(() => {
+    if (!identity || !cryptos || cryptos.length === 0 || targets.length === 0)
+      return;
+
+    for (const target of targets) {
+      if (target.triggered) continue;
+      if (triggeredRef.current.has(target.id)) continue;
+
+      const coin = cryptos.find((c) => c.id === target.coinId);
+      if (!coin) continue;
+
+      const price = coin.current_price;
+      const hit =
+        target.direction === PriceDirection.above
+          ? price >= target.targetPrice
+          : price <= target.targetPrice;
+
+      if (hit) {
+        triggeredRef.current.add(target.id);
+        markTriggered(target.id).catch(() => {
+          triggeredRef.current.delete(target.id);
+        });
+        toast(
+          `🎯 ${target.coinName} hit your $${target.targetPrice.toLocaleString()} target!`,
+          {
+            duration: 8000,
+            style: {
+              background: "hsl(var(--card))",
+              border: "1px solid oklch(0.85 0.18 195 / 0.6)",
+              color: "oklch(0.85 0.18 195)",
+            },
+          },
+        );
+      }
+    }
+  }, [cryptos, targets, identity, markTriggered]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -58,7 +122,6 @@ export default function Dashboard() {
     }
   };
 
-  // Compute setup count from loaded data (no extra API calls)
   const setupCount = (cryptos || []).filter(
     (c) => getPriceSignal(c).type !== "neutral",
   ).length;
@@ -158,7 +221,6 @@ export default function Dashboard() {
                 )}
               </span>
             )}
-            {/* Live setup count badge */}
             {cryptos && cryptos.length > 0 && (
               <span
                 className={`text-xs flex items-center gap-1 px-2 py-1 rounded-full border font-heading transition-colors duration-300 ${
@@ -184,7 +246,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <TradeSetupScanner cryptos={cryptos || []} />
+      <TradeSetupScanner
+        cryptos={cryptos || []}
+        indicatorsCache={indicatorsCache.size > 0 ? indicatorsCache : undefined}
+      />
       <MarketSentimentPanel cryptos={cryptos || []} />
       <CryptoTable cryptos={cryptos || []} timeframe={timeframe} />
     </div>

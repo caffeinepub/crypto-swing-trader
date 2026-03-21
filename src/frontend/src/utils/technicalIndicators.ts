@@ -1,9 +1,16 @@
+export interface DivergenceResult {
+  bullish: boolean;
+  bearish: boolean;
+  description: string;
+}
+
 export interface TechnicalIndicators {
   rsi: number;
   macd: {
     macd: number;
     signal: number;
     histogram: number;
+    prevHistogram: number;
   };
   sma20: number;
   sma50: number;
@@ -13,8 +20,13 @@ export interface TechnicalIndicators {
     middle: number;
     lower: number;
   };
+  divergence?: DivergenceResult;
 }
 
+/**
+ * Wilder's smoothed RSI (industry-standard).
+ * Uses EMA-style smoothing: avgGain = (prevAvgGain * (period-1) + gain) / period
+ */
 export function calculateRSI(prices: number[], period = 14): number[] {
   if (prices.length < period + 1) return [];
 
@@ -23,23 +35,32 @@ export function calculateRSI(prices: number[], period = 14): number[] {
     changes.push(prices[i] - prices[i - 1]);
   }
 
+  // Seed with simple average for first period
+  const seed = changes.slice(0, period);
+  let avgGain = seed.filter((c) => c > 0).reduce((a, b) => a + b, 0) / period;
+  let avgLoss =
+    seed
+      .filter((c) => c < 0)
+      .map(Math.abs)
+      .reduce((a, b) => a + b, 0) / period;
+
   const rsi: number[] = [];
-  for (let i = period; i <= changes.length; i++) {
-    const slice = changes.slice(i - period, i);
-    const gains = slice.filter((c) => c > 0);
-    const losses = slice.filter((c) => c < 0).map((c) => Math.abs(c));
-
-    const avgGain =
-      gains.length > 0 ? gains.reduce((a, b) => a + b, 0) / period : 0;
-    const avgLoss =
-      losses.length > 0 ? losses.reduce((a, b) => a + b, 0) / period : 0;
-
-    if (avgLoss === 0) {
+  const addRsi = (ag: number, al: number) => {
+    if (al === 0) {
       rsi.push(100);
-    } else {
-      const rs = avgGain / avgLoss;
-      rsi.push(100 - 100 / (1 + rs));
+      return;
     }
+    const rs = ag / al;
+    rsi.push(100 - 100 / (1 + rs));
+  };
+  addRsi(avgGain, avgLoss);
+
+  for (let i = period; i < changes.length; i++) {
+    const gain = changes[i] > 0 ? changes[i] : 0;
+    const loss = changes[i] < 0 ? Math.abs(changes[i]) : 0;
+    avgGain = (avgGain * (period - 1) + gain) / period;
+    avgLoss = (avgLoss * (period - 1) + loss) / period;
+    addRsi(avgGain, avgLoss);
   }
 
   return rsi;
@@ -119,4 +140,56 @@ export function calculateBollingerBands(
   }
 
   return { upper, middle: sma, lower };
+}
+
+/**
+ * Detects RSI divergence between price and RSI series.
+ * Bullish: price makes lower low but RSI makes higher low (reversal signal).
+ * Bearish: price makes higher high but RSI makes lower high (reversal signal).
+ */
+export function detectDivergence(
+  closes: number[],
+  rsiSeries: number[],
+  lookback = 20,
+): DivergenceResult {
+  if (closes.length < lookback || rsiSeries.length < lookback) {
+    return { bullish: false, bearish: false, description: "" };
+  }
+
+  const priceWindow = closes.slice(-lookback);
+  const rsiWindow = rsiSeries.slice(-lookback);
+
+  const half = Math.floor(lookback / 2);
+  const prevPriceWindow = priceWindow.slice(0, half);
+  const recentPriceWindow = priceWindow.slice(half);
+  const prevRsiWindow = rsiWindow.slice(0, half);
+  const recentRsiWindow = rsiWindow.slice(half);
+
+  const prevPriceLow = Math.min(...prevPriceWindow);
+  const recentPriceLow = Math.min(...recentPriceWindow);
+  const prevRsiLow = Math.min(...prevRsiWindow);
+  const recentRsiLow = Math.min(...recentRsiWindow);
+
+  const prevPriceHigh = Math.max(...prevPriceWindow);
+  const recentPriceHigh = Math.max(...recentPriceWindow);
+  const prevRsiHigh = Math.max(...prevRsiWindow);
+  const recentRsiHigh = Math.max(...recentRsiWindow);
+
+  // Bullish: price lower low but RSI higher low (>= 3pt difference to avoid noise)
+  const bullish =
+    recentPriceLow < prevPriceLow * 0.995 && recentRsiLow > prevRsiLow + 3;
+
+  // Bearish: price higher high but RSI lower high (>= 3pt difference)
+  const bearish =
+    recentPriceHigh > prevPriceHigh * 1.005 && recentRsiHigh < prevRsiHigh - 3;
+
+  return {
+    bullish,
+    bearish,
+    description: bullish
+      ? "Bullish RSI divergence — price lower low but RSI higher low (reversal signal)"
+      : bearish
+        ? "Bearish RSI divergence — price higher high but RSI lower high (reversal signal)"
+        : "",
+  };
 }

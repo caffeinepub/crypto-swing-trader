@@ -6,6 +6,7 @@ import {
   calculateMACD,
   calculateRSI,
   calculateSMA,
+  detectDivergence,
 } from "@/utils/technicalIndicators";
 import { useQuery } from "@tanstack/react-query";
 
@@ -32,12 +33,19 @@ export function useTechnicalIndicators(
       const ema20 = calculateEMA(closes, 20);
       const bollinger = calculateBollingerBands(closes, 20, 2);
 
+      const lastHistogram = macd.histogram[macd.histogram.length - 1] || 0;
+      const prevHistogram = macd.histogram[macd.histogram.length - 2] || 0;
+
+      // Detect divergence using full RSI series before trimming to last value
+      const divergence = detectDivergence(closes, rsi);
+
       return {
         rsi: rsi[rsi.length - 1] || 0,
         macd: {
           macd: macd.macd[macd.macd.length - 1] || 0,
           signal: macd.signal[macd.signal.length - 1] || 0,
-          histogram: macd.histogram[macd.histogram.length - 1] || 0,
+          histogram: lastHistogram,
+          prevHistogram,
         },
         sma20: sma20[sma20.length - 1] || 0,
         sma50: sma50[sma50.length - 1] || 0,
@@ -47,6 +55,7 @@ export function useTechnicalIndicators(
           middle: bollinger.middle[bollinger.middle.length - 1] || 0,
           lower: bollinger.lower[bollinger.lower.length - 1] || 0,
         },
+        divergence,
       };
     },
     enabled: !!coinId,

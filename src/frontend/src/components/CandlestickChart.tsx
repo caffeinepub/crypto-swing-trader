@@ -52,7 +52,6 @@ export default function CandlestickChart({
     y: number;
   } | null>(null);
 
-  // All hooks must be called before any conditional returns
   const chartData = useMemo(() => {
     return data.map((d, index) => ({
       timestamp: new Date(d.timestamp).toLocaleDateString(),
@@ -63,12 +62,9 @@ export default function CandlestickChart({
     }));
   }, [data]);
 
-  // Find entry point in chart data
   const entryPointData = useMemo(() => {
     if (!tradeRecommendation || tradeRecommendation.direction === "hold")
       return null;
-
-    // Use the last data point as entry reference
     const lastIndex = chartData.length - 1;
     return {
       index: lastIndex,
@@ -77,7 +73,6 @@ export default function CandlestickChart({
     };
   }, [tradeRecommendation, chartData]);
 
-  // Show error state when chart data fails to load (after all hooks)
   if (isError) {
     return (
       <div className="w-full h-[400px] rounded-lg border border-neon-red/30 bg-background-elevated/50 p-8 flex flex-col items-center justify-center gap-4">
@@ -118,21 +113,14 @@ export default function CandlestickChart({
     );
   }
 
-  // Custom entry marker shape - must always return an SVG element
   const renderEntryMarker = (props: any) => {
     const { cx, cy } = props;
-
-    if (!tradeRecommendation || tradeRecommendation.direction === "hold") {
-      // Return empty group if no recommendation
+    if (!tradeRecommendation || tradeRecommendation.direction === "hold")
       return <g />;
-    }
-
     const isLong = tradeRecommendation.direction === "buy";
     const color = isLong ? "#22c55e" : "#ef4444";
-
     return (
       <g>
-        {/* Glow effect */}
         <circle
           cx={cx}
           cy={cy}
@@ -142,7 +130,6 @@ export default function CandlestickChart({
           className="animate-pulse"
         />
         <circle cx={cx} cy={cy} r={8} fill={color} opacity={0.4} />
-        {/* Arrow */}
         {isLong ? (
           <path
             d={`M ${cx} ${cy - 6} L ${cx - 4} ${cy + 2} L ${cx + 4} ${cy + 2} Z`}
@@ -162,21 +149,17 @@ export default function CandlestickChart({
     );
   };
 
-  // Pattern markers with hover detection
   const renderPatternMarkers = () => {
     if (!patterns || patterns.length === 0) return null;
-
     return patterns.map((pattern, _i) => {
       const dataPoint = chartData[pattern.index];
       if (!dataPoint) return null;
-
       const color =
         pattern.type === "bullish"
           ? "#22c55e"
           : pattern.type === "bearish"
             ? "#ef4444"
             : "#a855f7";
-
       return (
         <ReferenceDot
           key={`pattern-${pattern.index}-${pattern.name}`}
@@ -211,6 +194,20 @@ export default function CandlestickChart({
     if (price >= 0.01) return price.toFixed(6);
     return price.toFixed(8);
   };
+
+  // Stagger TP label positions to avoid overlap
+  const tpLabelPositions: Array<"insideTopLeft" | "insideTopRight"> = [
+    "insideTopLeft",
+    "insideTopRight",
+    "insideTopLeft",
+  ];
+
+  const rrLabel =
+    tradeRecommendation &&
+    tradeRecommendation.direction !== "hold" &&
+    tradeRecommendation.riskReward > 0
+      ? ` (R/R 1:${tradeRecommendation.riskReward.toFixed(1)})`
+      : "";
 
   return (
     <div className="relative">
@@ -266,8 +263,8 @@ export default function CandlestickChart({
               fill="url(#priceGradient)"
             />
 
-            {/* Support/Resistance Levels */}
-            {supportResistance?.map((level, _i) => (
+            {/* Support/Resistance Levels — alternating left/right */}
+            {supportResistance?.map((level, i) => (
               <ReferenceLine
                 key={`sr-${level.type}-${level.price.toFixed(0)}`}
                 y={level.price}
@@ -280,7 +277,7 @@ export default function CandlestickChart({
                 strokeWidth={2}
                 label={{
                   value: `${level.type} $${level.price.toFixed(2)}`,
-                  position: "right",
+                  position: i % 2 === 0 ? "insideTopLeft" : "insideTopRight",
                   fill:
                     level.type === "support"
                       ? "oklch(var(--neon-green))"
@@ -300,7 +297,7 @@ export default function CandlestickChart({
               />
             )}
 
-            {/* Entry Point Line */}
+            {/* Entry Point Line with R/R ratio */}
             {tradeRecommendation &&
               tradeRecommendation.direction !== "hold" && (
                 <ReferenceLine
@@ -313,7 +310,7 @@ export default function CandlestickChart({
                   strokeWidth={2}
                   strokeDasharray="5 5"
                   label={{
-                    value: `Entry: $${formatPrice(tradeRecommendation.entryPoint)}`,
+                    value: `Entry: $${formatPrice(tradeRecommendation.entryPoint)}${rrLabel}`,
                     position: "insideTopRight",
                     fill:
                       tradeRecommendation.direction === "buy"
@@ -325,7 +322,7 @@ export default function CandlestickChart({
                 />
               )}
 
-            {/* Take Profit Levels */}
+            {/* Take Profit Levels — staggered left/right */}
             {tradeRecommendation &&
               tradeRecommendation.direction !== "hold" &&
               tradeRecommendation.takeProfitTargets && (
@@ -336,10 +333,10 @@ export default function CandlestickChart({
                       stroke="#22c55e"
                       strokeWidth={1.5}
                       strokeDasharray="3 3"
-                      strokeOpacity={0.8}
+                      strokeOpacity={0.9}
                       label={{
-                        value: `TP1: $${formatPrice(tradeRecommendation.takeProfitTargets[0].price)}`,
-                        position: "insideTopRight",
+                        value: `TP1: $${formatPrice(tradeRecommendation.takeProfitTargets[0].price)} (+${tradeRecommendation.takeProfitTargets[0].percentage.toFixed(1)}%)`,
+                        position: tpLabelPositions[0],
                         fill: "#22c55e",
                         fontSize: 9,
                         fontFamily: "JetBrains Mono, monospace",
@@ -352,10 +349,10 @@ export default function CandlestickChart({
                       stroke="#22c55e"
                       strokeWidth={1.5}
                       strokeDasharray="3 3"
-                      strokeOpacity={0.6}
+                      strokeOpacity={0.7}
                       label={{
-                        value: `TP2: $${formatPrice(tradeRecommendation.takeProfitTargets[1].price)}`,
-                        position: "insideTopRight",
+                        value: `TP2: $${formatPrice(tradeRecommendation.takeProfitTargets[1].price)} (+${tradeRecommendation.takeProfitTargets[1].percentage.toFixed(1)}%)`,
+                        position: tpLabelPositions[1],
                         fill: "#22c55e",
                         fontSize: 9,
                         fontFamily: "JetBrains Mono, monospace",
@@ -368,10 +365,10 @@ export default function CandlestickChart({
                       stroke="#22c55e"
                       strokeWidth={1.5}
                       strokeDasharray="3 3"
-                      strokeOpacity={0.4}
+                      strokeOpacity={0.5}
                       label={{
-                        value: `TP3: $${formatPrice(tradeRecommendation.takeProfitTargets[2].price)}`,
-                        position: "insideTopRight",
+                        value: `TP3: $${formatPrice(tradeRecommendation.takeProfitTargets[2].price)} (+${tradeRecommendation.takeProfitTargets[2].percentage.toFixed(1)}%)`,
+                        position: tpLabelPositions[2],
                         fill: "#22c55e",
                         fontSize: 9,
                         fontFamily: "JetBrains Mono, monospace",
@@ -390,7 +387,7 @@ export default function CandlestickChart({
                   strokeWidth={2}
                   strokeDasharray="5 5"
                   label={{
-                    value: `Stop Loss: $${formatPrice(tradeRecommendation.stopLoss)}`,
+                    value: `Stop: $${formatPrice(tradeRecommendation.stopLoss)}`,
                     position: "insideBottomRight",
                     fill: "#ef4444",
                     fontSize: 11,
@@ -409,10 +406,7 @@ export default function CandlestickChart({
       {hoveredPattern && tooltipPosition && (
         <div
           className="fixed z-50 max-w-xs p-3 rounded-lg border border-neon-purple/50 bg-card/95 backdrop-blur-sm glow-ambient shadow-lg"
-          style={{
-            left: tooltipPosition.x + 10,
-            top: tooltipPosition.y + 10,
-          }}
+          style={{ left: tooltipPosition.x + 10, top: tooltipPosition.y + 10 }}
         >
           <div className="font-semibold text-neon-purple mb-1">
             {hoveredPattern.name}
@@ -428,7 +422,7 @@ export default function CandlestickChart({
         </div>
       )}
 
-      {/* Trading Legend - Mobile Friendly */}
+      {/* Trading Legend */}
       {tradeRecommendation && tradeRecommendation.direction !== "hold" && (
         <div className="mt-4 p-4 rounded-lg border border-neon-cyan/20 bg-background-elevated/30">
           <div className="text-xs font-heading text-neon-cyan mb-2">
@@ -456,6 +450,17 @@ export default function CandlestickChart({
               <AlertTriangle className="h-3 w-3 text-neon-red" />
               <span className="text-muted-foreground">Stop Loss Level</span>
             </div>
+            {tradeRecommendation.riskReward > 0 && (
+              <div className="flex items-center gap-2">
+                <span className="text-neon-cyan font-mono text-xs">R/R</span>
+                <span className="text-muted-foreground">
+                  Risk/Reward: 1:{tradeRecommendation.riskReward.toFixed(1)}{" "}
+                  {tradeRecommendation.riskReward >= 2
+                    ? "(✓ Favorable)"
+                    : "(Low — use caution)"}
+                </span>
+              </div>
+            )}
             {patterns && patterns.length > 0 && (
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-neon-purple" />

@@ -24,6 +24,15 @@ export interface Preferences {
     theme: string;
     notifications: boolean;
 }
+export interface PriceTarget {
+    id: string;
+    direction: PriceDirection;
+    createdAt: bigint;
+    targetPrice: number;
+    coinName: string;
+    coinId: string;
+    triggered: boolean;
+}
 export interface Alert {
     triggerReason?: TriggerReason;
     priceAtTrigger: number;
@@ -62,21 +71,29 @@ export interface http_request_result {
     body: Uint8Array;
     headers: Array<http_header>;
 }
+export enum PriceDirection {
+    above = "above",
+    below = "below"
+}
 export enum SignalType {
     buy = "buy",
     hold = "hold",
     sell = "sell"
 }
 export interface backendInterface {
+    addPriceTarget(coinId: string, coinName: string, targetPrice: number, direction: PriceDirection): Promise<string>;
     clearAlerts(): Promise<void>;
+    deletePriceTarget(id: string): Promise<void>;
     fetchTopCryptoNews(): Promise<string>;
     fetchTopCryptos(): Promise<string>;
     getAlertHistory(filterCrypto: string | null, filterSignal: SignalType | null): Promise<Array<Alert>>;
     getAlertStats(): Promise<[bigint, bigint, bigint]>;
     getAlertsLast24Hours(): Promise<Array<Alert>>;
     getCryptoAlertHistory(crypto: string): Promise<Array<Alert>>;
+    getPriceTargets(): Promise<Array<PriceTarget>>;
     getTheme(): Promise<string>;
     initializeUser(preferences: Preferences): Promise<void>;
+    markPriceTargetTriggered(id: string): Promise<void>;
     purgeOldAlerts(): Promise<void>;
     saveAlert(crypto: string, signalType: SignalType, triggerReason: TriggerReason | null, confidence: bigint, priceAtTrigger: number): Promise<void>;
     transform(input: TransformationInput): Promise<TransformationOutput>;

@@ -5,6 +5,11 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import type { CryptoMarketData } from "@/services/coingecko";
+import type { TechnicalIndicators } from "@/utils/technicalIndicators";
+import {
+  calculateCompositeScore,
+  generateTradingSignals,
+} from "@/utils/tradingSignals";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -20,6 +25,54 @@ export interface PriceSignal {
   label: string;
   reason: string;
   priority: number;
+  source: "indicators" | "price-action";
+  compositeScore?: number;
+}
+
+/**
+ * Generate a signal from cached technical indicators when available.
+ * Returns null if no actionable signals detected.
+ */
+function getIndicatorSignal(
+  crypto: CryptoMarketData,
+  indicators: TechnicalIndicators,
+): PriceSignal | null {
+  const signals = generateTradingSignals(indicators, crypto.current_price);
+  const buySignals = signals.filter((s) => s.type === "buy");
+  const sellSignals = signals.filter((s) => s.type === "sell");
+
+  if (buySignals.length === 0 && sellSignals.length === 0) return null;
+
+  const isBuy = buySignals.length >= sellSignals.length;
+  const dominant = isBuy ? buySignals : sellSignals;
+  const strongest = dominant.sort((a, b) => {
+    const order = { high: 0, medium: 1, low: 2 };
+    return order[a.confidence] - order[b.confidence];
+  })[0];
+
+  const isHighConf = strongest.confidence === "high";
+  const label = isBuy
+    ? isHighConf
+      ? "Strong Buy"
+      : "Buy"
+    : isHighConf
+      ? "Strong Sell"
+      : "Sell";
+
+  const reasonParts = dominant.slice(0, 2).map((s) => s.indicator);
+  const reason = `${strongest.reason} (${reasonParts.join(", ")})`;
+
+  // Composite score for sorting and badge display
+  const composite = calculateCompositeScore(indicators, crypto.current_price);
+
+  return {
+    type: isBuy ? "buy" : "sell",
+    label,
+    reason,
+    priority: isHighConf ? 1 : 2,
+    source: "indicators",
+    compositeScore: composite.score,
+  };
 }
 
 export function getPriceSignal(crypto: CryptoMarketData): PriceSignal {
@@ -31,8 +84,11 @@ export function getPriceSignal(crypto: CryptoMarketData): PriceSignal {
     return {
       type: "buy",
       label: "Strong Buy",
-      reason: `Down ${Math.abs(change).toFixed(1)}% in 24h — potential oversold bounce${highVolume ? " with high volume" : ""}`,
+      reason: `Down ${Math.abs(change).toFixed(1)}% in 24h — potential oversold bounce${
+        highVolume ? " with high volume" : ""
+      }`,
       priority: 1,
+      source: "price-action",
     };
   }
   if (change <= -3) {
@@ -41,14 +97,18 @@ export function getPriceSignal(crypto: CryptoMarketData): PriceSignal {
       label: "Buy",
       reason: `Down ${Math.abs(change).toFixed(1)}% in 24h — pullback opportunity`,
       priority: 2,
+      source: "price-action",
     };
   }
   if (change >= 8) {
     return {
       type: "sell",
       label: "Strong Sell",
-      reason: `Up ${change.toFixed(1)}% in 24h — potential overbought${highVolume ? " with high volume" : ""}`,
+      reason: `Up ${change.toFixed(1)}% in 24h — potential overbought${
+        highVolume ? " with high volume" : ""
+      }`,
       priority: 3,
+      source: "price-action",
     };
   }
   if (change >= 3) {
@@ -57,6 +117,7 @@ export function getPriceSignal(crypto: CryptoMarketData): PriceSignal {
       label: "Sell",
       reason: `Up ${change.toFixed(1)}% in 24h — consider taking profits`,
       priority: 4,
+      source: "price-action",
     };
   }
   return {
@@ -64,18 +125,40 @@ export function getPriceSignal(crypto: CryptoMarketData): PriceSignal {
     label: "Neutral",
     reason: "No strong directional signal — price action consolidating",
     priority: 99,
+    source: "price-action",
   };
 }
 
 interface TradeSetupScannerProps {
   cryptos: CryptoMarketData[];
+  /** Optional map of coinId -> cached TechnicalIndicators from React Query */
+  indicatorsCache?: Map<string, TechnicalIndicators>;
 }
 
-export default function TradeSetupScanner({ cryptos }: TradeSetupScannerProps) {
+export default function TradeSetupScanner({
+  cryptos,
+  indicatorsCache,
+}: TradeSetupScannerProps) {
   const setups = cryptos
-    .map((crypto) => ({ crypto, signal: getPriceSignal(crypto) }))
+    .map((crypto) => {
+      const cached = indicatorsCache?.get(crypto.id);
+      const signal = cached
+        ? (getIndicatorSignal(crypto, cached) ?? getPriceSignal(crypto))
+        : getPriceSignal(crypto);
+      return { crypto, signal };
+    })
     .filter(({ signal }) => signal.type !== "neutral")
-    .sort((a, b) => a.signal.priority - b.signal.priority);
+    .sort((a, b) => {
+      // Prefer composite score sort for indicator-based signals
+      const aScore = a.signal.compositeScore;
+      const bScore = b.signal.compositeScore;
+      if (aScore !== undefined && bScore !== undefined) {
+        return bScore - aScore; // higher score first
+      }
+      if (aScore !== undefined) return -1; // indicator signals first
+      if (bScore !== undefined) return 1;
+      return a.signal.priority - b.signal.priority;
+    });
 
   const count = setups.length;
   const [open, setOpen] = useState(count > 0);
@@ -139,6 +222,9 @@ export default function TradeSetupScanner({ cryptos }: TradeSetupScannerProps) {
                 const signalClass = isBuy
                   ? "border-neon-green/50 text-neon-green bg-neon-green/10"
                   : "border-neon-red/50 text-neon-red bg-neon-red/10";
+                const hasDivergence =
+                  indicatorsCache?.get(crypto.id)?.divergence?.bullish ||
+                  indicatorsCache?.get(crypto.id)?.divergence?.bearish;
 
                 return (
                   <Link
@@ -146,9 +232,6 @@ export default function TradeSetupScanner({ cryptos }: TradeSetupScannerProps) {
                     to="/crypto/$cryptoId"
                     params={{ cryptoId: crypto.id }}
                     className="flex items-center gap-3 px-4 py-3 hover:bg-background-elevated/50 transition-all duration-200 group"
-                    style={{
-                      boxShadow: undefined,
-                    }}
                     data-ocid={`scanner.item.${idx + 1}`}
                   >
                     <img
@@ -172,6 +255,33 @@ export default function TradeSetupScanner({ cryptos }: TradeSetupScannerProps) {
                           <SignalIcon className="h-3 w-3" />
                           {signal.label}
                         </Badge>
+                        {signal.source === "indicators" && (
+                          <span className="text-xs text-neon-purple/70 font-mono">
+                            ⚡ RSI/MACD
+                          </span>
+                        )}
+                        {hasDivergence && (
+                          <span
+                            className="text-xs text-neon-yellow/80 font-mono"
+                            title="RSI divergence detected"
+                          >
+                            ◆ DIV
+                          </span>
+                        )}
+                        {signal.compositeScore !== undefined && (
+                          <span
+                            className={`text-xs font-mono font-bold ${
+                              signal.compositeScore >= 70
+                                ? "text-neon-cyan"
+                                : signal.compositeScore >= 40
+                                  ? "text-neon-cyan/70"
+                                  : "text-neon-cyan/50"
+                            }`}
+                            title={`Composite signal score: ${signal.compositeScore}/100`}
+                          >
+                            {signal.compositeScore}
+                          </span>
+                        )}
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5 truncate">
                         {signal.reason}

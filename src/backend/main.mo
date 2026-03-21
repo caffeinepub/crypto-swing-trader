@@ -1,11 +1,10 @@
 import Text "mo:core/Text";
 import List "mo:core/List";
 import Map "mo:core/Map";
+import Time "mo:core/Time";
+import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
 import Iter "mo:core/Iter";
-import Principal "mo:core/Principal";
-import Time "mo:core/Time";
-import Nat32 "mo:core/Nat32";
 import OutCall "http-outcalls/outcall";
 
 
@@ -15,17 +14,11 @@ actor {
     OutCall.transform(input);
   };
 
-  // Types
-  type Direction = { #long; #short };
-  type Preferences = {
-    theme : Text;
-    notifications : Bool;
-  };
-  type UserData = {
-    preferences : Preferences;
-  };
-  type SignalType = { #buy; #sell; #hold };
-  type TriggerReason = {
+  public type Preferences = { theme : Text; notifications : Bool };
+  public type UserData = { preferences : Preferences };
+  public type Direction = { #long; #short };
+  public type SignalType = { #buy; #sell; #hold };
+  public type TriggerReason = {
     #rsiBelow30 : Text;
     #rsiAbove70 : Text;
     #macdCrossover : Text;
@@ -36,21 +29,31 @@ actor {
     #trendFollowing : Bool;
   };
 
-  // Now includes TriggerReason
-  type Alert = {
+  public type PriceDirection = { #above; #below };
+
+  public type Alert = {
     timestamp : Int;
     crypto : Text;
     signalType : SignalType;
-    triggerReason : ?TriggerReason; // Now optional
+    triggerReason : ?TriggerReason;
     confidence : Nat;
     priceAtTrigger : Float;
   };
 
-  // State
+  public type PriceTarget = {
+    id : Text;
+    coinId : Text;
+    coinName : Text;
+    targetPrice : Float;
+    direction : PriceDirection;
+    createdAt : Int;
+    triggered : Bool;
+  };
+
   let userData = Map.empty<Text, UserData>();
   let alertHistories = Map.empty<Text, List.List<Alert>>();
+  let priceTargets = Map.empty<Text, List.List<PriceTarget>>();
 
-  // Helper Functions
   func getUserData(caller : Principal) : ?UserData {
     let id = caller.toText();
     userData.get(id);
@@ -63,16 +66,15 @@ actor {
     };
   };
 
-  // 1. Authentication & User Management
   public shared ({ caller }) func initializeUser(preferences : Preferences) : async () {
     let id = caller.toText();
     if (userData.containsKey(id)) { Runtime.trap("User already exists") };
     let data : UserData = { preferences };
     userData.add(id, data);
     alertHistories.add(id, List.empty<Alert>());
+    priceTargets.add(id, List.empty<PriceTarget>());
   };
 
-  // 2. News Aggregation (Backend handles outcall only - parsing and display done in frontend)
   public shared ({ caller }) func fetchTopCryptoNews() : async Text {
     await OutCall.httpGetRequest(
       "https://crypto-news-api.com/api/v1/top-news?category=cryptocurrency&apiKey=fakeApiKey",
@@ -81,7 +83,6 @@ actor {
     );
   };
 
-  // 3. Price Data Fetching (Backend handles outcall only - parsing and display done in frontend)
   public shared ({ caller }) func fetchTopCryptos() : async Text {
     await OutCall.httpGetRequest(
       "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=1&sparkline=false",
@@ -90,7 +91,6 @@ actor {
     );
   };
 
-  // 4. Customization
   public shared ({ caller }) func updateTheme(theme : Text) : async () {
     ensureUserExists(caller);
     if (not (Text.equal(theme, "dark") or Text.equal(theme, "light"))) {
@@ -118,8 +118,6 @@ actor {
     };
   };
 
-  // --- 5. Alert History (New Functionality) ---
-  // Persist a single alert for a user
   public shared ({ caller }) func saveAlert(crypto : Text, signalType : SignalType, triggerReason : ?TriggerReason, confidence : Nat, priceAtTrigger : Float) : async () {
     ensureUserExists(caller);
     let currentTime = Time.now();
@@ -142,7 +140,6 @@ actor {
     alertHistories.add(caller.toText(), currentHistory);
   };
 
-  // Retrieve filtered alert history
   public query ({ caller }) func getAlertHistory(filterCrypto : ?Text, filterSignal : ?SignalType) : async [Alert] {
     ensureUserExists(caller);
     switch (alertHistories.get(caller.toText())) {
@@ -170,7 +167,6 @@ actor {
     };
   };
 
-  // Helper function to compare SignalTypes
   func isMatchingSignalType(a : SignalType, b : SignalType) : Bool {
     switch (a, b) {
       case (#buy, #buy) { true };
@@ -180,10 +176,9 @@ actor {
     };
   };
 
-  // Purge Old Alerts (e.g., older than 30 days)
   public shared ({ caller }) func purgeOldAlerts() : async () {
     ensureUserExists(caller);
-    let thirtyDaysInNanos = 2592000000000000; // 30 days in nanoseconds
+    let thirtyDaysInNanos = 2592000000000000;
 
     let currentTime = Time.now();
     let currentHistory = switch (alertHistories.get(caller.toText())) {
@@ -197,7 +192,6 @@ actor {
     alertHistories.add(caller.toText(), filteredHistory);
   };
 
-  // Fetch Alerts from Last 24 Hours
   public query ({ caller }) func getAlertsLast24Hours() : async [Alert] {
     ensureUserExists(caller);
     let dayInNanos = 86400000000000;
@@ -213,7 +207,6 @@ actor {
     };
   };
 
-  // Get Count of Alerts by Type
   public query ({ caller }) func getAlertStats() : async (Nat, Nat, Nat) {
     ensureUserExists(caller);
     var buyCount = 0 : Nat;
@@ -242,7 +235,6 @@ actor {
     };
   };
 
-  // Retrieve All Alerts for a Crypto
   public query ({ caller }) func getCryptoAlertHistory(crypto : Text) : async [Alert] {
     ensureUserExists(caller);
     switch (alertHistories.get(caller.toText())) {
@@ -253,9 +245,71 @@ actor {
     };
   };
 
-  // Clear All Alerts Function
   public shared ({ caller }) func clearAlerts() : async () {
     ensureUserExists(caller);
     alertHistories.add(caller.toText(), List.empty<Alert>());
+  };
+
+  public shared ({ caller }) func addPriceTarget(coinId : Text, coinName : Text, targetPrice : Float, direction : PriceDirection) : async Text {
+    ensureUserExists(caller);
+    let id = Time.now().toText() # coinId;
+    let newTarget : PriceTarget = {
+      id;
+      coinId;
+      coinName;
+      targetPrice;
+      direction;
+      createdAt = Time.now();
+      triggered = false;
+    };
+
+    let currentTargets = switch (priceTargets.get(caller.toText())) {
+      case (null) { List.empty<PriceTarget>() };
+      case (?targets) { targets };
+    };
+
+    currentTargets.add(newTarget);
+    priceTargets.add(caller.toText(), currentTargets);
+    id;
+  };
+
+  public query ({ caller }) func getPriceTargets() : async [PriceTarget] {
+    ensureUserExists(caller);
+    switch (priceTargets.get(caller.toText())) {
+      case (null) { [] };
+      case (?targets) {
+        targets.toArray();
+      };
+    };
+  };
+
+  public shared ({ caller }) func deletePriceTarget(id : Text) : async () {
+    ensureUserExists(caller);
+    switch (priceTargets.get(caller.toText())) {
+      case (null) { Runtime.trap("Price target not found") };
+      case (?targets) {
+        let filteredTargets = targets.filter(
+          func(target) { not Text.equal(target.id, id) }
+        );
+        priceTargets.add(caller.toText(), filteredTargets);
+      };
+    };
+  };
+
+  public shared ({ caller }) func markPriceTargetTriggered(id : Text) : async () {
+    ensureUserExists(caller);
+    switch (priceTargets.get(caller.toText())) {
+      case (null) { Runtime.trap("Price target not found") };
+      case (?targets) {
+        let updatedTargets = targets.map<PriceTarget, PriceTarget>(
+          func(target) {
+            if (Text.equal(target.id, id)) {
+              { target with triggered = true };
+            } else { target };
+          }
+        );
+        priceTargets.add(caller.toText(), updatedTargets);
+      };
+    };
   };
 };

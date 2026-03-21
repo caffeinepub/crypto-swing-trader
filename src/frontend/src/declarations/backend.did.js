@@ -8,6 +8,10 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const PriceDirection = IDL.Variant({
+  'above' : IDL.Null,
+  'below' : IDL.Null,
+});
 export const SignalType = IDL.Variant({
   'buy' : IDL.Null,
   'hold' : IDL.Null,
@@ -30,6 +34,15 @@ export const Alert = IDL.Record({
   'timestamp' : IDL.Int,
   'confidence' : IDL.Nat,
   'signalType' : SignalType,
+});
+export const PriceTarget = IDL.Record({
+  'id' : IDL.Text,
+  'direction' : PriceDirection,
+  'createdAt' : IDL.Int,
+  'targetPrice' : IDL.Float64,
+  'coinName' : IDL.Text,
+  'coinId' : IDL.Text,
+  'triggered' : IDL.Bool,
 });
 export const Preferences = IDL.Record({
   'theme' : IDL.Text,
@@ -55,7 +68,13 @@ export const TransformationOutput = IDL.Record({
 });
 
 export const idlService = IDL.Service({
+  'addPriceTarget' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Float64, PriceDirection],
+      [IDL.Text],
+      [],
+    ),
   'clearAlerts' : IDL.Func([], [], []),
+  'deletePriceTarget' : IDL.Func([IDL.Text], [], []),
   'fetchTopCryptoNews' : IDL.Func([], [IDL.Text], []),
   'fetchTopCryptos' : IDL.Func([], [IDL.Text], []),
   'getAlertHistory' : IDL.Func(
@@ -66,8 +85,10 @@ export const idlService = IDL.Service({
   'getAlertStats' : IDL.Func([], [IDL.Nat, IDL.Nat, IDL.Nat], ['query']),
   'getAlertsLast24Hours' : IDL.Func([], [IDL.Vec(Alert)], ['query']),
   'getCryptoAlertHistory' : IDL.Func([IDL.Text], [IDL.Vec(Alert)], ['query']),
+  'getPriceTargets' : IDL.Func([], [IDL.Vec(PriceTarget)], ['query']),
   'getTheme' : IDL.Func([], [IDL.Text], ['query']),
   'initializeUser' : IDL.Func([Preferences], [], []),
+  'markPriceTargetTriggered' : IDL.Func([IDL.Text], [], []),
   'purgeOldAlerts' : IDL.Func([], [], []),
   'saveAlert' : IDL.Func(
       [IDL.Text, SignalType, IDL.Opt(TriggerReason), IDL.Nat, IDL.Float64],
@@ -85,6 +106,10 @@ export const idlService = IDL.Service({
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const PriceDirection = IDL.Variant({
+    'above' : IDL.Null,
+    'below' : IDL.Null,
+  });
   const SignalType = IDL.Variant({
     'buy' : IDL.Null,
     'hold' : IDL.Null,
@@ -108,6 +133,15 @@ export const idlFactory = ({ IDL }) => {
     'confidence' : IDL.Nat,
     'signalType' : SignalType,
   });
+  const PriceTarget = IDL.Record({
+    'id' : IDL.Text,
+    'direction' : PriceDirection,
+    'createdAt' : IDL.Int,
+    'targetPrice' : IDL.Float64,
+    'coinName' : IDL.Text,
+    'coinId' : IDL.Text,
+    'triggered' : IDL.Bool,
+  });
   const Preferences = IDL.Record({
     'theme' : IDL.Text,
     'notifications' : IDL.Bool,
@@ -129,7 +163,13 @@ export const idlFactory = ({ IDL }) => {
   });
   
   return IDL.Service({
+    'addPriceTarget' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Float64, PriceDirection],
+        [IDL.Text],
+        [],
+      ),
     'clearAlerts' : IDL.Func([], [], []),
+    'deletePriceTarget' : IDL.Func([IDL.Text], [], []),
     'fetchTopCryptoNews' : IDL.Func([], [IDL.Text], []),
     'fetchTopCryptos' : IDL.Func([], [IDL.Text], []),
     'getAlertHistory' : IDL.Func(
@@ -140,8 +180,10 @@ export const idlFactory = ({ IDL }) => {
     'getAlertStats' : IDL.Func([], [IDL.Nat, IDL.Nat, IDL.Nat], ['query']),
     'getAlertsLast24Hours' : IDL.Func([], [IDL.Vec(Alert)], ['query']),
     'getCryptoAlertHistory' : IDL.Func([IDL.Text], [IDL.Vec(Alert)], ['query']),
+    'getPriceTargets' : IDL.Func([], [IDL.Vec(PriceTarget)], ['query']),
     'getTheme' : IDL.Func([], [IDL.Text], ['query']),
     'initializeUser' : IDL.Func([Preferences], [], []),
+    'markPriceTargetTriggered' : IDL.Func([IDL.Text], [], []),
     'purgeOldAlerts' : IDL.Func([], [], []),
     'saveAlert' : IDL.Func(
         [IDL.Text, SignalType, IDL.Opt(TriggerReason), IDL.Nat, IDL.Float64],

@@ -108,6 +108,19 @@ export default function AITradeAnalysisCard({
     return "text-neon-red";
   };
 
+  const getRRColor = () => {
+    if (recommendation.riskReward >= 3) return "text-neon-green glow-text";
+    if (recommendation.riskReward >= 2) return "text-yellow-400";
+    return "text-neon-red";
+  };
+
+  const getRRLabel = () => {
+    if (recommendation.riskReward >= 3) return "Excellent";
+    if (recommendation.riskReward >= 2) return "Good";
+    if (recommendation.riskReward >= 1) return "Fair";
+    return "Poor";
+  };
+
   const formatPrice = (price: number) => {
     if (price >= 1000)
       return price.toLocaleString(undefined, {
@@ -194,6 +207,30 @@ export default function AITradeAnalysisCard({
             </Badge>
           </div>
         </div>
+
+        {/* Risk/Reward Ratio */}
+        {recommendation.direction !== "hold" &&
+          recommendation.riskReward > 0 && (
+            <div className="p-3 rounded-lg border border-neon-cyan/30 bg-background-elevated/40 flex items-center justify-between">
+              <div className="space-y-0.5">
+                <div className="text-xs font-heading text-muted-foreground uppercase tracking-wide">
+                  Risk / Reward Ratio
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  For every $1 risked, potential gain of $
+                  {recommendation.riskReward.toFixed(1)}
+                </div>
+              </div>
+              <div className="text-right">
+                <div className={`text-2xl font-bold font-mono ${getRRColor()}`}>
+                  1 : {recommendation.riskReward.toFixed(1)}
+                </div>
+                <div className={`text-xs font-heading ${getRRColor()}`}>
+                  {getRRLabel()}
+                </div>
+              </div>
+            </div>
+          )}
 
         {/* Take Profit Targets */}
         <div className="space-y-3">

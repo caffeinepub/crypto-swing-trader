@@ -19,6 +19,17 @@ export interface Alert {
   'signalType' : SignalType,
 }
 export interface Preferences { 'theme' : string, 'notifications' : boolean }
+export type PriceDirection = { 'above' : null } |
+  { 'below' : null };
+export interface PriceTarget {
+  'id' : string,
+  'direction' : PriceDirection,
+  'createdAt' : bigint,
+  'targetPrice' : number,
+  'coinName' : string,
+  'coinId' : string,
+  'triggered' : boolean,
+}
 export type SignalType = { 'buy' : null } |
   { 'hold' : null } |
   { 'sell' : null };
@@ -46,7 +57,12 @@ export interface http_request_result {
   'headers' : Array<http_header>,
 }
 export interface _SERVICE {
+  'addPriceTarget' : ActorMethod<
+    [string, string, number, PriceDirection],
+    string
+  >,
   'clearAlerts' : ActorMethod<[], undefined>,
+  'deletePriceTarget' : ActorMethod<[string], undefined>,
   'fetchTopCryptoNews' : ActorMethod<[], string>,
   'fetchTopCryptos' : ActorMethod<[], string>,
   'getAlertHistory' : ActorMethod<
@@ -56,8 +72,10 @@ export interface _SERVICE {
   'getAlertStats' : ActorMethod<[], [bigint, bigint, bigint]>,
   'getAlertsLast24Hours' : ActorMethod<[], Array<Alert>>,
   'getCryptoAlertHistory' : ActorMethod<[string], Array<Alert>>,
+  'getPriceTargets' : ActorMethod<[], Array<PriceTarget>>,
   'getTheme' : ActorMethod<[], string>,
   'initializeUser' : ActorMethod<[Preferences], undefined>,
+  'markPriceTargetTriggered' : ActorMethod<[string], undefined>,
   'purgeOldAlerts' : ActorMethod<[], undefined>,
   'saveAlert' : ActorMethod<
     [string, SignalType, [] | [TriggerReason], bigint, number],
