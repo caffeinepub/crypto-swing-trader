@@ -1,4 +1,8 @@
-import { type OHLCData, fetchOHLCData } from "@/services/coingecko";
+import {
+  type OHLCData,
+  fetchMarketChart15m,
+  fetchOHLCData,
+} from "@/services/coingecko";
 import {
   type CandlestickPattern,
   detectCandlestickPatterns,
@@ -15,7 +19,10 @@ interface ChartData {
   supportResistance: SupportResistanceLevel[];
 }
 
-export function useChartData(coinId: string, timeframe: "1H" | "4H" | "Daily") {
+export function useChartData(
+  coinId: string,
+  timeframe: "15m" | "1H" | "4H" | "Daily",
+) {
   const daysMap = {
     "1H": 1,
     "4H": 7,
@@ -25,7 +32,12 @@ export function useChartData(coinId: string, timeframe: "1H" | "4H" | "Daily") {
   return useQuery<ChartData>({
     queryKey: ["chartData", coinId, timeframe],
     queryFn: async () => {
-      const ohlc = await fetchOHLCData(coinId, daysMap[timeframe]);
+      let ohlc: OHLCData[];
+      if (timeframe === "15m") {
+        ohlc = await fetchMarketChart15m(coinId);
+      } else {
+        ohlc = await fetchOHLCData(coinId, daysMap[timeframe]);
+      }
       const patterns = detectCandlestickPatterns(ohlc);
       const supportResistance = calculateSupportResistance(ohlc);
 

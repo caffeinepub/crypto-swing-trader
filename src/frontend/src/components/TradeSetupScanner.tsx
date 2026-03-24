@@ -27,6 +27,7 @@ export interface PriceSignal {
   priority: number;
   source: "indicators" | "price-action";
   compositeScore?: number;
+  timeframe?: string;
 }
 
 /**
@@ -36,6 +37,7 @@ export interface PriceSignal {
 function getIndicatorSignal(
   crypto: CryptoMarketData,
   indicators: TechnicalIndicators,
+  timeframe?: string,
 ): PriceSignal | null {
   const signals = generateTradingSignals(indicators, crypto.current_price);
   const buySignals = signals.filter((s) => s.type === "buy");
@@ -72,6 +74,7 @@ function getIndicatorSignal(
     priority: isHighConf ? 1 : 2,
     source: "indicators",
     compositeScore: composite.score,
+    timeframe,
   };
 }
 
@@ -129,10 +132,15 @@ export function getPriceSignal(crypto: CryptoMarketData): PriceSignal {
   };
 }
 
+export interface IndicatorsCacheEntry {
+  indicators: TechnicalIndicators;
+  timeframe: string;
+}
+
 interface TradeSetupScannerProps {
   cryptos: CryptoMarketData[];
-  /** Optional map of coinId -> cached TechnicalIndicators from React Query */
-  indicatorsCache?: Map<string, TechnicalIndicators>;
+  /** Optional map of coinId -> cached TechnicalIndicators + timeframe from React Query */
+  indicatorsCache?: Map<string, IndicatorsCacheEntry>;
 }
 
 export default function TradeSetupScanner({
@@ -143,7 +151,8 @@ export default function TradeSetupScanner({
     .map((crypto) => {
       const cached = indicatorsCache?.get(crypto.id);
       const signal = cached
-        ? (getIndicatorSignal(crypto, cached) ?? getPriceSignal(crypto))
+        ? (getIndicatorSignal(crypto, cached.indicators, cached.timeframe) ??
+          getPriceSignal(crypto))
         : getPriceSignal(crypto);
       return { crypto, signal };
     })
@@ -222,9 +231,10 @@ export default function TradeSetupScanner({
                 const signalClass = isBuy
                   ? "border-neon-green/50 text-neon-green bg-neon-green/10"
                   : "border-neon-red/50 text-neon-red bg-neon-red/10";
+                const cachedEntry = indicatorsCache?.get(crypto.id);
                 const hasDivergence =
-                  indicatorsCache?.get(crypto.id)?.divergence?.bullish ||
-                  indicatorsCache?.get(crypto.id)?.divergence?.bearish;
+                  cachedEntry?.indicators?.divergence?.bullish ||
+                  cachedEntry?.indicators?.divergence?.bearish;
 
                 return (
                   <Link
@@ -258,6 +268,11 @@ export default function TradeSetupScanner({
                         {signal.source === "indicators" && (
                           <span className="text-xs text-neon-purple/70 font-mono">
                             ⚡ RSI/MACD
+                          </span>
+                        )}
+                        {signal.timeframe && (
+                          <span className="text-xs text-muted-foreground font-mono border border-border/50 px-1 rounded">
+                            {signal.timeframe}
                           </span>
                         )}
                         {hasDivergence && (

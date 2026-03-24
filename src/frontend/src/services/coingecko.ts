@@ -214,3 +214,83 @@ export async function fetchOHLCData(
     throw error;
   }
 }
+
+/**
+ * Fetch ~5-minute price data for the last 24h from CoinGecko market_chart
+ * and group into 15-minute OHLC buckets.
+ */
+export async function fetchMarketChart15m(coinId: string): Promise<OHLCData[]> {
+  const cacheKey = `market_chart_15m-${coinId}`;
+
+  const cached = getCachedResponse<OHLCData[]>(cacheKey);
+  if (cached) return cached;
+
+  const inFlight = inFlightRequests.get(cacheKey);
+  if (inFlight) return inFlight;
+
+  const requestPromise = (async () => {
+    try {
+      const response = await fetch(
+        `${COINGECKO_API_BASE}/coins/${coinId}/market_chart?vs_currency=usd&days=1`,
+      );
+
+      if (!response.ok) {
+        if (response.status === 429) {
+          throw new Error("Rate limit exceeded (429)");
+        }
+        throw new Error(`Failed to fetch 15m chart data (${response.status})`);
+      }
+
+      const data: { prices: number[][]; total_volumes: number[][] } =
+        await response.json();
+
+      const BUCKET_MS = 15 * 60 * 1000;
+
+      // Group prices into 15-min buckets
+      const priceBuckets = new Map<
+        number,
+        { prices: number[]; bucketTs: number }
+      >();
+      for (const [ts, price] of data.prices) {
+        const bucket = Math.floor(ts / BUCKET_MS);
+        if (!priceBuckets.has(bucket)) {
+          priceBuckets.set(bucket, {
+            prices: [],
+            bucketTs: bucket * BUCKET_MS,
+          });
+        }
+        priceBuckets.get(bucket)!.prices.push(price);
+      }
+
+      // Group volumes into same buckets
+      const volumeBuckets = new Map<number, number>();
+      for (const [ts, vol] of data.total_volumes) {
+        const bucket = Math.floor(ts / BUCKET_MS);
+        volumeBuckets.set(bucket, (volumeBuckets.get(bucket) || 0) + vol);
+      }
+
+      const ohlcData: OHLCData[] = [];
+      for (const [bucket, { prices, bucketTs }] of priceBuckets) {
+        if (prices.length === 0) continue;
+        ohlcData.push({
+          timestamp: bucketTs,
+          open: prices[0],
+          high: Math.max(...prices),
+          low: Math.min(...prices),
+          close: prices[prices.length - 1],
+          volume: volumeBuckets.get(bucket) || 0,
+        });
+      }
+
+      ohlcData.sort((a, b) => a.timestamp - b.timestamp);
+
+      setCachedResponse(cacheKey, ohlcData);
+      return ohlcData;
+    } finally {
+      inFlightRequests.delete(cacheKey);
+    }
+  })();
+
+  inFlightRequests.set(cacheKey, requestPromise);
+  return requestPromise;
+}

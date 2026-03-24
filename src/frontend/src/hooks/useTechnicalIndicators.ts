@@ -1,4 +1,4 @@
-import { fetchOHLCData } from "@/services/coingecko";
+import { fetchMarketChart15m, fetchOHLCData } from "@/services/coingecko";
 import {
   type TechnicalIndicators,
   calculateBollingerBands,
@@ -12,9 +12,9 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useTechnicalIndicators(
   coinId: string,
-  timeframe: "1H" | "4H" | "Daily",
+  timeframe: "15m" | "1H" | "4H" | "Daily",
 ) {
-  const daysMap = {
+  const daysMap: Record<string, number> = {
     "1H": 1,
     "4H": 7,
     Daily: 90,
@@ -23,7 +23,11 @@ export function useTechnicalIndicators(
   return useQuery<TechnicalIndicators>({
     queryKey: ["indicators", coinId, timeframe],
     queryFn: async () => {
-      const ohlc = await fetchOHLCData(coinId, daysMap[timeframe]);
+      const ohlc =
+        timeframe === "15m"
+          ? await fetchMarketChart15m(coinId)
+          : await fetchOHLCData(coinId, daysMap[timeframe]);
+
       const closes = ohlc.map((d) => d.close);
 
       const rsi = calculateRSI(closes, 14);

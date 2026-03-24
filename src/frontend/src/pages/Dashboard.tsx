@@ -2,9 +2,11 @@ import { PriceDirection } from "@/backend";
 import CryptoTable from "@/components/CryptoTable";
 import MarketSentimentPanel from "@/components/MarketSentimentPanel";
 import TimeframeSelector from "@/components/TimeframeSelector";
+import type { Timeframe } from "@/components/TimeframeSelector";
 import TradeSetupScanner, {
   getPriceSignal,
 } from "@/components/TradeSetupScanner";
+import type { IndicatorsCacheEntry } from "@/components/TradeSetupScanner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -20,7 +22,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 export default function Dashboard() {
-  const [timeframe, setTimeframe] = useState<"1H" | "4H" | "Daily">("4H");
+  const [timeframe, setTimeframe] = useState<Timeframe>("4H");
   const {
     data: cryptos,
     error,
@@ -41,7 +43,7 @@ export default function Dashboard() {
 
   // Build a cache of already-fetched technical indicators for the current timeframe
   const indicatorsCache = useMemo(() => {
-    const map = new Map<string, TechnicalIndicators>();
+    const map = new Map<string, IndicatorsCacheEntry>();
     if (!cryptos) return map;
     for (const coin of cryptos) {
       const cached = queryClient.getQueryData<TechnicalIndicators>([
@@ -49,7 +51,7 @@ export default function Dashboard() {
         coin.id,
         timeframe,
       ]);
-      if (cached) map.set(coin.id, cached);
+      if (cached) map.set(coin.id, { indicators: cached, timeframe });
     }
     return map;
     // eslint-disable-next-line react-hooks/exhaustive-deps

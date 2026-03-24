@@ -2,6 +2,7 @@ import AITradeAnalysisCard from "@/components/AITradeAnalysisCard";
 import CandlestickChart from "@/components/CandlestickChart";
 import IndicatorsPanel from "@/components/IndicatorsPanel";
 import TimeframeSelector from "@/components/TimeframeSelector";
+import type { Timeframe } from "@/components/TimeframeSelector";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useChartData } from "@/hooks/useChartData";
@@ -17,7 +18,7 @@ import { useEffect, useState } from "react";
 
 export default function CryptoDetail() {
   const { cryptoId } = useParams({ from: "/crypto/$cryptoId" });
-  const [timeframe, setTimeframe] = useState<"1H" | "4H" | "Daily">("4H");
+  const [timeframe, setTimeframe] = useState<Timeframe>("4H");
   const [tradeRecommendation, setTradeRecommendation] =
     useState<TradeRecommendation | null>(null);
 

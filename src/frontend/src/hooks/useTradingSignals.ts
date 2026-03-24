@@ -7,7 +7,7 @@ import { useTechnicalIndicators } from "./useTechnicalIndicators";
 
 export function useTradingSignals(
   coinId: string,
-  timeframe: "1H" | "4H" | "Daily",
+  timeframe: "15m" | "1H" | "4H" | "Daily",
 ) {
   const { data: indicators } = useTechnicalIndicators(coinId, timeframe);
 

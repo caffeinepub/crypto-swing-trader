@@ -23,7 +23,7 @@ import { useState } from "react";
 
 interface CryptoTableProps {
   cryptos: CryptoMarketData[];
-  timeframe?: "1H" | "4H" | "Daily";
+  timeframe?: "15m" | "1H" | "4H" | "Daily";
 }
 
 // Generate signal from price data only - no extra API calls needed
